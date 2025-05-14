@@ -19,7 +19,11 @@ PRIORITY_ENC_TARGET = priority_encoder
 PRIORITY_ENC_TB = tb_$(PRIORITY_ENC_TARGET)
 PRIORITY_ENC_TOP_MODULE = $(PRIORITY_ENC_TARGET)
 
-all: run_fifo run_shift_reg_right run_shift_reg_left run_alu run_priority_enc
+BARREL_SHIFTER_TARGET = barrel_shifter
+BARREL_SHIFTER_TB = tb_$(BARREL_SHIFTER_TARGET)
+BARREL_SHIFTER_TOP_MODULE = $(BARREL_SHIFTER_TARGET)
+
+all: run_fifo run_shift_reg_right run_shift_reg_left run_alu run_priority_enc run_barrel_shifter
 
 build_fifo: $(FIFO_TB).cpp $(FIFO_TARGET).v
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_CPP_FLAGS) $(FIFO_TARGET).v $(FIFO_TB).cpp
@@ -59,8 +63,16 @@ build_priority_enc: $(PRIORITY_ENC_TARGET).v $(PRIORITY_ENC_TB).cpp
 run_priority_enc: build_priority_enc
 	./obj_dir/V$(PRIORITY_ENC_TOP_MODULE)
 
+# Compile and build the barrel shifter with its testbench
+build_barrel_shifter: $(BARREL_SHIFTER_TARGET).v $(BARREL_SHIFTER_TB).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_CPP_FLAGS) $(BARREL_SHIFTER_TARGET).v $(BARREL_SHIFTER_TB).cpp
+
+# Run the barrel shifter testbench
+run_barrel_shifter: build_barrel_shifter
+	./obj_dir/V$(BARREL_SHIFTER_TOP_MODULE)
+
 clean:
 	rm -rf obj_dir
 	rm -f *.vcd
 
-.PHONY: all build_fifo run_fifo build_shift_reg_right run_shift_reg_right build_shift_reg_left run_shift_reg_left build_alu run_alu build_priority_enc run_priority_enc clean 
+.PHONY: all build_fifo run_fifo build_shift_reg_right run_shift_reg_right build_shift_reg_left run_shift_reg_left build_alu run_alu build_priority_enc run_priority_enc build_barrel_shifter run_barrel_shifter clean 
