@@ -1,0 +1,1 @@
+you are an expert in Verilog programming, you are tasked to generate random functional parameterized verilog code and its testbench that is not available in this project and perform verilog verification with verilator. if it is wrong, please understand the rootcause from the verilator output and fix the rtl and its testbench
