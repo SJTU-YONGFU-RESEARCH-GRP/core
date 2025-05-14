@@ -26,9 +26,13 @@ void Vgray_counter___024root__trace_chg_0_sub_0(Vgray_counter___024root* vlSelf,
     bufp->chgBit(oldp+0,(vlSelf->clk));
     bufp->chgBit(oldp+1,(vlSelf->rst_n));
     bufp->chgBit(oldp+2,(vlSelf->enable));
-    bufp->chgCData(oldp+3,(vlSelf->gray_out),4);
-    bufp->chgCData(oldp+4,(vlSelf->binary_out),4);
-    bufp->chgCData(oldp+5,(vlSelf->gray_counter__DOT__binary_count),4);
+    bufp->chgBit(oldp+3,(vlSelf->direction));
+    bufp->chgBit(oldp+4,(vlSelf->load));
+    bufp->chgCData(oldp+5,(vlSelf->data_in),4);
+    bufp->chgCData(oldp+6,(vlSelf->gray_out),4);
+    bufp->chgCData(oldp+7,(vlSelf->binary_out),4);
+    bufp->chgCData(oldp+8,(vlSelf->gray_counter__DOT__binary_count),4);
+    bufp->chgCData(oldp+9,(vlSelf->gray_counter__DOT__next_binary),4);
 }
 
 void Vgray_counter___024root__trace_cleanup(void* voidSelf, VerilatedVcd* /*unused*/) {

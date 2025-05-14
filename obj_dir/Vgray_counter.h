@@ -28,6 +28,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vgray_counter VL_NOT_FINAL : public Verilated
     VL_IN8(&clk,0,0);
     VL_IN8(&rst_n,0,0);
     VL_IN8(&enable,0,0);
+    VL_IN8(&direction,0,0);
+    VL_IN8(&load,0,0);
+    VL_IN8(&data_in,3,0);
     VL_OUT8(&gray_out,3,0);
     VL_OUT8(&binary_out,3,0);
 

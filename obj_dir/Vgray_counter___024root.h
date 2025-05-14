@@ -17,15 +17,21 @@ class alignas(VL_CACHE_LINE_BYTES) Vgray_counter___024root final : public Verila
     VL_IN8(clk,0,0);
     VL_IN8(rst_n,0,0);
     VL_IN8(enable,0,0);
+    VL_IN8(direction,0,0);
+    VL_IN8(load,0,0);
+    VL_IN8(data_in,3,0);
     VL_OUT8(gray_out,3,0);
     VL_OUT8(binary_out,3,0);
     CData/*3:0*/ gray_counter__DOT__binary_count;
+    CData/*3:0*/ gray_counter__DOT__next_binary;
     CData/*0:0*/ __VstlFirstIteration;
+    CData/*0:0*/ __VicoFirstIteration;
     CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
     CData/*0:0*/ __Vtrigprevexpr___TOP__rst_n__0;
     CData/*0:0*/ __VactContinue;
     IData/*31:0*/ __VactIterCount;
     VlTriggerVec<1> __VstlTriggered;
+    VlTriggerVec<1> __VicoTriggered;
     VlTriggerVec<1> __VactTriggered;
     VlTriggerVec<1> __VnbaTriggered;
 

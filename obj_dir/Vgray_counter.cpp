@@ -13,6 +13,9 @@ Vgray_counter::Vgray_counter(VerilatedContext* _vcontextp__, const char* _vcname
     , clk{vlSymsp->TOP.clk}
     , rst_n{vlSymsp->TOP.rst_n}
     , enable{vlSymsp->TOP.enable}
+    , direction{vlSymsp->TOP.direction}
+    , load{vlSymsp->TOP.load}
+    , data_in{vlSymsp->TOP.data_in}
     , gray_out{vlSymsp->TOP.gray_out}
     , binary_out{vlSymsp->TOP.binary_out}
     , rootp{&(vlSymsp->TOP)}

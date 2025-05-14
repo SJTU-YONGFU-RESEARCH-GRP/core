@@ -79,6 +79,14 @@ VL_ATTR_COLD void Vgray_counter___024root___stl_sequent__TOP__0(Vgray_counter___
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vgray_counter___024root___stl_sequent__TOP__0\n"); );
     // Body
     vlSelf->binary_out = vlSelf->gray_counter__DOT__binary_count;
+    vlSelf->gray_counter__DOT__next_binary = (0xfU 
+                                              & ((IData)(vlSelf->direction)
+                                                  ? 
+                                                 ((IData)(vlSelf->gray_counter__DOT__binary_count) 
+                                                  - (IData)(1U))
+                                                  : 
+                                                 ((IData)(1U) 
+                                                  + (IData)(vlSelf->gray_counter__DOT__binary_count))));
 }
 
 VL_ATTR_COLD void Vgray_counter___024root___eval_stl(Vgray_counter___024root* vlSelf) {
@@ -107,6 +115,21 @@ VL_ATTR_COLD bool Vgray_counter___024root___eval_phase__stl(Vgray_counter___024r
     }
     return (__VstlExecute);
 }
+
+#ifdef VL_DEBUG
+VL_ATTR_COLD void Vgray_counter___024root___dump_triggers__ico(Vgray_counter___024root* vlSelf) {
+    if (false && vlSelf) {}  // Prevent unused
+    Vgray_counter__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vgray_counter___024root___dump_triggers__ico\n"); );
+    // Body
+    if ((1U & (~ (IData)(vlSelf->__VicoTriggered.any())))) {
+        VL_DBG_MSGF("         No triggers active\n");
+    }
+    if ((1ULL & vlSelf->__VicoTriggered.word(0U))) {
+        VL_DBG_MSGF("         'ico' region trigger index 0 is active: Internal 'ico' trigger - first iteration\n");
+    }
+}
+#endif  // VL_DEBUG
 
 #ifdef VL_DEBUG
 VL_ATTR_COLD void Vgray_counter___024root___dump_triggers__act(Vgray_counter___024root* vlSelf) {
@@ -146,9 +169,13 @@ VL_ATTR_COLD void Vgray_counter___024root___ctor_var_reset(Vgray_counter___024ro
     vlSelf->clk = VL_RAND_RESET_I(1);
     vlSelf->rst_n = VL_RAND_RESET_I(1);
     vlSelf->enable = VL_RAND_RESET_I(1);
+    vlSelf->direction = VL_RAND_RESET_I(1);
+    vlSelf->load = VL_RAND_RESET_I(1);
+    vlSelf->data_in = VL_RAND_RESET_I(4);
     vlSelf->gray_out = VL_RAND_RESET_I(4);
     vlSelf->binary_out = VL_RAND_RESET_I(4);
     vlSelf->gray_counter__DOT__binary_count = VL_RAND_RESET_I(4);
+    vlSelf->gray_counter__DOT__next_binary = VL_RAND_RESET_I(4);
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__rst_n__0 = VL_RAND_RESET_I(1);
 }
