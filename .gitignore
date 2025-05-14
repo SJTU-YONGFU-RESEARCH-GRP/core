@@ -3,6 +3,7 @@
 
 # Verilator build directory
 obj_dir/
+build
 
 # Editor backup files
 *~

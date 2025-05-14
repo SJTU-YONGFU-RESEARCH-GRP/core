@@ -9,252 +9,236 @@ VL_INLINE_OPT void Vconfigurable_fp_adder___024root___ico_sequent__TOP__0(Vconfi
     if (false && vlSelf) {}  // Prevent unused
     Vconfigurable_fp_adder__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vconfigurable_fp_adder___024root___ico_sequent__TOP__0\n"); );
+    // Init
+    CData/*0:0*/ configurable_fp_adder__DOT____VdfgTmp_h026ab96c__0;
+    configurable_fp_adder__DOT____VdfgTmp_h026ab96c__0 = 0;
+    CData/*0:0*/ configurable_fp_adder__DOT____VdfgTmp_ha49cbc40__0;
+    configurable_fp_adder__DOT____VdfgTmp_ha49cbc40__0 = 0;
+    CData/*0:0*/ configurable_fp_adder__DOT____VdfgTmp_ha5c11a71__0;
+    configurable_fp_adder__DOT____VdfgTmp_ha5c11a71__0 = 0;
+    CData/*0:0*/ configurable_fp_adder__DOT____VdfgTmp_hc8de2c6c__0;
+    configurable_fp_adder__DOT____VdfgTmp_hc8de2c6c__0 = 0;
+    CData/*0:0*/ configurable_fp_adder__DOT____VdfgTmp_hf24ca935__0;
+    configurable_fp_adder__DOT____VdfgTmp_hf24ca935__0 = 0;
     // Body
-    vlSelf->result = (((0x7fc00000U == vlSelf->a) | 
-                       (0x7fc00000U == vlSelf->b)) ? 0x7fc00000U
-                       : ((((0x7f800000U == vlSelf->a) 
-                            & (0xff800000U == vlSelf->b)) 
-                           | ((0xff800000U == vlSelf->a) 
-                              & (0x7f800000U == vlSelf->b)))
-                           ? 0x7fc00000U : (((0x7f800000U 
-                                              == vlSelf->a) 
-                                             | (0x7f800000U 
-                                                == vlSelf->b))
-                                             ? 0x7f800000U
-                                             : (((0xff800000U 
-                                                  == vlSelf->a) 
-                                                 | (0xff800000U 
-                                                    == vlSelf->b))
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h600b310c__0 
+        = (((0xffU & (vlSelf->a >> 0x17U)) > (0xffU 
+                                              & (vlSelf->b 
+                                                 >> 0x17U)))
+            ? (0xffU & (vlSelf->a >> 0x17U)) : (0xffU 
+                                                & (vlSelf->b 
+                                                   >> 0x17U)));
+    configurable_fp_adder__DOT____VdfgTmp_ha5c11a71__0 
+        = ((vlSelf->a & vlSelf->b) >> 0x1fU);
+    vlSelf->configurable_fp_adder__DOT__b_is_zero = (IData)(
+                                                            (0U 
+                                                             == 
+                                                             (0x7fffffffU 
+                                                              & vlSelf->b)));
+    configurable_fp_adder__DOT____VdfgTmp_ha49cbc40__0 
+        = ((vlSelf->a >> 0x1fU) != (vlSelf->b >> 0x1fU));
+    vlSelf->configurable_fp_adder__DOT__a_is_nan = (IData)(
+                                                           ((0x7f800000U 
+                                                             == 
+                                                             (0x7f800000U 
+                                                              & vlSelf->a)) 
+                                                            & (0U 
+                                                               != 
+                                                               (0x7fffffU 
+                                                                & vlSelf->a))));
+    vlSelf->configurable_fp_adder__DOT__b_is_nan = (IData)(
+                                                           ((0x7f800000U 
+                                                             == 
+                                                             (0x7f800000U 
+                                                              & vlSelf->b)) 
+                                                            & (0U 
+                                                               != 
+                                                               (0x7fffffU 
+                                                                & vlSelf->b))));
+    vlSelf->configurable_fp_adder__DOT__a_is_zero = (IData)(
+                                                            (0U 
+                                                             == 
+                                                             (0x7fffffffU 
+                                                              & vlSelf->a)));
+    vlSelf->configurable_fp_adder__DOT__b_is_inf = (IData)(
+                                                           (0x7f800000U 
+                                                            == 
+                                                            (0x7fffffffU 
+                                                             & vlSelf->b)));
+    vlSelf->configurable_fp_adder__DOT__a_is_inf = (IData)(
+                                                           (0x7f800000U 
+                                                            == 
+                                                            (0x7fffffffU 
+                                                             & vlSelf->a)));
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_ha4ba1160__0 
+        = ((vlSelf->a >> 0x1fU) == (vlSelf->b >> 0x1fU));
+    vlSelf->configurable_fp_adder__DOT__exp_diff = 
+        (0x1ffU & ((0xffU & (vlSelf->a >> 0x17U)) - 
+                   (0xffU & (vlSelf->b >> 0x17U))));
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h9284d053__0 
+        = ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_nan) 
+           | (IData)(vlSelf->configurable_fp_adder__DOT__b_is_nan));
+    configurable_fp_adder__DOT____VdfgTmp_hc8de2c6c__0 
+        = ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_zero) 
+           & (IData)(vlSelf->configurable_fp_adder__DOT__b_is_zero));
+    configurable_fp_adder__DOT____VdfgTmp_h026ab96c__0 
+        = ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_inf) 
+           & (IData)(vlSelf->configurable_fp_adder__DOT__b_is_inf));
+    configurable_fp_adder__DOT____VdfgTmp_hf24ca935__0 
+        = (IData)((((IData)(vlSelf->configurable_fp_adder__DOT__exp_diff) 
+                    >> 8U) | (0U == (IData)(vlSelf->configurable_fp_adder__DOT__exp_diff))));
+    vlSelf->configurable_fp_adder__DOT__result_zero_sign 
+        = (1U & ((IData)(configurable_fp_adder__DOT____VdfgTmp_hc8de2c6c__0)
+                  ? (IData)(configurable_fp_adder__DOT____VdfgTmp_ha5c11a71__0)
+                  : ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_zero)
+                      ? (vlSelf->b >> 0x1fU) : (vlSelf->a 
+                                                >> 0x1fU))));
+    vlSelf->configurable_fp_adder__DOT__result_is_zero 
+        = ((IData)(configurable_fp_adder__DOT____VdfgTmp_hc8de2c6c__0) 
+           | ((~ (IData)(vlSelf->configurable_fp_adder__DOT__a_is_nan)) 
+              & ((~ (IData)(vlSelf->configurable_fp_adder__DOT__b_is_nan)) 
+                 & ((~ (IData)(vlSelf->configurable_fp_adder__DOT__a_is_inf)) 
+                    & ((~ (IData)(vlSelf->configurable_fp_adder__DOT__b_is_inf)) 
+                       & (((0xffU & (vlSelf->a >> 0x17U)) 
+                           == (0xffU & (vlSelf->b >> 0x17U))) 
+                          & (((0x7fffffU & vlSelf->a) 
+                              == (0x7fffffU & vlSelf->b)) 
+                             & (IData)(configurable_fp_adder__DOT____VdfgTmp_ha49cbc40__0))))))));
+    vlSelf->configurable_fp_adder__DOT__result_inf_sign 
+        = (1U & ((IData)(configurable_fp_adder__DOT____VdfgTmp_h026ab96c__0)
+                  ? (IData)(configurable_fp_adder__DOT____VdfgTmp_ha5c11a71__0)
+                  : ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_inf)
+                      ? (vlSelf->a >> 0x1fU) : (vlSelf->b 
+                                                >> 0x1fU))));
+    vlSelf->configurable_fp_adder__DOT__result_is_nan 
+        = ((IData)(vlSelf->configurable_fp_adder__DOT____VdfgTmp_h9284d053__0) 
+           | ((IData)(configurable_fp_adder__DOT____VdfgTmp_h026ab96c__0) 
+              & (IData)(configurable_fp_adder__DOT____VdfgTmp_ha49cbc40__0)));
+    if (configurable_fp_adder__DOT____VdfgTmp_hf24ca935__0) {
+        vlSelf->configurable_fp_adder__DOT__aligned_a_mant 
+            = (0xffffffU & (0x800000U | (0x7fffffU 
+                                         & vlSelf->a)));
+        vlSelf->configurable_fp_adder__DOT__aligned_b_mant 
+            = (0xffffffU & VL_SHIFTR_III(24,24,9, (0x800000U 
+                                                   | (0x7fffffU 
+                                                      & vlSelf->b)), (IData)(vlSelf->configurable_fp_adder__DOT__exp_diff)));
+    } else {
+        vlSelf->configurable_fp_adder__DOT__aligned_a_mant 
+            = (0xffffffU & VL_SHIFTR_III(24,24,9, (0x800000U 
+                                                   | (0x7fffffU 
+                                                      & vlSelf->a)), 
+                                         (0x1ffU & 
+                                          (- (IData)(vlSelf->configurable_fp_adder__DOT__exp_diff)))));
+        vlSelf->configurable_fp_adder__DOT__aligned_b_mant 
+            = (0xffffffU & (0x800000U | (0x7fffffU 
+                                         & vlSelf->b)));
+    }
+    vlSelf->configurable_fp_adder__DOT__result_is_inf 
+        = ((~ (IData)(vlSelf->configurable_fp_adder__DOT__result_is_nan)) 
+           & ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_inf) 
+              | (IData)(vlSelf->configurable_fp_adder__DOT__b_is_inf)));
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h47244eb8__0 
+        = (vlSelf->configurable_fp_adder__DOT__aligned_a_mant 
+           >= vlSelf->configurable_fp_adder__DOT__aligned_b_mant);
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0 
+        = (0x3ffffffU & ((IData)(vlSelf->configurable_fp_adder__DOT____VdfgTmp_ha4ba1160__0)
+                          ? (vlSelf->configurable_fp_adder__DOT__aligned_a_mant 
+                             + vlSelf->configurable_fp_adder__DOT__aligned_b_mant)
+                          : ((IData)(vlSelf->configurable_fp_adder__DOT____VdfgTmp_h47244eb8__0)
+                              ? (0xffffffU & (vlSelf->configurable_fp_adder__DOT__aligned_a_mant 
+                                              - vlSelf->configurable_fp_adder__DOT__aligned_b_mant))
+                              : (0xffffffU & (vlSelf->configurable_fp_adder__DOT__aligned_b_mant 
+                                              - vlSelf->configurable_fp_adder__DOT__aligned_a_mant)))));
+    vlSelf->configurable_fp_adder__DOT__norm_shift 
+        = ((0x2000000U & vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0)
+            ? 0U : (0xffU & VL_EXTEND_II(32,8, ([&]() {
+                        vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__value 
+                            = (0xffffffU & vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0);
+                        vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__Vfuncout = 0U;
+                        vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k = 0x17U;
+                        while (VL_LTES_III(32, 0U, vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k)) {
+                            if (((0x17U >= (0x1fU & vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k)) 
+                                 && (1U & (vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__value 
+                                           >> (0x1fU 
+                                               & vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k))))) {
+                                vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k = 0xffffffffU;
+                            } else {
+                                vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__Vfuncout 
+                                    = (0xffU & ((IData)(1U) 
+                                                + (IData)(vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__Vfuncout)));
+                            }
+                            vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k 
+                                = (vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k 
+                                   - (IData)(1U));
+                        }
+                    }(), (IData)(vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__Vfuncout)))));
+    vlSelf->configurable_fp_adder__DOT__norm_mant = 
+        (0xffffffU & ((0x2000000U & vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0)
+                       ? (vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0 
+                          >> 1U) : VL_SHIFTL_III(24,24,8, vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0, (IData)(vlSelf->configurable_fp_adder__DOT__norm_shift))));
+    vlSelf->configurable_fp_adder__DOT__round_increment 
+        = (1U & (vlSelf->configurable_fp_adder__DOT__norm_mant 
+                 & ((vlSelf->configurable_fp_adder__DOT__norm_mant 
+                     >> 1U) | vlSelf->configurable_fp_adder__DOT__norm_mant)));
+    vlSelf->configurable_fp_adder__DOT__mant_rounded 
+        = (0x7fffffU & ((vlSelf->configurable_fp_adder__DOT__norm_mant 
+                         >> 1U) + (IData)(vlSelf->configurable_fp_adder__DOT__round_increment)));
+    vlSelf->result = (((IData)(vlSelf->configurable_fp_adder__DOT____VdfgTmp_h9284d053__0) 
+                       | ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_inf) 
+                          | ((IData)(vlSelf->configurable_fp_adder__DOT__b_is_inf) 
+                             | ((IData)(vlSelf->configurable_fp_adder__DOT__a_is_zero) 
+                                | (IData)(vlSelf->configurable_fp_adder__DOT__b_is_zero)))))
+                       ? ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_nan)
+                           ? 0x7fc00000U : ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_inf)
+                                             ? ((IData)(vlSelf->configurable_fp_adder__DOT__result_inf_sign)
                                                  ? 0xff800000U
-                                                 : 
-                                                (((0U 
-                                                   == vlSelf->a) 
-                                                  & (0U 
-                                                     == vlSelf->b))
-                                                  ? 0U
-                                                  : 
-                                                 ((((0U 
-                                                     == vlSelf->a) 
-                                                    & (0x80000000U 
-                                                       == vlSelf->b)) 
-                                                   | ((0x80000000U 
-                                                       == vlSelf->a) 
-                                                      & (0U 
-                                                         == vlSelf->b)))
-                                                   ? 0U
-                                                   : 
-                                                  (((0x80000000U 
-                                                     == vlSelf->a) 
-                                                    & (0x80000000U 
-                                                       == vlSelf->b))
-                                                    ? 0x80000000U
-                                                    : 
-                                                   ((((0x40000000U 
-                                                       == vlSelf->a) 
-                                                      & (0x40400000U 
-                                                         == vlSelf->b)) 
-                                                     | ((0x40400000U 
-                                                         == vlSelf->a) 
-                                                        & (0x40000000U 
-                                                           == vlSelf->b)))
-                                                     ? 0x40a00000U
-                                                     : 
-                                                    ((((0x40800000U 
-                                                        == vlSelf->a) 
-                                                       & (0x3f800000U 
-                                                          == vlSelf->b)) 
-                                                      | ((0x3f800000U 
-                                                          == vlSelf->a) 
-                                                         & (0x40800000U 
-                                                            == vlSelf->b)))
-                                                      ? 0x40a00000U
-                                                      : 
-                                                     ((((0x40000000U 
-                                                         == vlSelf->a) 
-                                                        & (0xc0000000U 
-                                                           == vlSelf->b)) 
-                                                       | ((0xc0000000U 
-                                                           == vlSelf->a) 
-                                                          & (0x40000000U 
-                                                             == vlSelf->b)))
-                                                       ? 0U
-                                                       : 
-                                                      ((((0x800000U 
-                                                          == vlSelf->a) 
-                                                         & (0x80a00000U 
-                                                            == vlSelf->b)) 
-                                                        | ((0x80a00000U 
-                                                            == vlSelf->a) 
-                                                           & (0x800000U 
-                                                              == vlSelf->b)))
-                                                        ? 0x400000U
+                                                 : 0x7f800000U)
+                                             : ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_zero)
+                                                 ? 
+                                                ((IData)(vlSelf->configurable_fp_adder__DOT__result_zero_sign)
+                                                  ? 0x80000000U
+                                                  : 0U)
+                                                 : 0x7fc00000U)))
+                       : ((((~ (IData)(vlSelf->configurable_fp_adder__DOT__result_is_nan)) 
+                            & ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_inf)
+                                ? (IData)(vlSelf->configurable_fp_adder__DOT__result_inf_sign)
+                                : ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_zero)
+                                    ? (IData)(vlSelf->configurable_fp_adder__DOT__result_zero_sign)
+                                    : ((IData)(vlSelf->configurable_fp_adder__DOT____VdfgTmp_ha4ba1160__0)
+                                        ? (vlSelf->a 
+                                           >> 0x1fU)
+                                        : ((IData)(vlSelf->configurable_fp_adder__DOT____VdfgTmp_h47244eb8__0)
+                                            ? (vlSelf->a 
+                                               >> 0x1fU)
+                                            : (vlSelf->b 
+                                               >> 0x1fU)))))) 
+                           << 0x1fU) | ((((IData)(vlSelf->configurable_fp_adder__DOT__result_is_nan)
+                                           ? 0xffU : 
+                                          ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_inf)
+                                            ? 0xffU
+                                            : ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_zero)
+                                                ? 0U
+                                                : (0xffU 
+                                                   & (((0x2000000U 
+                                                        & vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0)
+                                                        ? 
+                                                       ((IData)(1U) 
+                                                        + vlSelf->configurable_fp_adder__DOT____VdfgTmp_h600b310c__0)
                                                         : 
-                                                       ((((0x40000000U 
-                                                           == vlSelf->a) 
-                                                          & (0x200000U 
-                                                             == vlSelf->b)) 
-                                                         | ((0x200000U 
-                                                             == vlSelf->a) 
-                                                            & (0x40000000U 
-                                                               == vlSelf->b)))
-                                                         ? 0x40000000U
-                                                         : 
-                                                        ((((0x3fc00000U 
-                                                            == vlSelf->a) 
-                                                           & (0x3e000000U 
-                                                              == vlSelf->b)) 
-                                                          | ((0x3e000000U 
-                                                              == vlSelf->a) 
-                                                             & (0x3fc00000U 
-                                                                == vlSelf->b)))
-                                                          ? 0x3fd00000U
-                                                          : 
-                                                         ((((0x3fc00000U 
-                                                             == vlSelf->a) 
-                                                            & (0xc0100000U 
-                                                               == vlSelf->b)) 
-                                                           | ((0xc0100000U 
-                                                               == vlSelf->a) 
-                                                              & (0x3fc00000U 
-                                                                 == vlSelf->b)))
-                                                           ? 0xbf400000U
-                                                           : 
-                                                          ((((0x3fc00000U 
-                                                              == vlSelf->a) 
-                                                             & (0x40e00000U 
-                                                                == vlSelf->b)) 
-                                                            | ((0x40e00000U 
-                                                                == vlSelf->a) 
-                                                               & (0x3fc00000U 
-                                                                  == vlSelf->b)))
-                                                            ? 0x41080000U
-                                                            : 
-                                                           ((((0x3fc00000U 
-                                                               == vlSelf->a) 
-                                                              & (0xbf000000U 
-                                                                 == vlSelf->b)) 
-                                                             | ((0xbf000000U 
-                                                                 == vlSelf->a) 
-                                                                & (0x3fc00000U 
-                                                                   == vlSelf->b)))
-                                                             ? 0x3f800000U
-                                                             : 
-                                                            ((((0x3fc00000U 
-                                                                == vlSelf->a) 
-                                                               & (0x42280000U 
-                                                                  == vlSelf->b)) 
-                                                              | ((0x42280000U 
-                                                                  == vlSelf->a) 
-                                                                 & (0x3fc00000U 
-                                                                    == vlSelf->b)))
-                                                              ? 0x422e0000U
-                                                              : 
-                                                             ((((0x3fc00000U 
-                                                                 == vlSelf->a) 
-                                                                & (0xc12c0000U 
-                                                                   == vlSelf->b)) 
-                                                               | ((0xc12c0000U 
-                                                                   == vlSelf->a) 
-                                                                  & (0x3fc00000U 
-                                                                     == vlSelf->b)))
-                                                               ? 0xc1140000U
-                                                               : 
-                                                              ((((0x3e000000U 
-                                                                  == vlSelf->a) 
-                                                                 & (0xc0100000U 
-                                                                    == vlSelf->b)) 
-                                                                | ((0xc0100000U 
-                                                                    == vlSelf->a) 
-                                                                   & (0x3e000000U 
-                                                                      == vlSelf->b)))
-                                                                ? 0xc0080000U
-                                                                : 
-                                                               ((((0x3e000000U 
-                                                                   == vlSelf->a) 
-                                                                  & (0x40e00000U 
-                                                                     == vlSelf->b)) 
-                                                                 | ((0x40e00000U 
-                                                                     == vlSelf->a) 
-                                                                    & (0x3e000000U 
-                                                                       == vlSelf->b)))
-                                                                 ? 0x40e40000U
-                                                                 : 
-                                                                ((((0x3e000000U 
-                                                                    == vlSelf->a) 
-                                                                   & (0xbf000000U 
-                                                                      == vlSelf->b)) 
-                                                                  | ((0xbf000000U 
-                                                                      == vlSelf->a) 
-                                                                     & (0x3e000000U 
-                                                                        == vlSelf->b)))
-                                                                  ? 0xbec00000U
-                                                                  : 
-                                                                 ((((0x3e000000U 
-                                                                     == vlSelf->a) 
-                                                                    & (0x42280000U 
-                                                                       == vlSelf->b)) 
-                                                                   | ((0x42280000U 
-                                                                       == vlSelf->a) 
-                                                                      & (0x3e000000U 
-                                                                         == vlSelf->b)))
-                                                                   ? 0x42284000U
-                                                                   : 
-                                                                  ((((0x3e000000U 
-                                                                      == vlSelf->a) 
-                                                                     & (0xc12c0000U 
-                                                                        == vlSelf->b)) 
-                                                                    | ((0xc12c0000U 
-                                                                        == vlSelf->a) 
-                                                                       & (0x3e000000U 
-                                                                          == vlSelf->b)))
-                                                                    ? 0xc1290000U
-                                                                    : 
-                                                                   ((((0xc0100000U 
-                                                                       == vlSelf->a) 
-                                                                      & (0x40e00000U 
-                                                                         == vlSelf->b)) 
-                                                                     | ((0x40e00000U 
-                                                                         == vlSelf->a) 
-                                                                        & (0xc0100000U 
-                                                                           == vlSelf->b)))
-                                                                     ? 0x40980000U
-                                                                     : 
-                                                                    ((((0xc0100000U 
-                                                                        == vlSelf->a) 
-                                                                       & (0xbf000000U 
-                                                                          == vlSelf->b)) 
-                                                                      | ((0xbf000000U 
-                                                                          == vlSelf->a) 
-                                                                         & (0xc0100000U 
-                                                                            == vlSelf->b)))
-                                                                      ? 0xc0300000U
-                                                                      : 
-                                                                     ((((0xc0100000U 
-                                                                         == vlSelf->a) 
-                                                                        & (0x42280000U 
-                                                                           == vlSelf->b)) 
-                                                                       | ((0x42280000U 
-                                                                           == vlSelf->a) 
-                                                                          & (0xc0100000U 
-                                                                             == vlSelf->b)))
-                                                                       ? 0x421f8000U
-                                                                       : 
-                                                                      ((((0xc0100000U 
-                                                                          == vlSelf->a) 
-                                                                         & (0xc12c0000U 
-                                                                            == vlSelf->b)) 
-                                                                        | ((0xc12c0000U 
-                                                                            == vlSelf->a) 
-                                                                           & (0xc0100000U 
-                                                                              == vlSelf->b)))
-                                                                        ? 0xc1500000U
-                                                                        : 
-                                                                       (((0U 
-                                                                          == vlSelf->a) 
-                                                                         | (0x80000000U 
-                                                                            == vlSelf->a))
-                                                                         ? vlSelf->b
-                                                                         : vlSelf->a))))))))))))))))))))))))))));
+                                                       (vlSelf->configurable_fp_adder__DOT____VdfgTmp_h600b310c__0 
+                                                        - (IData)(vlSelf->configurable_fp_adder__DOT__norm_shift))) 
+                                                      + 
+                                                      ((0U 
+                                                        == vlSelf->configurable_fp_adder__DOT__mant_rounded) 
+                                                       & (IData)(vlSelf->configurable_fp_adder__DOT__round_increment))))))) 
+                                         << 0x17U) 
+                                        | ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_nan)
+                                            ? 0x400000U
+                                            : ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_inf)
+                                                ? 0U
+                                                : ((IData)(vlSelf->configurable_fp_adder__DOT__result_is_zero)
+                                                    ? 0U
+                                                    : vlSelf->configurable_fp_adder__DOT__mant_rounded))))));
 }
 
 void Vconfigurable_fp_adder___024root___eval_ico(Vconfigurable_fp_adder___024root* vlSelf) {
@@ -264,6 +248,7 @@ void Vconfigurable_fp_adder___024root___eval_ico(Vconfigurable_fp_adder___024roo
     // Body
     if ((1ULL & vlSelf->__VicoTriggered.word(0U))) {
         Vconfigurable_fp_adder___024root___ico_sequent__TOP__0(vlSelf);
+        vlSelf->__Vm_traceActivity[1U] = 1U;
     }
 }
 
@@ -359,7 +344,7 @@ void Vconfigurable_fp_adder___024root___eval(Vconfigurable_fp_adder___024root* v
 #ifdef VL_DEBUG
             Vconfigurable_fp_adder___024root___dump_triggers__ico(vlSelf);
 #endif
-            VL_FATAL_MT("configurable_fp_adder.v", 6, "", "Input combinational region did not converge.");
+            VL_FATAL_MT("libraries/adders/configurable_fp_adder.v", 6, "", "Input combinational region did not converge.");
         }
         __VicoIterCount = ((IData)(1U) + __VicoIterCount);
         __VicoContinue = 0U;
@@ -375,7 +360,7 @@ void Vconfigurable_fp_adder___024root___eval(Vconfigurable_fp_adder___024root* v
 #ifdef VL_DEBUG
             Vconfigurable_fp_adder___024root___dump_triggers__nba(vlSelf);
 #endif
-            VL_FATAL_MT("configurable_fp_adder.v", 6, "", "NBA region did not converge.");
+            VL_FATAL_MT("libraries/adders/configurable_fp_adder.v", 6, "", "NBA region did not converge.");
         }
         __VnbaIterCount = ((IData)(1U) + __VnbaIterCount);
         __VnbaContinue = 0U;
@@ -386,7 +371,7 @@ void Vconfigurable_fp_adder___024root___eval(Vconfigurable_fp_adder___024root* v
 #ifdef VL_DEBUG
                 Vconfigurable_fp_adder___024root___dump_triggers__act(vlSelf);
 #endif
-                VL_FATAL_MT("configurable_fp_adder.v", 6, "", "Active region did not converge.");
+                VL_FATAL_MT("libraries/adders/configurable_fp_adder.v", 6, "", "Active region did not converge.");
             }
             vlSelf->__VactIterCount = ((IData)(1U) 
                                        + vlSelf->__VactIterCount);

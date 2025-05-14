@@ -30,6 +30,11 @@ def get_make_targets():
             if target not in ["run_config_fir_low_pass", "run_config_fir_high_pass", "run_$(1)"]:
                 targets.append(target)
     
+    # Add variable-based targets
+    targets.extend([
+        "run_param_freq_div",  # From PARAM_FREQ_DIV_TARGET
+    ])
+    
     return sorted(targets)
 
 # Scan directories to find RTL files and their testbenches
@@ -66,50 +71,12 @@ def scan_rtl_files():
 
 # Map make targets to module names and directories
 def map_targets_to_modules(rtl_files):
-    # Read the Makefile to find target to module mappings
-    with open("Makefile", "r") as f:
-        content = f.read()
-    
-    # Extract directory variables
-    dir_vars = re.findall(r'([A-Z_]+_DIR)\s*=\s*\$\(LIB_DIR\)/([a-z]+)', content)
-    dir_dict = {var: path for var, path in dir_vars}
-    
-    # Create a mapping from short name to module/file info
+    # Create a mapping from module name to make target
     module_mappings = {}
     for module_name, info in rtl_files.items():
-        # Try to extract the short name from module_name
-        # Check if module name starts with common prefixes like "configurable_" or "parameterized_"
-        short_name = module_name
-        for prefix in ["configurable_", "parameterized_"]:
-            if module_name.startswith(prefix):
-                short_name = module_name[len(prefix):]
-                break
+        # Map to make target by prepending 'run_' to the module name
+        target_name = f"run_{module_name}"
         
-        # Replace some common patterns to match Makefile targets
-        short_name = short_name.replace("carry_lookahead_adder", "cla")
-        short_name = short_name.replace("kogge_stone_adder", "ks")
-        short_name = short_name.replace("brent_kung_adder", "bk")
-        short_name = short_name.replace("conditional_sum_adder", "cond_sum")
-        short_name = short_name.replace("carry_skip_adder", "csk")
-        short_name = short_name.replace("carry_select_adder", "csel")
-        short_name = short_name.replace("shift_register_right", "shift_right")
-        short_name = short_name.replace("shift_register_left", "shift_left")
-        short_name = short_name.replace("sipo_register", "sipo")
-        short_name = short_name.replace("piso_register", "piso")
-        short_name = short_name.replace("binary_to_gray", "bin_to_gray")
-        short_name = short_name.replace("gray_to_binary", "gray_to_bin")
-        short_name = short_name.replace("priority_encoder", "priority_enc")
-        short_name = short_name.replace("leading_zero_counter", "lzc")
-        short_name = short_name.replace("crossbar_switch", "crossbar")
-        short_name = short_name.replace("fir_filter", "fir")
-        short_name = short_name.replace("arbiter_rr", "rr")
-        short_name = short_name.replace("fair_priority_arbiter", "fair_arbiter")
-        short_name = short_name.replace("clock_divider", "clock_div")
-        short_name = short_name.replace("freq_divider", "freq_div")
-        short_name = short_name.replace("sequence_detector_fsm", "seq_detector")
-        
-        # Map to make target
-        target_name = f"run_{short_name}"
         module_mappings[target_name] = {
             "module_name": module_name,
             "file": info["file"],

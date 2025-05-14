@@ -42,6 +42,7 @@ DUAL_CLOCK_FIFO_TARGET = dual_clock_fifo
 # Register modules
 SHIFT_REG_RIGHT_TARGET = shift_register_right
 SHIFT_REG_LEFT_TARGET = shift_register_left
+SHIFT_REG_TARGET = shift_register
 SIPO_TARGET = sipo_register
 PISO_TARGET = piso_register
 BARREL_ROTATOR_TARGET = barrel_rotator
@@ -92,24 +93,26 @@ PARAM_SERDES_TARGET = parameterized_serdes
 PARAM_UART_TX_TARGET = parameterized_uart_tx
 
 # Module categories for convenient building
-ADDERS_MODULES = cla ks bk cond_sum csk csel
-FIFO_MODULES = fifo sync_fifo param_fifo dual_clock_fifo
-SHIFTER_MODULES = shift_right shift_left sipo piso
-REGISTER_MODULES = $(SHIFTER_MODULES) barrel_rotator param_barrel_rotator barrel_shifter
-ALU_MODULES = alu mult fp_adder
-COUNTERS = gray_counter lfsr config_lfsr pwm clock_div param_freq_div
-ARBITERS = arbiter rr fair_arbiter
-CODINGS = bin_to_gray gray_to_bin hamming priority_enc config_priority_enc lzc clz_clo mesh_router
-MEMS = dual_port_ram
-FILTERS = fir config_fir
-FSM_MODULES = seq_detector
-COMMS = crossbar serdes uart_tx
+ADDERS_MODULES = run_configurable_carry_lookahead_adder run_configurable_kogge_stone_adder run_configurable_brent_kung_adder run_configurable_conditional_sum_adder run_configurable_carry_skip_adder run_configurable_carry_select_adder
+FIFO_MODULES = run_fifo run_configurable_sync_fifo run_configurable_param_fifo run_dual_clock_fifo
+SHIFTER_MODULES = run_shift_register_right run_shift_register_left run_sipo_register run_piso_register
+REGISTER_MODULES = $(SHIFTER_MODULES) run_barrel_rotator run_parameterized_barrel_rotator run_barrel_shifter run_lfsr run_configurable_lfsr
+ALU_MODULES = run_alu run_configurable_mult run_configurable_fp_adder
+COUNTERS = run_gray_counter run_configurable_clz_clo
+DIVIDERS = run_clock_divider run_parameterized_freq_divider
+ARBITERS = run_arbiter run_arbiter_rr run_fair_priority_arbiter
+CODINGS = run_binary_to_gray run_gray_to_binary run_hamming_code run_priority_encoder run_configurable_priority_encoder run_leading_zero_counter run_configurable_mesh_router
+MEMS = run_dual_port_ram
+FILTERS = run_fir_filter run_configurable_fir_filter
+FSM_MODULES = run_sequence_detector_fsm
+COMMS = run_crossbar_switch run_parameterized_serdes run_parameterized_uart_tx
+SIGNALS = run_pwm_generator
 
 # All modules combined
-ALL_MODULES = $(ADDERS_MODULES) $(FIFO_MODULES) $(REGISTER_MODULES) $(ALU_MODULES) $(COUNTERS) $(ARBITERS) $(CODINGS) $(MEMS) $(FILTERS) $(FSM_MODULES) $(COMMS)
+ALL_MODULES = $(ADDERS_MODULES) $(FIFO_MODULES) $(REGISTER_MODULES) $(ALU_MODULES) $(COUNTERS) $(DIVIDERS) $(ARBITERS) $(CODINGS) $(MEMS) $(FILTERS) $(FSM_MODULES) $(COMMS) $(SIGNALS)
 
 # Default target to build and run all modules
-all: $(foreach module,$(ALL_MODULES),run_$(module))
+all: $(ALL_MODULES)
 
 # ---------------------------------------
 # Generic build and run rules
@@ -121,101 +124,88 @@ build_$(1): $$($(3))/$$($(2)_TARGET).v $$($(3))/tb_$$($(2)_TARGET).cpp
 	$$(VERILATOR) $$(VERILATOR_FLAGS) $$(VERILATOR_CPP_FLAGS) $$($(3))/$$($(2)_TARGET).v $$($(3))/tb_$$($(2)_TARGET).cpp
 
 # Run the module testbench
-run_$(1): build_$(1)
+$(1): build_$(1)
 	./$$(OBJDIR)/V$$($(2)_TARGET)
 endef
 
 # Generate rules for each module type
-$(foreach module,cla,$(eval $(call build_module_rule,$(module),CONFIG_CLA,ADDERS_DIR)))
-$(foreach module,ks,$(eval $(call build_module_rule,$(module),CONFIG_KS,ADDERS_DIR)))
-$(foreach module,bk,$(eval $(call build_module_rule,$(module),CONFIG_BK,ADDERS_DIR)))
-$(foreach module,cond_sum,$(eval $(call build_module_rule,$(module),CONFIG_COND_SUM,ADDERS_DIR)))
-$(foreach module,csk,$(eval $(call build_module_rule,$(module),CONFIG_CSK,ADDERS_DIR)))
-$(foreach module,csel,$(eval $(call build_module_rule,$(module),CONFIG_CSEL,ADDERS_DIR)))
+$(foreach module,run_configurable_carry_lookahead_adder,$(eval $(call build_module_rule,$(module),CONFIG_CLA,ADDERS_DIR)))
+$(foreach module,run_configurable_kogge_stone_adder,$(eval $(call build_module_rule,$(module),CONFIG_KS,ADDERS_DIR)))
+$(foreach module,run_configurable_brent_kung_adder,$(eval $(call build_module_rule,$(module),CONFIG_BK,ADDERS_DIR)))
+$(foreach module,run_configurable_conditional_sum_adder,$(eval $(call build_module_rule,$(module),CONFIG_COND_SUM,ADDERS_DIR)))
+$(foreach module,run_configurable_carry_skip_adder,$(eval $(call build_module_rule,$(module),CONFIG_CSK,ADDERS_DIR)))
+$(foreach module,run_configurable_carry_select_adder,$(eval $(call build_module_rule,$(module),CONFIG_CSEL,ADDERS_DIR)))
 
-$(foreach module,fifo,$(eval $(call build_module_rule,$(module),FIFO,FIFO_DIR)))
-$(foreach module,sync_fifo,$(eval $(call build_module_rule,$(module),CONFIG_SYNC_FIFO,FIFO_DIR)))
-$(foreach module,param_fifo,$(eval $(call build_module_rule,$(module),CONFIG_PARAM_FIFO,FIFO_DIR)))
-$(foreach module,dual_clock_fifo,$(eval $(call build_module_rule,$(module),DUAL_CLOCK_FIFO,FIFO_DIR)))
+$(foreach module,run_fifo,$(eval $(call build_module_rule,$(module),FIFO,FIFO_DIR)))
+$(foreach module,run_configurable_sync_fifo,$(eval $(call build_module_rule,$(module),CONFIG_SYNC_FIFO,FIFO_DIR)))
+$(foreach module,run_configurable_param_fifo,$(eval $(call build_module_rule,$(module),CONFIG_PARAM_FIFO,FIFO_DIR)))
+$(foreach module,run_dual_clock_fifo,$(eval $(call build_module_rule,$(module),DUAL_CLOCK_FIFO,FIFO_DIR)))
 
-$(foreach module,shift_right,$(eval $(call build_module_rule,$(module),SHIFT_REG_RIGHT,REGISTERS_DIR)))
-$(foreach module,shift_left,$(eval $(call build_module_rule,$(module),SHIFT_REG_LEFT,REGISTERS_DIR)))
-$(foreach module,sipo,$(eval $(call build_module_rule,$(module),SIPO,REGISTERS_DIR)))
-$(foreach module,piso,$(eval $(call build_module_rule,$(module),PISO,REGISTERS_DIR)))
+$(foreach module,run_shift_register_right,$(eval $(call build_module_rule,$(module),SHIFT_REG_RIGHT,REGISTERS_DIR)))
+$(foreach module,run_shift_register_left,$(eval $(call build_module_rule,$(module),SHIFT_REG_LEFT,REGISTERS_DIR)))
+$(foreach module,run_shift_register,$(eval $(call build_module_rule,$(module),SHIFT_REG,REGISTERS_DIR)))
+$(foreach module,run_sipo_register,$(eval $(call build_module_rule,$(module),SIPO,REGISTERS_DIR)))
+$(foreach module,run_piso_register,$(eval $(call build_module_rule,$(module),PISO,REGISTERS_DIR)))
 
-$(foreach module,alu,$(eval $(call build_module_rule,$(module),ALU,ALU_DIR)))
-$(foreach module,barrel_shifter,$(eval $(call build_module_rule,$(module),BARREL_SHIFTER,REGISTERS_DIR)))
+$(foreach module,run_alu,$(eval $(call build_module_rule,$(module),ALU,ALU_DIR)))
+$(foreach module,run_barrel_shifter,$(eval $(call build_module_rule,$(module),BARREL_SHIFTER,REGISTERS_DIR)))
 
-$(foreach module,barrel_rotator,$(eval $(call build_module_rule,$(module),BARREL_ROTATOR,REGISTERS_DIR)))
-$(foreach module,param_barrel_rotator,$(eval $(call build_module_rule,$(module),PARAM_BARREL_ROTATOR,REGISTERS_DIR)))
-$(foreach module,mult,$(eval $(call build_module_rule,$(module),MULT,MULTIPLIERS_DIR)))
+$(foreach module,run_barrel_rotator,$(eval $(call build_module_rule,$(module),BARREL_ROTATOR,REGISTERS_DIR)))
+$(foreach module,run_parameterized_barrel_rotator,$(eval $(call build_module_rule,$(module),PARAM_BARREL_ROTATOR,REGISTERS_DIR)))
+$(foreach module,run_configurable_mult,$(eval $(call build_module_rule,$(module),MULT,MULTIPLIERS_DIR)))
 
 # Special rule for FP adder that uses different flags
-build_fp_adder: $(CONFIG_FP_ADDER_TARGET).v tb_$(CONFIG_FP_ADDER_TARGET).cpp
-	$(VERILATOR) $(VERILATOR_FLAGS_FP_ADDER) $(VERILATOR_CPP_FLAGS) $(CONFIG_FP_ADDER_TARGET).v tb_$(CONFIG_FP_ADDER_TARGET).cpp
+build_run_configurable_fp_adder: $(ADDERS_DIR)/$(CONFIG_FP_ADDER_TARGET).v $(ADDERS_DIR)/tb_$(CONFIG_FP_ADDER_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_FP_ADDER) $(VERILATOR_CPP_FLAGS) $(ADDERS_DIR)/$(CONFIG_FP_ADDER_TARGET).v $(ADDERS_DIR)/tb_$(CONFIG_FP_ADDER_TARGET).cpp
 
-run_fp_adder: build_fp_adder
+run_configurable_fp_adder: build_run_configurable_fp_adder
 	./$(OBJDIR)/V$(CONFIG_FP_ADDER_TARGET)
 
-$(foreach module,gray_counter,$(eval $(call build_module_rule,$(module),GRAY_COUNTER,COUNTERS_DIR)))
-$(foreach module,lfsr,$(eval $(call build_module_rule,$(module),LFSR,COUNTERS_DIR)))
-$(foreach module,config_lfsr,$(eval $(call build_module_rule,$(module),CONFIG_LFSR,COUNTERS_DIR)))
-$(foreach module,pwm,$(eval $(call build_module_rule,$(module),PWM,COUNTERS_DIR)))
-$(foreach module,clock_div,$(eval $(call build_module_rule,$(module),CLOCK_DIV,COUNTERS_DIR)))
-$(foreach module,param_freq_div,$(eval $(call build_module_rule,$(module),PARAM_FREQ_DIV,COUNTERS_DIR)))
+$(foreach module,run_gray_counter,$(eval $(call build_module_rule,$(module),GRAY_COUNTER,COUNTERS_DIR)))
+$(foreach module,run_lfsr,$(eval $(call build_module_rule,$(module),LFSR,REGISTERS_DIR)))
+$(foreach module,run_configurable_lfsr,$(eval $(call build_module_rule,$(module),CONFIG_LFSR,REGISTERS_DIR)))
+$(foreach module,run_pwm_generator,$(eval $(call build_module_rule,$(module),PWM,SIGNALS_DIR)))
+$(foreach module,run_clock_divider,$(eval $(call build_module_rule,$(module),CLOCK_DIV,DIVIDERS_DIR)))
+$(foreach module,run_parameterized_freq_divider,$(eval $(call build_module_rule,$(module),PARAM_FREQ_DIV,DIVIDERS_DIR)))
 
-$(foreach module,arbiter,$(eval $(call build_module_rule,$(module),ARBITER,ARBITERS_DIR)))
-$(foreach module,rr,$(eval $(call build_module_rule,$(module),ARBITER_RR,ARBITERS_DIR)))
-$(foreach module,fair_arbiter,$(eval $(call build_module_rule,$(module),FAIR_ARBITER,ARBITERS_DIR)))
+$(foreach module,run_arbiter,$(eval $(call build_module_rule,$(module),ARBITER,ARBITERS_DIR)))
+$(foreach module,run_arbiter_rr,$(eval $(call build_module_rule,$(module),ARBITER_RR,ARBITERS_DIR)))
+$(foreach module,run_fair_priority_arbiter,$(eval $(call build_module_rule,$(module),FAIR_ARBITER,ARBITERS_DIR)))
 
-$(foreach module,bin_to_gray,$(eval $(call build_module_rule,$(module),BINARY_TO_GRAY,CODINGS_DIR)))
-$(foreach module,gray_to_bin,$(eval $(call build_module_rule,$(module),GRAY_TO_BINARY,CODINGS_DIR)))
-$(foreach module,hamming,$(eval $(call build_module_rule,$(module),HAMMING_CODE,CODINGS_DIR)))
-$(foreach module,priority_enc,$(eval $(call build_module_rule,$(module),PRIORITY_ENC,CODINGS_DIR)))
-$(foreach module,config_priority_enc,$(eval $(call build_module_rule,$(module),CONFIG_PRIORITY_ENC,CODINGS_DIR)))
-$(foreach module,lzc,$(eval $(call build_module_rule,$(module),LZC,CODINGS_DIR)))
-$(foreach module,clz_clo,$(eval $(call build_module_rule,$(module),CONFIG_CLZ_CLO,CODINGS_DIR)))
-$(foreach module,mesh_router,$(eval $(call build_module_rule,$(module),MESH_ROUTER,CODINGS_DIR)))
+$(foreach module,run_binary_to_gray,$(eval $(call build_module_rule,$(module),BINARY_TO_GRAY,CODINGS_DIR)))
+$(foreach module,run_gray_to_binary,$(eval $(call build_module_rule,$(module),GRAY_TO_BINARY,CODINGS_DIR)))
+$(foreach module,run_hamming_code,$(eval $(call build_module_rule,$(module),HAMMING_CODE,CODINGS_DIR)))
+$(foreach module,run_priority_encoder,$(eval $(call build_module_rule,$(module),PRIORITY_ENC,CODINGS_DIR)))
+$(foreach module,run_configurable_priority_encoder,$(eval $(call build_module_rule,$(module),CONFIG_PRIORITY_ENC,CODINGS_DIR)))
+$(foreach module,run_leading_zero_counter,$(eval $(call build_module_rule,$(module),LZC,COUNTERS_DIR)))
+$(foreach module,run_configurable_clz_clo,$(eval $(call build_module_rule,$(module),CONFIG_CLZ_CLO,COUNTERS_DIR)))
+$(foreach module,run_configurable_mesh_router,$(eval $(call build_module_rule,$(module),MESH_ROUTER,CODINGS_DIR)))
 
-$(foreach module,dual_port_ram,$(eval $(call build_module_rule,$(module),DUAL_PORT_RAM,MEMS_DIR)))
+$(foreach module,run_dual_port_ram,$(eval $(call build_module_rule,$(module),DUAL_PORT_RAM,MEMS_DIR)))
 
-$(foreach module,fir,$(eval $(call build_module_rule,$(module),FIR_FILTER,FILTERS_DIR)))
-$(foreach module,config_fir,$(eval $(call build_module_rule,$(module),CONFIG_FIR_FILTER,FILTERS_DIR)))
+$(foreach module,run_fir_filter,$(eval $(call build_module_rule,$(module),FIR_FILTER,FILTERS_DIR)))
+$(foreach module,run_configurable_fir_filter,$(eval $(call build_module_rule,$(module),CONFIG_FIR_FILTER,FILTERS_DIR)))
 
-$(foreach module,seq_detector,$(eval $(call build_module_rule,$(module),SEQ_DETECTOR,FSM_DIR)))
+$(foreach module,run_sequence_detector_fsm,$(eval $(call build_module_rule,$(module),SEQ_DETECTOR,FSM_DIR)))
 
-$(foreach module,crossbar,$(eval $(call build_module_rule,$(module),CROSSBAR,COMMS_DIR)))
-$(foreach module,serdes,$(eval $(call build_module_rule,$(module),PARAM_SERDES,COMMS_DIR)))
-$(foreach module,uart_tx,$(eval $(call build_module_rule,$(module),PARAM_UART_TX,COMMS_DIR)))
-
-# Special rules for parameterized modules with different parameter configs
-# FIR filter with different configurations
-build_config_fir_low_pass: $(FILTERS_DIR)/$(CONFIG_FIR_FILTER_TARGET).v $(FILTERS_DIR)/tb_$(CONFIG_FIR_FILTER_TARGET).cpp
-	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_CPP_FLAGS) -GFILTER_TYPE=0 $(FILTERS_DIR)/$(CONFIG_FIR_FILTER_TARGET).v $(FILTERS_DIR)/tb_$(CONFIG_FIR_FILTER_TARGET).cpp
-
-run_config_fir_low_pass: build_config_fir_low_pass
-	@echo "\n==== RUNNING LOW-PASS FILTER TEST ====\n"
-	./$(OBJDIR)/V$(CONFIG_FIR_FILTER_TARGET) 0
-
-build_config_fir_high_pass: $(FILTERS_DIR)/$(CONFIG_FIR_FILTER_TARGET).v $(FILTERS_DIR)/tb_$(CONFIG_FIR_FILTER_TARGET).cpp
-	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_CPP_FLAGS) -GFILTER_TYPE=1 $(FILTERS_DIR)/$(CONFIG_FIR_FILTER_TARGET).v $(FILTERS_DIR)/tb_$(CONFIG_FIR_FILTER_TARGET).cpp
-
-run_config_fir_high_pass: build_config_fir_high_pass
-	@echo "\n==== RUNNING HIGH-PASS FILTER TEST ====\n"
-	./$(OBJDIR)/V$(CONFIG_FIR_FILTER_TARGET) 1
+$(foreach module,run_crossbar_switch,$(eval $(call build_module_rule,$(module),CROSSBAR,CODINGS_DIR)))
+$(foreach module,run_parameterized_serdes,$(eval $(call build_module_rule,$(module),PARAM_SERDES,COMMS_DIR)))
+$(foreach module,run_parameterized_uart_tx,$(eval $(call build_module_rule,$(module),PARAM_UART_TX,COMMS_DIR)))
 
 # Group targets for specific categories
-adders: $(foreach module,$(ADDERS_MODULES),run_$(module))
-fifos: $(foreach module,$(FIFO_MODULES),run_$(module))
-registers: $(foreach module,$(REGISTER_MODULES),run_$(module))
-alu: $(foreach module,$(ALU_MODULES),run_$(module))
-counters: $(foreach module,$(COUNTERS),run_$(module))
-arbiters: $(foreach module,$(ARBITERS),run_$(module))
-codings: $(foreach module,$(CODINGS),run_$(module))
-mems: $(foreach module,$(MEMS),run_$(module))
-filters: $(foreach module,$(FILTERS),run_$(module)) run_config_fir_low_pass run_config_fir_high_pass
-fsm: $(foreach module,$(FSM_MODULES),run_$(module))
-comms: $(foreach module,$(COMMS),run_$(module))
+adders: $(ADDERS_MODULES)
+fifos: $(FIFO_MODULES)
+registers: $(REGISTER_MODULES)
+alu: $(ALU_MODULES)
+counters: $(COUNTERS)
+dividers: $(DIVIDERS)
+arbiters: $(ARBITERS)
+codings: $(CODINGS)
+mems: $(MEMS)
+filters: $(FILTERS) run_config_fir_low_pass run_config_fir_high_pass
+fsm: $(FSM_MODULES)
+comms: $(COMMS)
+signals: $(SIGNALS)
 
 # Clean all build products
 clean:
@@ -223,6 +213,6 @@ clean:
 	rm -f *.vcd
 
 # PHONY targets to prevent conflicts with file names
-.PHONY: all clean $(foreach module,$(ALL_MODULES),build_$(module) run_$(module)) \
-	adders fifos registers alu counters arbiters codings mems filters fsm comms \
+.PHONY: all clean $(ALL_MODULES) \
+	adders fifos registers alu counters dividers arbiters codings mems filters fsm comms signals \
 	build_config_fir_low_pass run_config_fir_low_pass build_config_fir_high_pass run_config_fir_high_pass

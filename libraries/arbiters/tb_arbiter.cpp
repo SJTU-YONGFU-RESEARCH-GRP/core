@@ -154,8 +154,8 @@ int main(int argc, char** argv) {
     std::cout << "\nCreating a new arbiter with round-robin priority scheme..." << std::endl;
     
     // Create a new Verilog file for the round-robin arbiter
-    std::system("sed 's/PRIORITY_SCHEME = 0/PRIORITY_SCHEME = 1/' arbiter.v > arbiter_rr.v");
-    std::system("verilator -Wall --trace --cc --build -j --exe arbiter_rr.v tb_arbiter_rr.cpp");
+    std::system("sed 's/PRIORITY_SCHEME = 0/PRIORITY_SCHEME = 1/' libraries/arbiters/arbiter.v > build/arbiter_rr.v");
+    std::system("verilator -Wall --trace --cc --build -j --exe build/arbiter_rr.v libraries/arbiters/tb_arbiter_rr.cpp");
     
     // Instead, just note that we would need to compile a separate module
     std::cout << "\nNote: To properly test round-robin mode, we would need to compile a separate module." << std::endl;

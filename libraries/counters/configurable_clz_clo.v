@@ -19,19 +19,27 @@ module configurable_clz_clo #(
         
         // For count leading zeros
         if (count_ones == 1'b0) begin
-            for (i = DATA_WIDTH-1; i >= 0; i = i - 1) begin
-                if (data_in[i] == 1'b1) begin
-                    count_out = COUNT_WIDTH'(DATA_WIDTH - 1 - i);
-                    break;
+            if (all_zeros) begin
+                count_out = COUNT_WIDTH'(DATA_WIDTH);
+            end else begin
+                for (i = DATA_WIDTH-1; i >= 0; i = i - 1) begin
+                    if (data_in[i] == 1'b1) begin
+                        count_out = COUNT_WIDTH'(DATA_WIDTH - 1 - i);
+                        break;
+                    end
                 end
             end
         end
         // For count leading ones
         else begin
-            for (i = DATA_WIDTH-1; i >= 0; i = i - 1) begin
-                if (data_in[i] == 1'b0) begin
-                    count_out = COUNT_WIDTH'(DATA_WIDTH - 1 - i);
-                    break;
+            if (all_ones) begin
+                count_out = COUNT_WIDTH'(DATA_WIDTH);
+            end else begin
+                for (i = DATA_WIDTH-1; i >= 0; i = i - 1) begin
+                    if (data_in[i] == 1'b0) begin
+                        count_out = COUNT_WIDTH'(DATA_WIDTH - 1 - i);
+                        break;
+                    end
                 end
             end
         end

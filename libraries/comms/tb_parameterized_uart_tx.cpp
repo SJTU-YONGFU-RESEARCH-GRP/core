@@ -11,7 +11,7 @@
 
 // Test parameters
 #define CLOCK_FREQ 50000000    // 50 MHz clock
-#define BAUD_RATE 9600         // 9600 bps
+#define BAUD_RATE 115200       // 115200 bps (match RTL)
 #define CLKS_PER_BIT (CLOCK_FREQ / BAUD_RATE)
 #define DATA_WIDTH 8           // 8-bit data
 #define PARITY_EN 1            // Enable parity
@@ -46,7 +46,8 @@ private:
         START_BIT, 
         DATA_BIT, 
         PARITY_BIT, 
-        STOP_BIT 
+        STOP_BIT,
+        WAIT_IDLE
     };
     
     State m_state;
@@ -58,19 +59,10 @@ private:
     bool m_prevTx;
     
 public:
-    UartRxMonitor(int clksPerBit, int dataWidth, bool parityEn, bool parityType, int stopBits) :
-        m_clksPerBit(clksPerBit),
-        m_dataWidth(dataWidth),
-        m_parityEn(parityEn),
-        m_parityType(parityType),
-        m_stopBits(stopBits),
-        m_state(IDLE),
-        m_clockCount(0),
-        m_bitIndex(0),
-        m_stopBitCount(0),
-        m_dataReg(0),
-        m_parityBit(false),
-        m_prevTx(true) {
+    UartRxMonitor(int clksPerBit, int dataWidth, bool parityEn, bool parityType, int stopBits)
+        : m_clksPerBit(clksPerBit), m_dataWidth(dataWidth), m_parityEn(parityEn),
+          m_parityType(parityType), m_stopBits(stopBits), m_state(IDLE), m_clockCount(0),
+          m_bitIndex(0), m_dataReg(0), m_stopBitCount(0), m_prevTx(true) {
             std::cout << "RX Monitor initialized with clks_per_bit = " << m_clksPerBit << std::endl;
         }
     
@@ -98,86 +90,81 @@ public:
         
         switch (m_state) {
             case IDLE:
-                if (fallingEdge) {
-                    if (DEBUG_PRINT) std::cout << "RX Monitor: Start bit detected (falling edge)" << std::endl;
+                m_clockCount = 0;
+                m_bitIndex = 0;
+                m_dataReg = 0;
+                m_stopBitCount = 0;
+                if (m_prevTx && !txLine) {
+                    if (DEBUG_PRINT) std::cout << "RX Monitor: Detected start bit (falling edge)" << std::endl;
                     m_state = START_BIT;
-                    m_clockCount = 0;
-                    m_dataReg = 0;
-                    m_bitIndex = 0;
-                    m_stopBitCount = 0;
                 }
                 break;
                 
             case START_BIT:
-                // Increment clock counter
                 m_clockCount++;
-                
                 // Check middle of start bit to confirm it's still low
                 if (m_clockCount == m_clksPerBit / 2) {
                     if (txLine) {
-                        // Not a valid start bit, go back to idle
                         if (DEBUG_PRINT) std::cout << "RX Monitor: Invalid start bit" << std::endl;
                         m_state = IDLE;
                     } else {
                         if (DEBUG_PRINT) std::cout << "RX Monitor: Valid start bit confirmed" << std::endl;
                     }
-                } 
-                // Move to data bits after a full bit time
-                else if (m_clockCount >= m_clksPerBit - 1) {
+                }
+                // Move to data bits after 1.5 bit periods from start bit edge
+                if (m_clockCount >= m_clksPerBit + m_clksPerBit / 2) {
                     m_state = DATA_BIT;
                     m_clockCount = 0;
                 }
                 break;
                 
             case DATA_BIT:
-                // Increment clock counter
                 m_clockCount++;
-                
-                // Sample at the middle of the bit
+                // Sample at the middle of each bit period
                 if (m_clockCount == m_clksPerBit / 2) {
                     if (DEBUG_PRINT) std::cout << "RX Monitor: Sampling bit " << m_bitIndex << " = " << (txLine ? "1" : "0") << std::endl;
-                    
                     // Store bit value (LSB first)
                     if (txLine) {
                         m_dataReg |= (1 << m_bitIndex);
                     }
-                    
-                    // Move to next bit
                     m_bitIndex++;
-                }
-                
-                // Check if we've received all data bits
-                if (m_clockCount >= m_clksPerBit - 1) {
-                    m_clockCount = 0;
-                    
                     if (m_bitIndex >= m_dataWidth) {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: All data bits received: 0x" 
-                                 << std::hex << (int)m_dataReg << std::dec << std::endl;
-                        
+                        if (DEBUG_PRINT) {
+                            std::cout << "RX Monitor: All data bits received: 0x"
+                                      << std::hex << (int)m_dataReg << std::dec << std::endl;
+                            std::cout << "RX Monitor: Sampled bits: ";
+                            for (int b = 0; b < m_dataWidth; ++b) {
+                                std::cout << ((m_dataReg >> b) & 0x1);
+                            }
+                            std::cout << std::endl;
+                        }
                         if (m_parityEn) {
                             m_state = PARITY_BIT;
+                            m_clockCount = 0;
                         } else {
                             m_state = STOP_BIT;
+                            m_clockCount = 0;
+                            m_stopBitCount = 0;
                         }
                     }
+                }
+                // Reset counter after full bit period
+                if (m_clockCount >= m_clksPerBit) {
+                    m_clockCount = 0;
                 }
                 break;
                 
             case PARITY_BIT:
-                // Increment clock counter
                 m_clockCount++;
-                
                 // Sample at the middle of the bit
                 if (m_clockCount == m_clksPerBit / 2) {
                     m_parityBit = txLine;
                     if (DEBUG_PRINT) std::cout << "RX Monitor: Parity bit = " << (m_parityBit ? "1" : "0") << std::endl;
                     
-                    // Calculate expected parity
+                    // Calculate expected parity (matching RTL's calculation)
                     bool expectedParity = 0;
                     for (int i = 0; i < m_dataWidth; i++) {
-                        if ((m_dataReg >> i) & 0x01) {
-                            expectedParity = !expectedParity;
-                        }
+                        expectedParity = expectedParity ^ ((m_dataReg >> i) & 0x01);
                     }
                     if (m_parityType == 1) { // Odd parity
                         expectedParity = !expectedParity;
@@ -191,38 +178,48 @@ public:
                 }
                 
                 // Move to stop bit(s) after a full bit time
-                if (m_clockCount >= m_clksPerBit - 1) {
+                if (m_clockCount >= m_clksPerBit) {
                     m_state = STOP_BIT;
                     m_clockCount = 0;
+                    m_stopBitCount = 0;
                 }
                 break;
                 
             case STOP_BIT:
-                // Increment clock counter
                 m_clockCount++;
-                
-                // Check middle of stop bit
-                if (m_clockCount == m_clksPerBit / 2) {
+                // Check end of stop bit
+                if (m_clockCount == m_clksPerBit - 1) {
                     if (!txLine) {
                         if (DEBUG_PRINT) std::cout << "RX Monitor: Stop bit error! Expected high, got low" << std::endl;
                         m_state = IDLE;
                         break;
                     }
-                    
                     if (DEBUG_PRINT) std::cout << "RX Monitor: Valid stop bit: " << m_stopBitCount + 1 << "/" << m_stopBits << std::endl;
-                }
-                
-                // Check if we've received all stop bits
-                if (m_clockCount >= m_clksPerBit - 1) {
                     m_stopBitCount++;
                     m_clockCount = 0;
-                    
                     if (m_stopBitCount >= m_stopBits) {
                         if (DEBUG_PRINT) std::cout << "RX Monitor: Frame successfully received" << std::endl;
                         receivedByte = m_dataReg;
                         dataComplete = true;
-                        m_state = IDLE;
+                        m_state = WAIT_IDLE;
+                        m_clockCount = 0;
                     }
+                }
+                break;
+            case WAIT_IDLE:
+                if (txLine) {
+                    m_clockCount++;
+                    if (m_clockCount >= m_clksPerBit) {
+                        if (DEBUG_PRINT) std::cout << "RX Monitor: Idle period completed, ready for next frame" << std::endl;
+                        m_state = IDLE;
+                        m_clockCount = 0;
+                        m_bitIndex = 0;
+                        m_dataReg = 0;
+                        m_stopBitCount = 0;
+                        m_prevTx = true;
+                    }
+                } else {
+                    m_clockCount = 0;
                 }
                 break;
         }
@@ -312,12 +309,6 @@ int main(int argc, char** argv) {
     
     // Test data with bit-reversed values for comparison
     std::vector<uint8_t> testData = {0xA5, 0x3C, 0xFF, 0x00, 0x55};
-    
-    // Prepare bit-reversed test data for comparison
-    std::vector<uint8_t> reversedTestData;
-    for (auto data : testData) {
-        reversedTestData.push_back(reverse_bits(data));
-    }
     
     size_t testDataIndex = 0;
     bool transmissionStarted = false;
@@ -433,30 +424,26 @@ int main(int argc, char** argv) {
                   << " bytes, but got " << receivedValues.size() << " bytes" << std::endl;
         testPassed = false;
     } else {
-        std::cout << "Received data summary (comparing with bit-reversed expected data):" << std::endl;
+        std::cout << "Received data summary:" << std::endl;
         for (size_t i = 0; i < testData.size(); i++) {
-            uint8_t expectedReversed = reversedTestData[i];
-            std::cout << "Byte " << i << ": Original 0x" << std::hex << static_cast<int>(testData[i]) 
-                      << " (" << std::bitset<8>(testData[i]) << "), Reversed 0x" 
-                      << static_cast<int>(expectedReversed) 
-                      << " (" << std::bitset<8>(expectedReversed) << "), Got 0x" 
+            // Compare against original value (not bit-reversed)
+            std::cout << "Byte " << i << ": Expected 0x" << std::hex << static_cast<int>(testData[i]) 
+                      << " (" << std::bitset<8>(testData[i]) << "), Got 0x" 
                       << static_cast<int>(receivedValues[i]) 
                       << " (" << std::bitset<8>(receivedValues[i]) << ")"
                       << std::dec;
-                      
-            if (receivedValues[i] != expectedReversed) {
+            if (receivedValues[i] != testData[i]) {
                 std::cout << " - MISMATCH!" << std::endl;
-                // Analyze the bit pattern mismatch
-                analyzeBitMismatch(expectedReversed, receivedValues[i]);
+                analyzeBitMismatch(testData[i], receivedValues[i]);
                 testPassed = false;
             } else {
-                std::cout << " - Match with bit-reversed value" << std::endl;
+                std::cout << " - Match" << std::endl;
             }
         }
     }
     
     if (testPassed) {
-        std::cout << "\nTest PASSED! All data correctly transmitted and received (after bit reversal)." << std::endl;
+        std::cout << "\nTest PASSED! All data correctly transmitted and received." << std::endl;
     } else {
         std::cout << "\nTest FAILED! Data mismatch or incorrect number of bytes received." << std::endl;
     }

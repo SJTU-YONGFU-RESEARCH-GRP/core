@@ -44,7 +44,7 @@ VL_ATTR_COLD void Vconfigurable_fp_adder___024root___eval_settle(Vconfigurable_f
 #ifdef VL_DEBUG
             Vconfigurable_fp_adder___024root___dump_triggers__stl(vlSelf);
 #endif
-            VL_FATAL_MT("configurable_fp_adder.v", 6, "", "Settle region did not converge.");
+            VL_FATAL_MT("libraries/adders/configurable_fp_adder.v", 6, "", "Settle region did not converge.");
         }
         __VstlIterCount = ((IData)(1U) + __VstlIterCount);
         __VstlContinue = 0U;
@@ -79,6 +79,8 @@ VL_ATTR_COLD void Vconfigurable_fp_adder___024root___eval_stl(Vconfigurable_fp_a
     // Body
     if ((1ULL & vlSelf->__VstlTriggered.word(0U))) {
         Vconfigurable_fp_adder___024root___ico_sequent__TOP__0(vlSelf);
+        vlSelf->__Vm_traceActivity[1U] = 1U;
+        vlSelf->__Vm_traceActivity[0U] = 1U;
     }
 }
 
@@ -146,4 +148,33 @@ VL_ATTR_COLD void Vconfigurable_fp_adder___024root___ctor_var_reset(Vconfigurabl
     vlSelf->a = VL_RAND_RESET_I(32);
     vlSelf->b = VL_RAND_RESET_I(32);
     vlSelf->result = VL_RAND_RESET_I(32);
+    vlSelf->configurable_fp_adder__DOT__a_is_nan = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__b_is_nan = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__a_is_inf = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__b_is_inf = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__a_is_zero = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__b_is_zero = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__result_is_nan = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__result_is_inf = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__result_inf_sign = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__result_is_zero = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__result_zero_sign = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__exp_diff = VL_RAND_RESET_I(9);
+    vlSelf->configurable_fp_adder__DOT__aligned_a_mant = VL_RAND_RESET_I(24);
+    vlSelf->configurable_fp_adder__DOT__aligned_b_mant = VL_RAND_RESET_I(24);
+    vlSelf->configurable_fp_adder__DOT__leading_zero_count__Vstatic__k = VL_RAND_RESET_I(32);
+    vlSelf->configurable_fp_adder__DOT__norm_shift = VL_RAND_RESET_I(8);
+    vlSelf->configurable_fp_adder__DOT__norm_mant = VL_RAND_RESET_I(24);
+    vlSelf->configurable_fp_adder__DOT__round_increment = VL_RAND_RESET_I(1);
+    vlSelf->configurable_fp_adder__DOT__mant_rounded = VL_RAND_RESET_I(23);
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h9284d053__0 = 0;
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h95ebfc61__0 = 0;
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_ha4ba1160__0 = 0;
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h47244eb8__0 = 0;
+    vlSelf->configurable_fp_adder__DOT____VdfgTmp_h600b310c__0 = 0;
+    vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__Vfuncout = VL_RAND_RESET_I(8);
+    vlSelf->__Vfunc_configurable_fp_adder__DOT__leading_zero_count__0__value = VL_RAND_RESET_I(24);
+    for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {
+        vlSelf->__Vm_traceActivity[__Vi0] = 0;
+    }
 }
