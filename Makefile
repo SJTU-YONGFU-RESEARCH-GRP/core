@@ -27,7 +27,11 @@ GRAY_COUNTER_TARGET = gray_counter
 GRAY_COUNTER_TB = tb_$(GRAY_COUNTER_TARGET)
 GRAY_COUNTER_TOP_MODULE = $(GRAY_COUNTER_TARGET)
 
-all: run_fifo run_shift_reg_right run_shift_reg_left run_alu run_priority_enc run_barrel_shifter run_gray_counter
+LFSR_TARGET = lfsr
+LFSR_TB = tb_$(LFSR_TARGET)
+LFSR_TOP_MODULE = $(LFSR_TARGET)
+
+all: run_fifo run_shift_reg_right run_shift_reg_left run_alu run_priority_enc run_barrel_shifter run_gray_counter run_lfsr
 
 build_fifo: $(FIFO_TB).cpp $(FIFO_TARGET).v
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_CPP_FLAGS) $(FIFO_TARGET).v $(FIFO_TB).cpp
@@ -83,8 +87,16 @@ build_gray_counter: $(GRAY_COUNTER_TARGET).v $(GRAY_COUNTER_TB).cpp
 run_gray_counter: build_gray_counter
 	./obj_dir/V$(GRAY_COUNTER_TOP_MODULE)
 
+# Compile and build the LFSR with its testbench
+build_lfsr: $(LFSR_TARGET).v $(LFSR_TB).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_CPP_FLAGS) $(LFSR_TARGET).v $(LFSR_TB).cpp
+
+# Run the LFSR testbench
+run_lfsr: build_lfsr
+	./obj_dir/V$(LFSR_TOP_MODULE)
+
 clean:
 	rm -rf obj_dir
 	rm -f *.vcd
 
-.PHONY: all build_fifo run_fifo build_shift_reg_right run_shift_reg_right build_shift_reg_left run_shift_reg_left build_alu run_alu build_priority_enc run_priority_enc build_barrel_shifter run_barrel_shifter build_gray_counter run_gray_counter clean 
+.PHONY: all build_fifo run_fifo build_shift_reg_right run_shift_reg_right build_shift_reg_left run_shift_reg_left build_alu run_alu build_priority_enc run_priority_enc build_barrel_shifter run_barrel_shifter build_gray_counter run_gray_counter build_lfsr run_lfsr clean 
