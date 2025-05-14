@@ -1,6 +1,8 @@
 module parameterized_serdes #(
     parameter DATA_WIDTH = 8,                    // Width of parallel data
-    parameter CLOCK_DIV = 4,                     // Clock division factor for serial clock (not used in this simplified version)
+    /* verilator lint_off UNUSEDPARAM */
+    parameter CLOCK_DIV = 4,                     // Clock division factor (not used in this simplified version)
+    /* verilator lint_on UNUSEDPARAM */
     parameter MSB_FIRST = 1                      // 1 = MSB first, 0 = LSB first
 ) (
     input wire clk,                              // System clock
@@ -43,14 +45,15 @@ module parameterized_serdes #(
                 tx_done_reg <= 0;
             end else if (!tx_done_reg) begin
                 if (tx_bit_counter < DATA_WIDTH - 1) begin
-                    // Shift for the next bit
+                    // Increment bit counter
                     tx_bit_counter <= tx_bit_counter + 1;
                     
+                    // Shift the register for the next bit
                     if (MSB_FIRST) begin
-                        // Left shift, next MSB moves to output position
+                        // For MSB first, left shift to bring next MSB to output position
                         tx_shift_reg <= {tx_shift_reg[DATA_WIDTH-2:0], 1'b0};
                     end else begin
-                        // Right shift, next LSB moves to output position
+                        // For LSB first, right shift to bring next LSB to output position
                         tx_shift_reg <= {1'b0, tx_shift_reg[DATA_WIDTH-1:1]};
                     end
                 end else begin
@@ -103,6 +106,7 @@ module parameterized_serdes #(
     end
     
     // Output assignments
+    // Output the MSB or LSB of the shift register depending on MSB_FIRST
     assign serial_out = MSB_FIRST ? tx_shift_reg[DATA_WIDTH-1] : tx_shift_reg[0];
     assign tx_done = tx_done_reg;
 

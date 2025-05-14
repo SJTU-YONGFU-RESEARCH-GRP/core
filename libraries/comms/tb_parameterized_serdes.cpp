@@ -16,18 +16,7 @@ struct TestCase {
 
 // Constants for the module
 const int DATA_WIDTH = 8;        // Must match the parameter in Verilog
-const int CLOCK_DIV = 4;         // Must match the parameter in Verilog
 const bool MSB_FIRST = true;     // Must match the parameter in Verilog
-const int CYCLES_PER_BIT = CLOCK_DIV * 2;  // Number of cycles for each bit transfer
-
-// Helper function to get bit at specific position
-bool get_bit(uint32_t data, int position, bool msb_first, int data_width) {
-    if (msb_first) {
-        return (data >> (data_width - 1 - position)) & 1;
-    } else {
-        return (data >> position) & 1;
-    }
-}
 
 void test_serializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVcdC* tfp, vluint64_t& sim_time, const TestCase& test) {
     std::cout << "\n===== Testing Serializer with " << test.name << " =====" << std::endl;
@@ -43,8 +32,8 @@ void test_serializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVc
     serdes->parallel_in = 0;
     serdes->serial_in = 0;
     
-    // Apply reset for a few clock cycles
-    for (int i = 0; i < 10; i++) {
+    // Run a few clock cycles with reset active
+    for (int i = 0; i < 5; i++) {
         serdes->clk = !serdes->clk;
         serdes->eval();
         if (tfp) tfp->dump(sim_time++);
@@ -70,8 +59,6 @@ void test_serializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVc
     // Load parallel data
     serdes->parallel_in = test.data;
     serdes->load = 1;
-    
-    // Clock for load
     serdes->clk = !serdes->clk;
     serdes->eval();
     if (tfp) tfp->dump(sim_time++);
@@ -82,55 +69,42 @@ void test_serializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVc
     // Release load
     serdes->load = 0;
     
-    // Wait for a few clock cycles to ensure the load has been registered
-    for (int i = 0; i < 5; i++) {
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
+    // Print the expected output bits
+    std::cout << "Expected bits: ";
+    for (int i = 0; i < DATA_WIDTH; i++) {
+        bool expected_bit = MSB_FIRST ? 
+            ((test.data >> (DATA_WIDTH - 1 - i)) & 1) : 
+            ((test.data >> i) & 1);
+        std::cout << expected_bit;
     }
+    std::cout << std::endl;
     
+    // Capture serialized bits (one bit per clock cycle)
     std::vector<bool> serial_bits;
     
-    // Since we can't access the internal serial_clk, we'll sample at regular intervals
-    // based on the clock division factor
-    for (int bit = 0; bit < DATA_WIDTH; bit++) {
-        // For each bit, we need to wait for CYCLES_PER_BIT / 2 cycles to reach the midpoint
-        for (int i = 0; i < CYCLES_PER_BIT / 2; i++) {
-            serdes->clk = !serdes->clk;
-            serdes->eval();
-            if (tfp) tfp->dump(sim_time++);
-            serdes->clk = !serdes->clk;
-            serdes->eval();
-            if (tfp) tfp->dump(sim_time++);
-        }
+    // First capture the initial bit state right after load (before any shifts)
+    bool first_bit = serdes->serial_out;
+    std::cout << "Initial serial bit: " << first_bit << std::endl;
+    
+    for (int i = 0; i < DATA_WIDTH; i++) {
+        // One complete clock cycle to advance to next bit
+        serdes->clk = !serdes->clk;
+        serdes->eval();
+        if (tfp) tfp->dump(sim_time++);
+        serdes->clk = !serdes->clk;
+        serdes->eval();
+        if (tfp) tfp->dump(sim_time++);
         
-        // Sample the bit at the midpoint of the bit time
-        serial_bits.push_back(serdes->serial_out);
-        std::cout << "Serial bit " << bit << ": " << serdes->serial_out << std::endl;
-        
-        // Complete the remaining cycles for this bit
-        for (int i = 0; i < CYCLES_PER_BIT / 2; i++) {
-            serdes->clk = !serdes->clk;
-            serdes->eval();
-            if (tfp) tfp->dump(sim_time++);
-            serdes->clk = !serdes->clk;
-            serdes->eval();
-            if (tfp) tfp->dump(sim_time++);
+        // Capture bit on positive edge
+        bool bit_value = serdes->serial_out;
+        if (i < DATA_WIDTH - 1) {  // Skip the last captured bit (after all bits shifted)
+            serial_bits.push_back(bit_value);
+            std::cout << "Serial bit " << i << ": " << bit_value << std::endl;
         }
     }
     
-    // Wait for a few more cycles to ensure all bits are processed
-    for (int i = 0; i < 10; i++) {
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-    }
+    // Add the first bit to complete the sequence
+    serial_bits.insert(serial_bits.begin(), first_bit);
     
     // Verify serialized data
     bool error = false;
@@ -164,6 +138,20 @@ void test_serializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVc
     } else {
         std::cout << "Serializer test FAILED for " << test.name << std::endl;
     }
+    
+    // Check tx_done is asserted at the end
+    serdes->clk = !serdes->clk;
+    serdes->eval();
+    if (tfp) tfp->dump(sim_time++);
+    serdes->clk = !serdes->clk;
+    serdes->eval();
+    if (tfp) tfp->dump(sim_time++);
+    
+    if (serdes->tx_done) {
+        std::cout << "tx_done is correctly asserted" << std::endl;
+    } else {
+        std::cout << "ERROR: tx_done not asserted when expected" << std::endl;
+    }
 }
 
 void test_deserializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVcdC* tfp, vluint64_t& sim_time, const TestCase& test) {
@@ -180,8 +168,8 @@ void test_deserializer(std::unique_ptr<Vparameterized_serdes>& serdes, Verilated
     serdes->parallel_in = 0;
     serdes->serial_in = 0;
     
-    // Apply reset for a few clock cycles
-    for (int i = 0; i < 10; i++) {
+    // Run a few clock cycles with reset active
+    for (int i = 0; i < 5; i++) {
         serdes->clk = !serdes->clk;
         serdes->eval();
         if (tfp) tfp->dump(sim_time++);
@@ -194,16 +182,6 @@ void test_deserializer(std::unique_ptr<Vparameterized_serdes>& serdes, Verilated
     serdes->rst_n = 1;
     serdes->enable = 1;
     
-    // Run a few clock cycles to stabilize
-    for (int i = 0; i < 5; i++) {
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-    }
-    
     // Signal start of reception
     serdes->load = 1;
     serdes->clk = !serdes->clk;
@@ -214,39 +192,27 @@ void test_deserializer(std::unique_ptr<Vparameterized_serdes>& serdes, Verilated
     if (tfp) tfp->dump(sim_time++);
     serdes->load = 0;
     
-    // Wait a few cycles before sending data
-    for (int i = 0; i < 10; i++) {
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-        serdes->clk = !serdes->clk;
-        serdes->eval();
-        if (tfp) tfp->dump(sim_time++);
-    }
-    
-    // Send bits serially, waiting CYCLES_PER_BIT cycles for each bit
-    for (int bit = 0; bit < DATA_WIDTH; bit++) {
+    // Send bits serially one bit per clock cycle
+    for (int i = 0; i < DATA_WIDTH; i++) {
         // Calculate the bit value based on MSB_FIRST setting
         bool bit_value = MSB_FIRST ? 
-            ((test.data >> (DATA_WIDTH - 1 - bit)) & 1) : 
-            ((test.data >> bit) & 1);
+            ((test.data >> (DATA_WIDTH - 1 - i)) & 1) : 
+            ((test.data >> i) & 1);
             
-        std::cout << "Sending bit " << bit << ": " << bit_value << std::endl;
+        std::cout << "Sending bit " << i << ": " << bit_value << std::endl;
         serdes->serial_in = bit_value;
         
-        // Wait for a complete bit time (CYCLES_PER_BIT system clock cycles)
-        for (int i = 0; i < CYCLES_PER_BIT; i++) {
-            serdes->clk = !serdes->clk;
-            serdes->eval();
-            if (tfp) tfp->dump(sim_time++);
-            serdes->clk = !serdes->clk;
-            serdes->eval();
-            if (tfp) tfp->dump(sim_time++);
-        }
+        // One clock cycle per bit
+        serdes->clk = !serdes->clk;
+        serdes->eval();
+        if (tfp) tfp->dump(sim_time++);
+        serdes->clk = !serdes->clk;
+        serdes->eval();
+        if (tfp) tfp->dump(sim_time++);
     }
     
     // Additional cycles to ensure completion
-    for (int i = 0; i < CYCLES_PER_BIT * 3; i++) {
+    for (int i = 0; i < 2; i++) {
         serdes->clk = !serdes->clk;
         serdes->eval();
         if (tfp) tfp->dump(sim_time++);
@@ -266,6 +232,13 @@ void test_deserializer(std::unique_ptr<Vparameterized_serdes>& serdes, Verilated
         std::cout << "Deserializer test FAILED for " << test.name << ". Expected: 0x" 
                   << std::hex << std::setw(2) << std::setfill('0') << test.data
                   << ", Got: 0x" << std::hex << std::setw(2) << std::setfill('0') << received_data << std::endl;
+    }
+    
+    // Check rx_done is asserted
+    if (serdes->rx_done) {
+        std::cout << "rx_done is correctly asserted" << std::endl;
+    } else {
+        std::cout << "ERROR: rx_done not asserted when expected" << std::endl;
     }
 }
 

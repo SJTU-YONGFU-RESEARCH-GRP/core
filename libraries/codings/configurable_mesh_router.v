@@ -92,7 +92,7 @@ module configurable_mesh_router #(
     // Output arbitration
     reg  [NUM_PORTS-1:0] output_grant [0:NUM_PORTS-1];
     wire [NUM_PORTS-1:0] output_request [0:NUM_PORTS-1];
-    reg  [2:0] arb_ptr [0:NUM_PORTS-1];
+    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr [0:NUM_PORTS-1];
     
     // Packet data at FIFO heads
     wire [PACKET_WIDTH-1:0] fifo_head [0:NUM_PORTS-1];
@@ -235,8 +235,8 @@ module configurable_mesh_router #(
                 // Round-robin priority (fixed integer width)
                 for (integer k = 0; k < NUM_PORTS; k = k + 1) begin
                     // Fix width expansion issue by matching types
-                    reg [2:0] idx;
-                    idx = (arb_ptr[j] + k) % NUM_PORTS;
+                    reg [$clog2(NUM_PORTS)-1:0] idx;
+                    idx = (arb_ptr[j] + $clog2(NUM_PORTS)'(k)) % $clog2(NUM_PORTS)'(NUM_PORTS);
                     if (output_request[idx][j]) begin
                         output_grant[j][idx] = 1'b1;
                         break;
@@ -265,7 +265,7 @@ module configurable_mesh_router #(
                     if (valid_i[i] && !fifo_full[i]) begin
                         input_fifo[i][write_ptr[i]] <= packet_i[i];
                         // Fixed width comparison for FIFO_DEPTH-1
-                        if (write_ptr[i] == (FIFO_DEPTH-1)) begin
+                        if (write_ptr[i] == $clog2(FIFO_DEPTH)'(FIFO_DEPTH-1)) begin
                             write_ptr[i] <= 0;
                         end else begin
                             write_ptr[i] <= write_ptr[i] + 1;
@@ -279,7 +279,7 @@ module configurable_mesh_router #(
                           output_grant[3][i], output_grant[4][i]} && !fifo_empty[i] && 
                           ready_i[route_port[i]]) begin
                         // Fixed width comparison for FIFO_DEPTH-1
-                        if (read_ptr[i] == (FIFO_DEPTH-1)) begin
+                        if (read_ptr[i] == $clog2(FIFO_DEPTH)'(FIFO_DEPTH-1)) begin
                             read_ptr[i] <= 0;
                         end else begin
                             read_ptr[i] <= read_ptr[i] + 1;
@@ -309,3 +309,4 @@ module configurable_mesh_router #(
     end
 
 endmodule 
+
