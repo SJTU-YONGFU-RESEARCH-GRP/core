@@ -13,6 +13,8 @@
 class Vconfigurable_carry_select_adder__Syms;
 class Vconfigurable_carry_select_adder___024root;
 class VerilatedVcdC;
+class Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8;
+
 
 // This class is the main interface to the Verilated model
 class alignas(VL_CACHE_LINE_BYTES) Vconfigurable_carry_select_adder VL_NOT_FINAL : public VerilatedModel {
@@ -27,13 +29,28 @@ class alignas(VL_CACHE_LINE_BYTES) Vconfigurable_carry_select_adder VL_NOT_FINAL
     // propagate new values into/out from the Verilated model.
     VL_IN8(&cin,0,0);
     VL_OUT8(&cout,0,0);
-    VL_IN(&a,31,0);
-    VL_IN(&b,31,0);
-    VL_OUT(&sum,31,0);
+    VL_IN64(&a,63,0);
+    VL_IN64(&b,63,0);
+    VL_OUT64(&sum,63,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
     // Otherwise the application code can consider these internals.
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__first_block;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_1;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_1;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_1;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_1;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_1;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_1;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_0;
+    Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8* const __PVT__configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_1;
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.

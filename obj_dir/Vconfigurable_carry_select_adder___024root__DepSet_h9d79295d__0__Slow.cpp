@@ -80,62 +80,8 @@ VL_ATTR_COLD void Vconfigurable_carry_select_adder___024root___dump_triggers__st
 }
 #endif  // VL_DEBUG
 
-VL_ATTR_COLD void Vconfigurable_carry_select_adder___024root___stl_sequent__TOP__0(Vconfigurable_carry_select_adder___024root* vlSelf) {
-    if (false && vlSelf) {}  // Prevent unused
-    Vconfigurable_carry_select_adder__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vconfigurable_carry_select_adder___024root___stl_sequent__TOP__0\n"); );
-    // Body
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 7U));
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 6U));
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 5U));
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 4U));
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 3U));
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 2U));
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__select 
-        = (1U & ((IData)(vlSelf->configurable_carry_select_adder__DOT__block_carry) 
-                 >> 1U));
-}
-
-void Vconfigurable_carry_select_adder___024root___ico_sequent__TOP__0(Vconfigurable_carry_select_adder___024root* vlSelf);
-void Vconfigurable_carry_select_adder___024root___ico_comb__TOP__0(Vconfigurable_carry_select_adder___024root* vlSelf);
-
-VL_ATTR_COLD void Vconfigurable_carry_select_adder___024root___eval_stl(Vconfigurable_carry_select_adder___024root* vlSelf) {
-    if (false && vlSelf) {}  // Prevent unused
-    Vconfigurable_carry_select_adder__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vconfigurable_carry_select_adder___024root___eval_stl\n"); );
-    // Body
-    if ((2ULL & vlSelf->__VstlTriggered.word(0U))) {
-        Vconfigurable_carry_select_adder___024root___stl_sequent__TOP__0(vlSelf);
-    }
-    if ((1ULL & vlSelf->__VstlTriggered.word(0U))) {
-        Vconfigurable_carry_select_adder___024root___ico_sequent__TOP__0(vlSelf);
-        vlSelf->__Vm_traceActivity[3U] = 1U;
-        vlSelf->__Vm_traceActivity[2U] = 1U;
-        vlSelf->__Vm_traceActivity[1U] = 1U;
-        vlSelf->__Vm_traceActivity[0U] = 1U;
-    }
-    if ((3ULL & vlSelf->__VstlTriggered.word(0U))) {
-        Vconfigurable_carry_select_adder___024root___ico_comb__TOP__0(vlSelf);
-        vlSelf->__Vm_traceActivity[3U] = 1U;
-        vlSelf->__Vm_traceActivity[2U] = 1U;
-        vlSelf->__Vm_traceActivity[1U] = 1U;
-        vlSelf->__Vm_traceActivity[0U] = 1U;
-    }
-}
-
 VL_ATTR_COLD void Vconfigurable_carry_select_adder___024root___eval_triggers__stl(Vconfigurable_carry_select_adder___024root* vlSelf);
+VL_ATTR_COLD void Vconfigurable_carry_select_adder___024root___eval_stl(Vconfigurable_carry_select_adder___024root* vlSelf);
 
 VL_ATTR_COLD bool Vconfigurable_carry_select_adder___024root___eval_phase__stl(Vconfigurable_carry_select_adder___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
@@ -205,79 +151,19 @@ VL_ATTR_COLD void Vconfigurable_carry_select_adder___024root___ctor_var_reset(Vc
     Vconfigurable_carry_select_adder__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vconfigurable_carry_select_adder___024root___ctor_var_reset\n"); );
     // Body
-    vlSelf->a = VL_RAND_RESET_I(32);
-    vlSelf->b = VL_RAND_RESET_I(32);
+    vlSelf->a = VL_RAND_RESET_Q(64);
+    vlSelf->b = VL_RAND_RESET_Q(64);
     vlSelf->cin = VL_RAND_RESET_I(1);
-    vlSelf->sum = VL_RAND_RESET_I(32);
+    vlSelf->sum = VL_RAND_RESET_Q(64);
     vlSelf->cout = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__block_carry = VL_RAND_RESET_I(9);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__cout_cin_0 = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__cout_cin_1 = VL_RAND_RESET_I(1);
     vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__select = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__first_block__DOT____Vcellout__full_adders__BRA__0__KET____DOT__fa__cout = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__first_block__DOT____Vcellout__full_adders__BRA__1__KET____DOT__fa__cout = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__first_block__DOT____Vcellout__full_adders__BRA__2__KET____DOT__fa__cout = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__first_block__DOT____Vcellout__full_adders__BRA__3__KET____DOT__fa__cout = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__1__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__2__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__3__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__4__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__5__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__6__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_0__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__1__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__2__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
-    vlSelf->configurable_carry_select_adder__DOT__carry_select_blocks__BRA__7__KET____DOT__adder_1__DOT____Vcellinp__full_adders__BRA__3__KET____DOT__fa__cin = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__configurable_carry_select_adder__DOT__block_carry__0 = VL_RAND_RESET_I(9);
     vlSelf->__VstlDidInit = 0;
     vlSelf->__Vtrigprevexpr___TOP__configurable_carry_select_adder__DOT__block_carry__1 = VL_RAND_RESET_I(9);

@@ -2,7 +2,7 @@
 # DESCRIPTION: Verilator output: Make include file with class lists
 #
 # This file lists generated Verilated files, for including in higher level makefiles.
-# See Vconfigurable_carry_select_adder.mk for the caller.
+# See Vconfigurable_priority_encoder.mk for the caller.
 
 ### Switches...
 # C11 constructs required?  0/1 (always on now)
@@ -23,28 +23,26 @@ VM_TRACE_FST = 0
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-	Vconfigurable_carry_select_adder \
-	Vconfigurable_carry_select_adder___024root__DepSet_h730246f6__0 \
-	Vconfigurable_carry_select_adder___024root__DepSet_h9d79295d__0 \
-	Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8__DepSet_h89562005__0 \
+	Vconfigurable_priority_encoder \
+	Vconfigurable_priority_encoder___024root__DepSet_hb9c7fa2a__0 \
+	Vconfigurable_priority_encoder___024root__DepSet_he6828225__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-	Vconfigurable_carry_select_adder___024root__Slow \
-	Vconfigurable_carry_select_adder___024root__DepSet_h730246f6__0__Slow \
-	Vconfigurable_carry_select_adder___024root__DepSet_h9d79295d__0__Slow \
-	Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8__Slow \
-	Vconfigurable_carry_select_adder_csa_ripple_carry_adder__W8__DepSet_h27c4c82e__0__Slow \
+	Vconfigurable_priority_encoder__ConstPool_0 \
+	Vconfigurable_priority_encoder___024root__Slow \
+	Vconfigurable_priority_encoder___024root__DepSet_hb9c7fa2a__0__Slow \
+	Vconfigurable_priority_encoder___024root__DepSet_he6828225__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
-	Vconfigurable_carry_select_adder__Trace__0 \
+	Vconfigurable_priority_encoder__Trace__0 \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-	Vconfigurable_carry_select_adder__Syms \
-	Vconfigurable_carry_select_adder__Trace__0__Slow \
-	Vconfigurable_carry_select_adder__TraceDecls__0__Slow \
+	Vconfigurable_priority_encoder__Syms \
+	Vconfigurable_priority_encoder__Trace__0__Slow \
+	Vconfigurable_priority_encoder__TraceDecls__0__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \
