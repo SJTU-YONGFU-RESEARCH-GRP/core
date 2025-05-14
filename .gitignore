@@ -1,0 +1,23 @@
+# VCD files
+*.vcd
+
+# Verilator build directory
+obj_dir/
+
+# Editor backup files
+*~
+.*.swp
+.*.swo
+
+# Build artifacts
+*.o
+*.d
+*.exe
+*.out
+
+# Log files
+*.log
+
+# Other common files to ignore
+.DS_Store
+Thumbs.db 
