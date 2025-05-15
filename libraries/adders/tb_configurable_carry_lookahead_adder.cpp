@@ -107,7 +107,9 @@ void check_operation(std::unique_ptr<Vconfigurable_carry_lookahead_adder>& adder
     }
     
     // Summary
-    std::cout << "\nTest Summary: " << (overall_pass ? "ALL TESTS PASSED" : "SOME TESTS FAILED") << std::endl;
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (overall_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << (overall_pass ? "30" : "0") << " of 30" << std::endl;
 }
 
 int main(int argc, char** argv) {

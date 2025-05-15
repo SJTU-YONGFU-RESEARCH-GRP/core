@@ -27,6 +27,10 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
     const int DATA_WIDTH = 32;  // Must match the DATA_WIDTH parameter in the Verilog module
     const int COUNT_WIDTH = std::log2(DATA_WIDTH + 1);
     
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
     std::cout << "Testing Leading Zero Counter with DATA_WIDTH=" << DATA_WIDTH << std::endl;
     
     // Test data patterns
@@ -45,6 +49,8 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
     
     // Test each pattern
     for (uint32_t pattern : test_patterns) {
+        total_tests++;
+        
         // Apply input
         lzc->data_in = pattern;
         lzc->eval();
@@ -74,6 +80,9 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
         
         if (pass) {
             std::cout << " - PASS";
+            tests_passed++;
+        } else {
+            all_tests_pass = false;
         }
         std::cout << std::endl;
     }
@@ -81,6 +90,8 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
     // Test some randomly generated patterns
     std::cout << "\nTesting with random patterns:" << std::endl;
     for (int i = 0; i < 10; i++) {
+        total_tests++;
+        
         uint32_t random_pattern = rand() & 0xFFFFFFFF;
         
         // Apply input
@@ -111,9 +122,17 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
         
         if (pass) {
             std::cout << " - PASS";
+            tests_passed++;
+        } else {
+            all_tests_pass = false;
         }
         std::cout << std::endl;
     }
+    
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -139,6 +158,5 @@ int main(int argc, char** argv) {
     tfp->close();
     lzc->final();
     
-    std::cout << "Simulation completed!" << std::endl;
     return 0;
 } 

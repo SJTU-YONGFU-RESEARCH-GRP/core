@@ -37,6 +37,11 @@ int main(int argc, char** argv) {
     dut->trace(m_trace, 5);
     m_trace->open("waveform.vcd");
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 1; // We have one test case
+    
     // Test data
     uint8_t test_data[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
     size_t test_data_len = sizeof(test_data) / sizeof(test_data[0]);
@@ -111,9 +116,16 @@ int main(int argc, char** argv) {
     
     if (result_crc == expected_crc) {
         std::cout << "TEST PASSED" << std::endl;
+        tests_passed++;
     } else {
         std::cout << "TEST FAILED" << std::endl;
+        all_tests_pass = false;
     }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Clean up
     m_trace->close();

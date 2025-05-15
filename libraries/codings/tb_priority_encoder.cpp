@@ -9,10 +9,17 @@
 void check_operation(std::unique_ptr<Vpriority_encoder>& encoder, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     const int WIDTH = 8; // Must match the WIDTH parameter in the Verilog module
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
     std::cout << "Testing priority encoder with WIDTH=" << WIDTH << std::endl;
     
     // Test all possible input combinations
     for (int test_input = 0; test_input < (1 << WIDTH); test_input++) {
+        total_tests++;
+        
         // Apply input
         encoder->in = test_input;
         encoder->eval();
@@ -36,15 +43,28 @@ void check_operation(std::unique_ptr<Vpriority_encoder>& encoder, VerilatedVcdC*
                   << ", Output: " << static_cast<int>(encoder->out)
                   << ", Valid: " << (encoder->valid ? "1" : "0");
         
+        bool pass = true;
         if (expected_valid && (encoder->out != expected_out || !encoder->valid)) {
             std::cout << " - ERROR: Expected output " << expected_out 
                       << " with valid=1" << std::endl;
+            pass = false;
         } else if (!expected_valid && encoder->valid) {
             std::cout << " - ERROR: Expected valid=0" << std::endl;
+            pass = false;
         } else {
             std::cout << " - PASS" << std::endl;
+            tests_passed++;
+        }
+        
+        if (!pass) {
+            all_tests_pass = false;
         }
     }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -70,6 +90,5 @@ int main(int argc, char** argv) {
     tfp->close();
     encoder->final();
     
-    std::cout << "Simulation completed!" << std::endl;
     return 0;
 } 

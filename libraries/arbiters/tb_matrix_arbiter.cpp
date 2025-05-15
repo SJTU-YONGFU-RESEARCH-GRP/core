@@ -31,6 +31,11 @@ int main(int argc, char** argv) {
     dut->trace(tfp, 99);
     tfp->open("matrix_arbiter_tb.vcd");
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 4; // We have 4 test cases
+    
     // Define the parameters for our test
     const int NUM_REQUESTORS = 4;
     const int PRIORITY_WIDTH = 2;
@@ -88,12 +93,28 @@ int main(int argc, char** argv) {
     dut->eval();
     
     // Run for a few cycles to see the arbitration in action
+    bool test1_pass = true;
     for (int i = 0; i < 10; i++) {
         tick(dut, tfp);
         
         std::cout << "Cycle " << i << ": req = 0x" << std::hex << (int)dut->req
                   << ", grant = 0x" << (int)dut->grant
                   << ", grant_valid = " << (int)dut->grant_valid << std::endl;
+        
+        // Verify that the correct grant is given (lowest requester should get grant)
+        if (dut->grant != 0x1 || !dut->grant_valid) {
+            std::cout << "ERROR: Expected grant = 0x1 with grant_valid = 1" << std::endl;
+            test1_pass = false;
+        }
+    }
+    
+    // Report test 1 results
+    if (test1_pass) {
+        std::cout << "Test 1 PASSED: Low index priority working correctly" << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "Test 1 FAILED: Incorrect arbitration behavior" << std::endl;
+        all_tests_pass = false;
     }
     
     // Test case 2: Change priorities to favor higher indices
@@ -136,12 +157,28 @@ int main(int argc, char** argv) {
     dut->eval();
     
     // Run with the same requests but new priorities
+    bool test2_pass = true;
     for (int i = 0; i < 10; i++) {
         tick(dut, tfp);
         
         std::cout << "Cycle " << i << ": req = 0x" << std::hex << (int)dut->req
                   << ", grant = 0x" << (int)dut->grant
                   << ", grant_valid = " << (int)dut->grant_valid << std::endl;
+        
+        // Verify that the correct grant is given (highest requester should get grant)
+        if (dut->grant != 0x8 || !dut->grant_valid) {
+            std::cout << "ERROR: Expected grant = 0x8 with grant_valid = 1" << std::endl;
+            test2_pass = false;
+        }
+    }
+    
+    // Report test 2 results
+    if (test2_pass) {
+        std::cout << "Test 2 PASSED: High index priority working correctly" << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "Test 2 FAILED: Incorrect arbitration behavior" << std::endl;
+        all_tests_pass = false;
     }
     
     // Test case 3: Test fairness with equal priorities
@@ -172,12 +209,31 @@ int main(int argc, char** argv) {
     
     // Run with the same requests but equal priorities
     // This should demonstrate fairness over time
+    bool test3_pass = true;
+    
+    // When all priorities are equal, behavior may vary depending on implementation
+    // Here we'll just check that grant is valid and one of the requesters
     for (int i = 0; i < 20; i++) {
         tick(dut, tfp);
         
         std::cout << "Cycle " << i << ": req = 0x" << std::hex << (int)dut->req
                   << ", grant = 0x" << (int)dut->grant
                   << ", grant_valid = " << (int)dut->grant_valid << std::endl;
+        
+        // Verify that some valid grant is given
+        if ((dut->grant & dut->req) == 0 || !dut->grant_valid) {
+            std::cout << "ERROR: Grant should be one of the requesters and grant_valid should be 1" << std::endl;
+            test3_pass = false;
+        }
+    }
+    
+    // Report test 3 results
+    if (test3_pass) {
+        std::cout << "Test 3 PASSED: Equal priority arbitration working correctly" << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "Test 3 FAILED: Incorrect arbitration behavior" << std::endl;
+        all_tests_pass = false;
     }
     
     // Test case 4: Test with changing request patterns
@@ -195,6 +251,7 @@ int main(int argc, char** argv) {
     
     // Cycle through different request patterns
     uint8_t request_patterns[] = {0x1, 0x3, 0x7, 0xF, 0xE, 0xC, 0x8, 0x0};
+    bool test4_pass = true;
     
     for (int p = 0; p < 8; p++) {
         dut->req = request_patterns[p];
@@ -208,6 +265,28 @@ int main(int argc, char** argv) {
         std::cout << "Pattern " << p << ": req = 0x" << std::hex << (int)dut->req
                   << ", grant = 0x" << (int)dut->grant
                   << ", grant_valid = " << (int)dut->grant_valid << std::endl;
+        
+        // Check that grant is valid only when there's at least one request
+        if (dut->req == 0) {
+            if (dut->grant_valid) {
+                std::cout << "ERROR: grant_valid should be 0 when no requests are active" << std::endl;
+                test4_pass = false;
+            }
+        } else {
+            if (!dut->grant_valid || (dut->grant & dut->req) == 0) {
+                std::cout << "ERROR: grant should be one of the active requesters and grant_valid should be 1" << std::endl;
+                test4_pass = false;
+            }
+        }
+    }
+    
+    // Report test 4 results
+    if (test4_pass) {
+        std::cout << "Test 4 PASSED: Changing request patterns handled correctly" << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "Test 4 FAILED: Incorrect arbitration behavior with changing requests" << std::endl;
+        all_tests_pass = false;
     }
     
     // Cleanup
@@ -215,6 +294,10 @@ int main(int argc, char** argv) {
     delete tfp;
     delete dut;
     
-    std::cout << "\nSimulation complete" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    
     return 0;
 } 

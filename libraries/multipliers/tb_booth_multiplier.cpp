@@ -79,6 +79,9 @@ int main(int argc, char** argv) {
     int current_test = 0;
     bool test_in_progress = false;
     bool start_pulse_sent = false;
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = vector_count;
     
     // Initial values
     tb->clk = 0;
@@ -136,9 +139,11 @@ int main(int argc, char** argv) {
                 
                 if ((int16_t)tb->product == test_vectors[current_test].expected) {
                     std::cout << "PASS!" << std::endl;
+                    tests_passed++;
                 } else {
                     std::cout << "FAIL! Expected: " << test_vectors[current_test].expected 
                               << ", Got: " << (int16_t)tb->product << std::endl;
+                    all_tests_pass = false;
                 }
                 
                 // Wait a cycle before starting next test
@@ -160,9 +165,15 @@ int main(int argc, char** argv) {
     
     if (current_test < vector_count) {
         std::cout << "\nSimulation timed out before all tests completed!" << std::endl;
+        all_tests_pass = false;
     } else {
-        std::cout << "\nAll tests completed!" << std::endl;
+        std::cout << "\nAll test vectors processed!" << std::endl;
     }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Cleanup
     tfp->close();

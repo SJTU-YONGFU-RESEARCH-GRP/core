@@ -8,7 +8,7 @@
 vluint64_t sim_time = 0;
 
 // Function to verify duty cycle
-void check_duty_cycle(Vparameterized_pwm *dut, VerilatedVcdC *m_trace, 
+bool check_duty_cycle(Vparameterized_pwm *dut, VerilatedVcdC *m_trace, 
                      int duty_value, int counter_width, int div_value) {
     // Calculate max counter value based on width
     int max_count = (1 << counter_width) - 1;
@@ -61,11 +61,15 @@ void check_duty_cycle(Vparameterized_pwm *dut, VerilatedVcdC *m_trace,
     
     // Allow small error due to discrete counting
     float error = abs(expected_duty - observed_duty);
-    if (error < 5.0) {
+    bool pass = error < 5.0;
+    
+    if (pass) {
         std::cout << "PASS\n";
     } else {
         std::cout << "FAIL (error: " << error << "%)\n";
     }
+    
+    return pass;
 }
 
 int main(int argc, char** argv) {
@@ -77,6 +81,11 @@ int main(int argc, char** argv) {
     VerilatedVcdC *m_trace = new VerilatedVcdC;
     dut->trace(m_trace, 5);
     m_trace->open("waveform.vcd");
+    
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 6; // We have 6 test cases
     
     // Initialize inputs
     dut->clk = 0;
@@ -103,17 +112,44 @@ int main(int argc, char** argv) {
     
     // With POLARITY=1 (active high), test different duty cycles
     std::cout << "Active High Tests (POLARITY=1):" << std::endl;
-    check_duty_cycle(dut, m_trace, 0, 8, 1);       // 0% duty cycle
-    check_duty_cycle(dut, m_trace, 64, 8, 1);      // 25% duty cycle
-    check_duty_cycle(dut, m_trace, 127, 8, 1);     // 50% duty cycle
-    check_duty_cycle(dut, m_trace, 192, 8, 1);     // 75% duty cycle
-    check_duty_cycle(dut, m_trace, 255, 8, 1);     // 100% duty cycle
+    
+    // Test 1: 0% duty cycle
+    bool test1_pass = check_duty_cycle(dut, m_trace, 0, 8, 1);
+    if (test1_pass) tests_passed++;
+    else all_tests_pass = false;
+    
+    // Test 2: 25% duty cycle
+    bool test2_pass = check_duty_cycle(dut, m_trace, 64, 8, 1);
+    if (test2_pass) tests_passed++;
+    else all_tests_pass = false;
+    
+    // Test 3: 50% duty cycle
+    bool test3_pass = check_duty_cycle(dut, m_trace, 127, 8, 1);
+    if (test3_pass) tests_passed++;
+    else all_tests_pass = false;
+    
+    // Test 4: 75% duty cycle
+    bool test4_pass = check_duty_cycle(dut, m_trace, 192, 8, 1);
+    if (test4_pass) tests_passed++;
+    else all_tests_pass = false;
+    
+    // Test 5: 100% duty cycle
+    bool test5_pass = check_duty_cycle(dut, m_trace, 255, 8, 1);
+    if (test5_pass) tests_passed++;
+    else all_tests_pass = false;
     
     // Test with division
     std::cout << "Clock Division Test (div=3):" << std::endl;
-    check_duty_cycle(dut, m_trace, 64, 8, 3);      // 25% duty cycle with div=3
     
-    std::cout << "Tests completed!" << std::endl;
+    // Test 6: 25% duty cycle with div=3
+    bool test6_pass = check_duty_cycle(dut, m_trace, 64, 8, 3);
+    if (test6_pass) tests_passed++;
+    else all_tests_pass = false;
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     m_trace->close();
     delete dut;

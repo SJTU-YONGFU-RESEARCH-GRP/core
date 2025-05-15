@@ -292,20 +292,24 @@ int main(int argc, char** argv) {
     std::vector<int> widths_to_test = {4, 8, 16};
     std::vector<bool> signed_modes = {false, true};
     bool all_tests_passed = true;
+    int total_configs = 0;
+    int passed_configs = 0;
     
     for (int width : widths_to_test) {
         for (bool is_signed : signed_modes) {
+            total_configs++;
             bool result = run_tests_for_config(width, is_signed);
+            if (result) {
+                passed_configs++;
+            }
             all_tests_passed &= result;
         }
     }
     
-    // Print overall result
-    if (all_tests_passed) {
-        std::cout << "\nALL TESTS PASSED!\n";
-        return 0;
-    } else {
-        std::cout << "\nSOME TESTS FAILED!\n";
-        return 1;
-    }
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_configs << " of " << total_configs << std::endl;
+    
+    return all_tests_passed ? 0 : 1;
 } 

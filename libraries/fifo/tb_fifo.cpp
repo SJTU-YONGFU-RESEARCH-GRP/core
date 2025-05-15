@@ -10,6 +10,14 @@ void check_operation(std::unique_ptr<Vfifo>& fifo, VerilatedVcdC* tfp, vluint64_
     const int test_size = 10;
     std::vector<uint8_t> test_data = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x12, 0x34};
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 3; // Write test, Read test, Full condition test
+    bool write_test_pass = true;
+    bool read_test_pass = true;
+    bool full_test_pass = true;
+    
     // Reset the FIFO
     fifo->rst_n = 0;
     fifo->clk = 0;
@@ -45,6 +53,18 @@ void check_operation(std::unique_ptr<Vfifo>& fifo, VerilatedVcdC* tfp, vluint64_
         std::cout << "  Wrote: 0x" << std::hex << static_cast<int>(test_data[i]) 
                   << ", Full: " << (fifo->full ? "1" : "0")
                   << ", Empty: " << (fifo->empty ? "1" : "0") << std::endl;
+        
+        // Check if FIFO is incorrectly full before all data is written
+        if (i < test_size - 1 && fifo->full) {
+            std::cout << "ERROR: FIFO unexpectedly full during write test!" << std::endl;
+            write_test_pass = false;
+        }
+    }
+    
+    if (write_test_pass) {
+        tests_passed++;
+    } else {
+        all_tests_pass = false;
     }
     
     // Now, read data from the FIFO
@@ -70,7 +90,14 @@ void check_operation(std::unique_ptr<Vfifo>& fifo, VerilatedVcdC* tfp, vluint64_
         if (fifo->dout != test_data[i]) {
             std::cout << "ERROR: Data mismatch! Expected: 0x" << std::hex << static_cast<int>(test_data[i])
                       << ", Got: 0x" << static_cast<int>(fifo->dout) << std::endl;
+            read_test_pass = false;
         }
+    }
+    
+    if (read_test_pass) {
+        tests_passed++;
+    } else {
+        all_tests_pass = false;
     }
     
     // Test full condition by writing to FIFO until full
@@ -111,9 +138,22 @@ void check_operation(std::unique_ptr<Vfifo>& fifo, VerilatedVcdC* tfp, vluint64_
     
     if (fifo->full) {
         std::cout << "FIFO full after " << std::dec << write_count << " writes" << std::endl;
+        full_test_pass = true;
     } else {
         std::cout << "ERROR: FIFO didn't become full!" << std::endl;
+        full_test_pass = false;
     }
+    
+    if (full_test_pass) {
+        tests_passed++;
+    } else {
+        all_tests_pass = false;
+    }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -139,6 +179,5 @@ int main(int argc, char** argv) {
     tfp->close();
     fifo->final();
     
-    std::cout << "Simulation completed successfully!" << std::endl;
     return 0;
 } 

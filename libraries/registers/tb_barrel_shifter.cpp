@@ -28,11 +28,14 @@ uint32_t expected_shift(uint32_t data, uint32_t shift_amount, bool direction, bo
     return result;
 }
 
-void check_operation(std::unique_ptr<Vbarrel_shifter>& shifter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+int check_operation(std::unique_ptr<Vbarrel_shifter>& shifter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     const int DATA_WIDTH = 32;  // Must match the DATA_WIDTH parameter in the Verilog module
     const int SHIFT_WIDTH = std::log2(DATA_WIDTH);
     
     std::cout << "Testing barrel shifter with DATA_WIDTH=" << DATA_WIDTH << std::endl;
+    
+    int total_tests = 0;
+    int passed_tests = 0;
     
     // Test data patterns
     uint32_t test_patterns[] = {
@@ -49,6 +52,8 @@ void check_operation(std::unique_ptr<Vbarrel_shifter>& shifter, VerilatedVcdC* t
         for (int shift = 0; shift < DATA_WIDTH; shift++) {
             for (int dir = 0; dir <= 1; dir++) {
                 for (int rot = 0; rot <= 1; rot++) {
+                    total_tests++;
+                    
                     // Apply inputs
                     shifter->data_in = pattern;
                     shifter->shift_amount = shift;
@@ -72,11 +77,14 @@ void check_operation(std::unique_ptr<Vbarrel_shifter>& shifter, VerilatedVcdC* t
                         std::cout << " - ERROR: Expected 0x" << std::hex << std::setw(8) << std::setfill('0') << expected << std::endl;
                     } else {
                         std::cout << " - PASS" << std::endl;
+                        passed_tests++;
                     }
                 }
             }
         }
     }
+    
+    return passed_tests;
 }
 
 int main(int argc, char** argv) {
@@ -96,12 +104,18 @@ int main(int argc, char** argv) {
     vluint64_t sim_time = 0;
     
     // Run tests
-    check_operation(shifter, tfp.get(), sim_time);
+    int total_tests = 6 * 32 * 2 * 2; // 6 patterns, 32 shifts, 2 directions, 2 modes
+    int passed_tests = check_operation(shifter, tfp.get(), sim_time);
+    bool all_tests_passed = (passed_tests == total_tests);
     
     // Cleanup
     tfp->close();
     shifter->final();
     
-    std::cout << "Simulation completed!" << std::endl;
-    return 0;
+    // Display test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return all_tests_passed ? 0 : 1;
 } 

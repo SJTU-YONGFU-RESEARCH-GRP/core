@@ -88,6 +88,7 @@ void check_operation(std::unique_ptr<Valu>& alu, VerilatedVcdC* tfp, vluint64_t&
     
     int test_num = 0;
     int pass_count = 0;
+    int total_tests = test_cases.size();
     
     for (const auto& test : test_cases) {
         // Set inputs
@@ -139,8 +140,11 @@ void check_operation(std::unique_ptr<Valu>& alu, VerilatedVcdC* tfp, vluint64_t&
     }
     
     std::cout << "------------------------------------------------------------" << std::endl;
-    std::cout << "Test Summary: " << pass_count << "/" << test_cases.size() 
-              << " tests passed." << std::endl;
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (pass_count == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << pass_count << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -166,6 +170,5 @@ int main(int argc, char** argv) {
     tfp->close();
     alu->final();
     
-    std::cout << "Simulation completed!" << std::endl;
     return 0;
 } 

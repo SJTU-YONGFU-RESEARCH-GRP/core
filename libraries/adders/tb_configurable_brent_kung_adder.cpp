@@ -26,6 +26,11 @@ void print_test_case(uint32_t a, uint32_t b, bool cin, uint32_t sum, bool cout, 
 void check_operation(std::unique_ptr<Vconfigurable_brent_kung_adder>& adder, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     const int DATA_WIDTH = 32;  // Must match the DATA_WIDTH parameter in the Verilog module
     
+    // Test tracking variables
+    bool overall_pass = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
     std::cout << "Testing Configurable Brent-Kung Adder with DATA_WIDTH=" << DATA_WIDTH << std::endl;
     std::cout << "------------------------------------------------------" << std::endl;
     
@@ -49,7 +54,8 @@ void check_operation(std::unique_ptr<Vconfigurable_brent_kung_adder>& adder, Ver
         {0x7FFFFFFF, 0x00000001, false}   // Max positive + 1
     };
     
-    bool overall_pass = true;
+    // Update total test count
+    total_tests += sizeof(test_cases) / sizeof(test_cases[0]);
     
     // Test each case
     for (const auto& test : test_cases) {
@@ -68,7 +74,11 @@ void check_operation(std::unique_ptr<Vconfigurable_brent_kung_adder>& adder, Ver
         
         // Verify output
         bool test_pass = (adder->sum == expected_sum) && (adder->cout == expected_cout);
-        overall_pass &= test_pass;
+        if (test_pass) {
+            tests_passed++;
+        } else {
+            overall_pass = false;
+        }
         
         print_test_case(test.a, test.b, test.cin, adder->sum, adder->cout, test_pass);
     }
@@ -81,7 +91,10 @@ void check_operation(std::unique_ptr<Vconfigurable_brent_kung_adder>& adder, Ver
     std::mt19937 gen(rd());
     std::uniform_int_distribution<uint32_t> dist(0, 0xFFFFFFFF);
     
-    for (int i = 0; i < 20; i++) {
+    const int random_test_count = 20;
+    total_tests += random_test_count;
+    
+    for (int i = 0; i < random_test_count; i++) {
         uint32_t rand_a = dist(gen);
         uint32_t rand_b = dist(gen);
         bool rand_cin = (i % 2 == 0);  // Alternate carry-in for variety
@@ -101,13 +114,19 @@ void check_operation(std::unique_ptr<Vconfigurable_brent_kung_adder>& adder, Ver
         
         // Verify output
         bool test_pass = (adder->sum == expected_sum) && (adder->cout == expected_cout);
-        overall_pass &= test_pass;
+        if (test_pass) {
+            tests_passed++;
+        } else {
+            overall_pass = false;
+        }
         
         print_test_case(rand_a, rand_b, rand_cin, adder->sum, adder->cout, test_pass);
     }
     
-    // Summary
-    std::cout << "\nTest Summary: " << (overall_pass ? "ALL TESTS PASSED" : "SOME TESTS FAILED") << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (overall_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

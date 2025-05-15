@@ -16,7 +16,7 @@ struct TestCase {
     uint32_t expected_grant_idx;
 };
 
-void run_test(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcdC* tfp, vluint64_t& sim_time, const TestCase& test) {
+bool run_test(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcdC* tfp, vluint64_t& sim_time, const TestCase& test) {
     std::cout << "\nRunning test: " << test.name << std::endl;
     
     // Parameters from the design
@@ -89,9 +89,11 @@ void run_test(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcdC* tfp, 
     } else {
         std::cout << "Test FAILED!" << std::endl;
     }
+    
+    return passed;
 }
 
-void test_round_robin(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+bool test_round_robin(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     std::cout << "\nTesting Round-Robin Functionality" << std::endl;
     
     // Parameters from the design
@@ -118,6 +120,7 @@ void test_round_robin(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcd
     
     // Store the expected sequence for verification
     int expected_sequence[8] = {1, 2, 3, 0, 1, 2, 3, 0};
+    bool all_cycles_pass = true;
     
     for (int cycle = 0; cycle < 8; cycle++) {
         std::cout << "\nCycle " << cycle << std::endl;
@@ -147,8 +150,17 @@ void test_round_robin(std::unique_ptr<Vfair_priority_arbiter>& arb, VerilatedVcd
             std::cout << "ERROR: Round-robin failed. Expected grant to requester " 
                       << expected_sequence[cycle] << ", but got " 
                       << static_cast<int>(arb->grant_idx) << std::endl;
+            all_cycles_pass = false;
         }
     }
+    
+    if (all_cycles_pass) {
+        std::cout << "Round-Robin Test PASSED!" << std::endl;
+    } else {
+        std::cout << "Round-Robin Test FAILED!" << std::endl;
+    }
+    
+    return all_cycles_pass;
 }
 
 int main(int argc, char** argv) {
@@ -166,6 +178,11 @@ int main(int argc, char** argv) {
     
     // Initialize simulation time
     vluint64_t sim_time = 0;
+    
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 4; // 3 individual tests + round-robin test
     
     // Reset the module
     arb->rst_n = 0;
@@ -206,7 +223,12 @@ int main(int argc, char** argv) {
     
     // Run individual test cases
     for (const auto& test : test_cases) {
-        run_test(arb, tfp.get(), sim_time, test);
+        bool test_passed = run_test(arb, tfp.get(), sim_time, test);
+        if (test_passed) {
+            tests_passed++;
+        } else {
+            all_tests_pass = false;
+        }
         
         // Add additional clock cycles between tests
         for (int i = 0; i < 2; i++) {
@@ -233,12 +255,21 @@ int main(int argc, char** argv) {
     arb->rst_n = 1;
     
     // Test round-robin behavior
-    test_round_robin(arb, tfp.get(), sim_time);
+    bool round_robin_passed = test_round_robin(arb, tfp.get(), sim_time);
+    if (round_robin_passed) {
+        tests_passed++;
+    } else {
+        all_tests_pass = false;
+    }
     
     // Cleanup
     tfp->close();
     arb->final();
     
-    std::cout << "\nSimulation completed successfully!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    
     return 0;
 } 

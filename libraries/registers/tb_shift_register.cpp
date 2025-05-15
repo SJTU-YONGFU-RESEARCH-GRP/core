@@ -14,6 +14,11 @@ void print_reg(uint32_t value, int width) {
 
 void test_shift_register(std::unique_ptr<Vshift_register>& sr, VerilatedVcdC* tfp, vluint64_t& sim_time,
                        bool shift_dir, int width) {
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 2; // Parallel load test and shift test
+    
     // Reset the shift register
     sr->rst_n = 0;
     sr->clk = 0;
@@ -64,12 +69,28 @@ void test_shift_register(std::unique_ptr<Vshift_register>& sr, VerilatedVcdC* tf
     std::cout << "After load, register value: ";
     print_reg(sr->parallel_out, width);
     
+    // Verify parallel load
+    bool load_test_passed = (sr->parallel_out == test_value);
+    if (load_test_passed) {
+        std::cout << "Parallel load test: PASS" << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "Parallel load test: FAIL - Expected: ";
+        print_reg(test_value, width);
+        std::cout << " Actual: ";
+        print_reg(sr->parallel_out, width);
+        all_tests_pass = false;
+    }
+    
     // Test shifting
     const char* shift_type = shift_dir ? "left" : "right";
     std::cout << "\nTesting " << shift_type << " shift with serial in = 0" << std::endl;
     
+    bool shift_test_passed = true;
+    uint32_t expected_value = test_value;
+    
     for (int i = 0; i < width + 2; i++) { // Do width+2 shifts to see full effect
-        // First half of shifts with serial_in = 0
+        // First half of shifts with serial_in = 0, second half with serial_in = 1
         bool serial_bit = (i < width/2) ? 0 : 1;
         sr->clk = 0;
         sr->en = 1;
@@ -83,11 +104,49 @@ void test_shift_register(std::unique_ptr<Vshift_register>& sr, VerilatedVcdC* tf
         if (tfp) tfp->dump(sim_time);
         sim_time++;
         
+        // Calculate expected value after shift
+        if (shift_dir) {
+            // Left shift
+            expected_value = ((expected_value << 1) | serial_bit) & ((1 << width) - 1);
+            // Expected serial out is the MSB that gets shifted out
+            bool expected_serial_out = (i > 0) && ((test_value >> (width - i)) & 1);
+            if (i < width && sr->serial_out != expected_serial_out) {
+                shift_test_passed = false;
+            }
+        } else {
+            // Right shift
+            bool expected_serial_out = expected_value & 1;
+            expected_value = (expected_value >> 1) | (serial_bit << (width - 1));
+            if (i < width && sr->serial_out != expected_serial_out) {
+                shift_test_passed = false;
+            }
+        }
+        
         std::cout << "Shift " << i+1 << ", serial_in = " << serial_bit 
                   << ", serial_out = " << (int)sr->serial_out
                   << ", register = ";
         print_reg(sr->parallel_out, width);
+        
+        // Check if register value matches expected after each shift
+        if (sr->parallel_out != expected_value) {
+            std::cout << "  Expected: ";
+            print_reg(expected_value, width);
+            shift_test_passed = false;
+        }
     }
+    
+    if (shift_test_passed) {
+        std::cout << "Shift test: PASS" << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "Shift test: FAIL" << std::endl;
+        all_tests_pass = false;
+    }
+    
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -144,6 +203,5 @@ int main(int argc, char** argv) {
     tfp_left->close();
     sr_left->final();
     
-    std::cout << "\nSimulation completed successfully!" << std::endl;
     return 0;
 } 

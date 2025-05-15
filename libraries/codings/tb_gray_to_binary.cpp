@@ -16,15 +16,19 @@ T gray_to_binary(T gray) {
     return binary;
 }
 
-void check_conversion(std::unique_ptr<Vgray_to_binary>& converter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+void check_conversion(std::unique_ptr<Vgray_to_binary>& converter, VerilatedVcdC* tfp, vluint64_t& sim_time, bool& all_tests_pass, int& tests_passed, int& total_tests) {
     // Get the WIDTH parameter from the design
     const int WIDTH = 4; // Must match the parameter in the Verilog module
     const int MAX_VALUE = (1 << WIDTH) - 1;
     
+    // Set total number of tests
+    total_tests = MAX_VALUE + 1;
+    
     std::cout << "Testing Gray code to binary conversion for " << WIDTH << "-bit values:" << std::endl;
     std::cout << "Gray\tBinary (Expected)\tBinary (Actual)\tResult" << std::endl;
     
-    bool all_passed = true;
+    all_tests_pass = true;
+    tests_passed = 0;
     
     // Test all possible input values
     for (int gray = 0; gray <= MAX_VALUE; gray++) {
@@ -47,16 +51,11 @@ void check_conversion(std::unique_ptr<Vgray_to_binary>& converter, VerilatedVcdC
         
         if (expected_binary == actual_binary) {
             std::cout << "PASS" << std::endl;
+            tests_passed++;
         } else {
             std::cout << "FAIL" << std::endl;
-            all_passed = false;
+            all_tests_pass = false;
         }
-    }
-    
-    if (all_passed) {
-        std::cout << "All tests passed!" << std::endl;
-    } else {
-        std::cout << "Some tests failed!" << std::endl;
     }
 }
 
@@ -76,8 +75,18 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
     // Run tests
-    check_conversion(converter, tfp.get(), sim_time);
+    check_conversion(converter, tfp.get(), sim_time, all_tests_pass, tests_passed, total_tests);
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Cleanup
     tfp->close();

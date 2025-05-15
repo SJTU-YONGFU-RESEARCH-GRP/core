@@ -146,8 +146,13 @@ int main(int argc, char** argv) {
         total++;
     }
     
-    // Print results
-    std::cout << "\nSigned comparison test completed. " << errors << " errors out of " << total << " tests." << std::endl;
+    // Print standardized test summary
+    bool all_tests_pass = (errors == 0);
+    int tests_passed = total - errors;
+    
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total << std::endl;
     
     // Cleanup
     tfp->close();

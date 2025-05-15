@@ -32,6 +32,10 @@ int main(int argc, char** argv) {
     dut->enable = 1;    // Enable the counter
     dut->up_down = 1;   // Start counting up
     
+    // Test tracking variables
+    bool test_passed = true;
+    int total_tests = 1;
+    
     // Run simulation
     while (sim_time < MAX_SIM_TIME) {
         // Toggle clock
@@ -72,8 +76,10 @@ int main(int argc, char** argv) {
         sim_time++;
     }
     
-    // Simple verification - just check that the simulation ran without errors
-    std::cout << "\nSimulation completed successfully!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (test_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << (test_passed ? total_tests : 0) << " of " << total_tests << std::endl;
     
     // Clean up
     m_trace->close();

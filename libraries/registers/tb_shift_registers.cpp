@@ -99,6 +99,11 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Test variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool all_tests_passed = true;
+    
     // ----- Test RIGHT shift register -----
     std::cout << "=== Testing RIGHT shift register ===" << std::endl;
     std::unique_ptr<Vshift_register_right> sr_right = std::make_unique<Vshift_register_right>();
@@ -110,7 +115,14 @@ int main(int argc, char** argv) {
     tfp_right->open("shift_register_right_sim.vcd");
     
     // Run test for right shift (WIDTH=8)
-    test_shift_register(sr_right, tfp_right.get(), sim_time, false, 8);
+    total_tests++;
+    try {
+        test_shift_register(sr_right, tfp_right.get(), sim_time, false, 8);
+        passed_tests++;
+    } catch (const std::exception& e) {
+        std::cerr << "Test failed for RIGHT shift register: " << e.what() << std::endl;
+        all_tests_passed = false;
+    }
     
     // Cleanup right shift resources
     tfp_right->close();
@@ -131,12 +143,23 @@ int main(int argc, char** argv) {
     tfp_left->open("shift_register_left_sim.vcd");
     
     // Test left shift (WIDTH=8)
-    test_shift_register(sr_left, tfp_left.get(), sim_time, true, 8);
+    total_tests++;
+    try {
+        test_shift_register(sr_left, tfp_left.get(), sim_time, true, 8);
+        passed_tests++;
+    } catch (const std::exception& e) {
+        std::cerr << "Test failed for LEFT shift register: " << e.what() << std::endl;
+        all_tests_passed = false;
+    }
     
     // Cleanup left shift resources
     tfp_left->close();
     sr_left->final();
     
-    std::cout << "\nSimulation completed successfully!" << std::endl;
-    return 0;
+    // Display test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return all_tests_passed ? 0 : 1;
 } 

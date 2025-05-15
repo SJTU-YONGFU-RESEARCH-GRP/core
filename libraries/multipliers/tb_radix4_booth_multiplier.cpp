@@ -107,12 +107,11 @@ int main(int argc, char** argv) {
         }
     }
     
-    if (all_tests_passed) {
-        std::cout << "\nAll tests passed!" << std::endl;
-    } else {
-        std::cout << "\nSome tests failed!" << std::endl;
-        return 1;
-    }
+    // Print standardized test summary
+    int tests_passed = all_tests_passed ? num_tests : 0;
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << num_tests << std::endl;
     
     // Cleanup
     tfp->close();

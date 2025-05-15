@@ -7,206 +7,211 @@
 #include <vector>
 #include <deque>
 
-void clock_tick(std::unique_ptr<Vsequence_detector_fsm>& detector, VerilatedVcdC* tfp, vluint64_t& sim_time) {
-    detector->clk = 0;
-    detector->eval();
-    if (tfp) tfp->dump(sim_time);
-    sim_time++;
-    
-    detector->clk = 1;
-    detector->eval();
-    if (tfp) tfp->dump(sim_time);
-    sim_time++;
-}
+#define MAX_SIM_TIME 300
+vluint64_t sim_time = 0;
 
-void test_sequence_detector(std::unique_ptr<Vsequence_detector_fsm>& detector, VerilatedVcdC* tfp, vluint64_t& sim_time) {
-    // Get the parameters from the design
-    const int PATTERN_WIDTH = 4;
-    const uint32_t DEFAULT_PATTERN = 0b1011;
-    
-    std::cout << "Testing Sequence Detector FSM with PATTERN_WIDTH = " << PATTERN_WIDTH << std::endl;
-    std::cout << "Default pattern: 0x" << std::hex << DEFAULT_PATTERN 
-              << " (Binary: " << std::bitset<4>(DEFAULT_PATTERN) << ")" << std::endl;
-    
-    // Reset the module
-    detector->rst_n = 0;
-    detector->enable = 0;
-    detector->serial_in = 0;
-    detector->load_pattern = 0;
-    detector->config_pattern = 0;
-    clock_tick(detector, tfp, sim_time);
-    
-    // Release reset
-    detector->rst_n = 1;
-    clock_tick(detector, tfp, sim_time);
-    
-    // Test with default pattern
-    std::cout << "\nTest 1: Default pattern detection (1011)" << std::endl;
-    
-    // Input stream with pattern embedded: 0010111010
-    std::vector<bool> input_stream = {0, 0, 1, 0, 1, 1, 1, 0, 1, 0};
-    std::deque<bool> last_bits;
-    
-    std::cout << "Input stream: ";
-    for (bool bit : input_stream) {
-        std::cout << bit;
+// Define parameters to match the Verilog module
+#define PATTERN_WIDTH 4
+#define PATTERN 0b1011  // Default pattern to detect
+
+// Helper function to display bits as a string
+std::string bitToStr(uint32_t value, int width) {
+    std::string result = "";
+    for (int i = width - 1; i >= 0; i--) {
+        result += ((value >> i) & 1) ? '1' : '0';
     }
-    std::cout << std::endl;
-    
-    std::cout << "Cycle\tInput\tLast " << PATTERN_WIDTH << " bits\tDetected\tExpected" << std::endl;
-    
-    bool all_passed = true;
-    
-    for (size_t i = 0; i < input_stream.size(); i++) {
-        // Enable detector and set input bit
-        detector->enable = 1;
-        detector->serial_in = input_stream[i];
-        
-        // Track last PATTERN_WIDTH bits for expected output calculation
-        last_bits.push_back(input_stream[i]);
-        if (last_bits.size() > PATTERN_WIDTH) {
-            last_bits.pop_front();
-        }
-        
-        // Calculate expected output
-        bool expected_detection = false;
-        if (last_bits.size() == PATTERN_WIDTH) {
-            uint32_t last_pattern = 0;
-            for (size_t j = 0; j < last_bits.size(); j++) {
-                last_pattern = (last_pattern << 1) | last_bits[j];
-            }
-            expected_detection = (last_pattern == DEFAULT_PATTERN);
-        }
-        
-        // Clock the design
-        clock_tick(detector, tfp, sim_time);
-        
-        // Check the output
-        bool actual_detection = detector->pattern_detected;
-        
-        // Print bit pattern
-        std::string bit_pattern;
-        for (bool bit : last_bits) {
-            bit_pattern += bit ? '1' : '0';
-        }
-        while (bit_pattern.length() < PATTERN_WIDTH) {
-            bit_pattern = '0' + bit_pattern;
-        }
-        
-        std::cout << i << "\t" << input_stream[i] << "\t" << bit_pattern << "\t\t" 
-                  << actual_detection << "\t\t" << expected_detection << "\t";
-        
-        if (actual_detection == expected_detection) {
-            std::cout << "PASS" << std::endl;
-        } else {
-            std::cout << "FAIL" << std::endl;
-            all_passed = false;
-        }
-    }
-    
-    // Test with a custom pattern
-    std::cout << "\nTest 2: Custom pattern detection (0101)" << std::endl;
-    uint32_t custom_pattern = 0b0101;
-    
-    // Reset state
-    last_bits.clear();
-    
-    // Load custom pattern
-    detector->load_pattern = 1;
-    detector->config_pattern = custom_pattern;
-    clock_tick(detector, tfp, sim_time);
-    detector->load_pattern = 0;
-    
-    std::cout << "Custom pattern: 0x" << std::hex << custom_pattern 
-              << " (Binary: " << std::bitset<4>(custom_pattern) << ")" << std::endl;
-    
-    // Input stream with custom pattern embedded: 1001010010
-    std::vector<bool> custom_input_stream = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0};
-    
-    std::cout << "Input stream: ";
-    for (bool bit : custom_input_stream) {
-        std::cout << bit;
-    }
-    std::cout << std::endl;
-    
-    std::cout << "Cycle\tInput\tLast " << PATTERN_WIDTH << " bits\tDetected\tExpected" << std::endl;
-    
-    for (size_t i = 0; i < custom_input_stream.size(); i++) {
-        // Enable detector and set input bit
-        detector->enable = 1;
-        detector->serial_in = custom_input_stream[i];
-        
-        // Track last PATTERN_WIDTH bits for expected output calculation
-        last_bits.push_back(custom_input_stream[i]);
-        if (last_bits.size() > PATTERN_WIDTH) {
-            last_bits.pop_front();
-        }
-        
-        // Calculate expected output
-        bool expected_detection = false;
-        if (last_bits.size() == PATTERN_WIDTH) {
-            uint32_t last_pattern = 0;
-            for (size_t j = 0; j < last_bits.size(); j++) {
-                last_pattern = (last_pattern << 1) | last_bits[j];
-            }
-            expected_detection = (last_pattern == custom_pattern);
-        }
-        
-        // Clock the design
-        clock_tick(detector, tfp, sim_time);
-        
-        // Check the output
-        bool actual_detection = detector->pattern_detected;
-        
-        // Print bit pattern
-        std::string bit_pattern;
-        for (bool bit : last_bits) {
-            bit_pattern += bit ? '1' : '0';
-        }
-        while (bit_pattern.length() < PATTERN_WIDTH) {
-            bit_pattern = '0' + bit_pattern;
-        }
-        
-        std::cout << i << "\t" << custom_input_stream[i] << "\t" << bit_pattern << "\t\t" 
-                  << actual_detection << "\t\t" << expected_detection << "\t";
-        
-        if (actual_detection == expected_detection) {
-            std::cout << "PASS" << std::endl;
-        } else {
-            std::cout << "FAIL" << std::endl;
-            all_passed = false;
-        }
-    }
-    
-    if (all_passed) {
-        std::cout << "\nAll tests passed!" << std::endl;
-    } else {
-        std::cout << "\nSome tests failed!" << std::endl;
-    }
+    return result;
 }
 
 int main(int argc, char** argv) {
-    // Initialize Verilator
     Verilated::commandArgs(argc, argv);
     
-    // Create an instance of our module under test
-    std::unique_ptr<Vsequence_detector_fsm> detector = std::make_unique<Vsequence_detector_fsm>();
+    // Initialize Verilator
+    Vsequence_detector_fsm* dut = new Vsequence_detector_fsm;
     
-    // Initialize VCD trace file
+    // Initialize VCD trace dump
     Verilated::traceEverOn(true);
-    std::unique_ptr<VerilatedVcdC> tfp = std::make_unique<VerilatedVcdC>();
-    detector->trace(tfp.get(), 99);  // Trace 99 levels of hierarchy
-    tfp->open("sequence_detector_fsm_sim.vcd");
+    VerilatedVcdC* m_trace = new VerilatedVcdC;
+    dut->trace(m_trace, 5);
+    m_trace->open("sequence_detector_fsm_waveform.vcd");
     
-    // Initialize simulation time
-    vluint64_t sim_time = 0;
+    std::cout << "Sequence Detector FSM Test" << std::endl;
+    std::cout << "Pattern Width: " << PATTERN_WIDTH << std::endl;
+    std::cout << "Default Pattern: " << bitToStr(PATTERN, PATTERN_WIDTH) << std::endl;
     
-    // Run tests
-    test_sequence_detector(detector, tfp.get(), sim_time);
+    // Initialize signals
+    dut->clk = 0;
+    dut->rst_n = 0;     // Start with reset active
+    dut->enable = 0;    // Disabled
+    dut->serial_in = 0;
+    dut->config_pattern = PATTERN;
+    dut->load_pattern = 0;
     
-    // Cleanup
-    tfp->close();
-    detector->final();
+    // Test variables
+    bool test_passed = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
+    // Test vectors - patterns to send
+    struct TestCase {
+        std::string name;
+        uint32_t pattern;
+        std::vector<bool> input_sequence;
+        std::vector<bool> expected_output;
+    };
+    
+    std::vector<TestCase> test_cases;
+    
+    // Test case 1: Default pattern (1011) with exact match
+    {
+        TestCase tc;
+        tc.name = "Basic Pattern Detection";
+        tc.pattern = PATTERN;  // Default pattern: 1011
+        tc.input_sequence = {
+            0, 1, 0, 1, 1,  // Does not contain pattern
+            1, 0, 1, 1, 0,  // Contains pattern (1011)
+            1, 0, 1, 1      // Contains pattern (1011)
+        };
+        // Expected output: pattern_detected should be high when the full pattern is detected
+        tc.expected_output = {
+            0, 0, 0, 0, 0,  // No detection yet
+            0, 0, 0, 1, 0,  // Detection at position 8 (after shift in)
+            0, 0, 0, 1      // Detection at position 13 (after shift in)
+        };
+        test_cases.push_back(tc);
+    }
+    
+    // Test case 2: Overlapping patterns
+    {
+        TestCase tc;
+        tc.name = "Overlapping Patterns";
+        tc.pattern = 0b1101;  // New pattern to test: 1101
+        tc.input_sequence = {
+            1, 1, 0, 1, 1, 0, 1  // Contains 1101 at positions 0-3 and 3-6
+        };
+        // Expected output: pattern_detected should be high twice when the full pattern is detected
+        tc.expected_output = {
+            0, 0, 0, 1, 0, 0, 1  // Detection at positions 3 and 6
+        };
+        test_cases.push_back(tc);
+    }
+    
+    // Test case 3: Pattern change during operation
+    {
+        TestCase tc;
+        tc.name = "Pattern Change";
+        tc.pattern = 0b0101;  // Changed pattern: 0101
+        tc.input_sequence = {
+            1, 0, 1, 1,  // Original pattern (no match with new pattern)
+            0, 1, 0, 1   // New pattern (should match)
+        };
+        tc.expected_output = {
+            0, 0, 0, 0,  // No detection (wrong pattern)
+            0, 0, 0, 1   // Detection at position 7
+        };
+        test_cases.push_back(tc);
+    }
+    
+    // Current test case state
+    int current_test = -1;
+    size_t bit_index = 0;
+    bool loading_pattern = false;
+    
+    // Run simulation
+    while (sim_time < MAX_SIM_TIME && current_test < (int)test_cases.size()) {
+        // Toggle clock
+        dut->clk = !dut->clk;
+        
+        // On positive clock edge
+        if (dut->clk) {
+            // Release reset after a few clock cycles
+            if (sim_time == 8) {
+                dut->rst_n = 1;
+                dut->enable = 1;
+                current_test = 0;
+                bit_index = 0;
+                
+                std::cout << "\nStarting Test Case 1: " << test_cases[current_test].name << std::endl;
+                std::cout << "Pattern: " << bitToStr(test_cases[current_test].pattern, PATTERN_WIDTH) << std::endl;
+            }
+            
+            // Test case state machine
+            if (sim_time > 8 && dut->rst_n) {
+                // If this is a new test, load the pattern
+                if (loading_pattern) {
+                    dut->load_pattern = 0;
+                    loading_pattern = false;
+                }
+                
+                // If we've completed the current test case, move to the next one
+                if (current_test >= 0 && bit_index >= test_cases[current_test].input_sequence.size()) {
+                    current_test++;
+                    bit_index = 0;
+                    
+                    if (current_test < (int)test_cases.size()) {
+                        // Configure the new pattern
+                        dut->config_pattern = test_cases[current_test].pattern;
+                        dut->load_pattern = 1;
+                        loading_pattern = true;
+                        
+                        std::cout << "\nStarting Test Case " << (current_test + 1) << ": " 
+                                  << test_cases[current_test].name << std::endl;
+                        std::cout << "Pattern: " << bitToStr(test_cases[current_test].pattern, PATTERN_WIDTH) << std::endl;
+                    }
+                } 
+                // Process the next bit in the current test case
+                else if (current_test >= 0 && current_test < (int)test_cases.size()) {
+                    // Apply input bit
+                    dut->serial_in = test_cases[current_test].input_sequence[bit_index];
+                    
+                    // For debugging - print the current bit
+                    std::cout << "Input[" << bit_index << "]: " << dut->serial_in;
+                    
+                    // Check output against expected (on next clock cycle)
+                    if (bit_index > 0) {
+                        bool expected = test_cases[current_test].expected_output[bit_index - 1];
+                        bool actual = dut->pattern_detected;
+                        
+                        std::cout << " - Expected output: " << expected 
+                                  << ", Actual output: " << actual;
+                        
+                        if (expected == actual) {
+                            std::cout << " - PASS" << std::endl;
+                        } else {
+                            std::cout << " - FAIL" << std::endl;
+                            test_passed = false;
+                        }
+                        
+                        total_tests++;
+                        if (expected == actual) tests_passed++;
+                    } else {
+                        std::cout << std::endl;
+                    }
+                    
+                    // Move to next bit
+                    bit_index++;
+                }
+            }
+        }
+        
+        // Evaluate model
+        dut->eval();
+        
+        // Dump wave trace
+        m_trace->dump(sim_time);
+        
+        sim_time++;
+    }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (test_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    
+    // Clean up
+    m_trace->close();
+    delete m_trace;
+    delete dut;
     
     return 0;
 } 

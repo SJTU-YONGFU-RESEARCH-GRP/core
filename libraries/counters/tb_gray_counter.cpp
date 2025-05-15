@@ -12,6 +12,10 @@ uint8_t binary_to_gray(uint8_t binary) {
 }
 
 void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+    bool all_tests_passed = true;
+    int tests_passed = 0;
+    int total_tests = 3; // Total number of test cases
+    
     // Reset the counter
     counter->rst_n = 0;
     counter->clk = 0;
@@ -37,6 +41,8 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
     counter->enable = 1;
     counter->direction = 0;  // Count up
     
+    bool test1_passed = true;
+    
     for (int i = 0; i < 8; i++) {
         // Clock low
         counter->clk = 0;
@@ -57,6 +63,7 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
         
         // Verify the result
         bool match = (expected_gray == actual_gray);
+        test1_passed &= match;
         
         std::cout << std::bitset<4>(binary_value) << "\t" 
                   << std::bitset<4>(expected_gray) << "\t\t" 
@@ -66,6 +73,12 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
         if (!match) {
             std::cout << "ERROR: Gray code mismatch at binary value " << static_cast<int>(binary_value) << std::endl;
         }
+    }
+    
+    if (test1_passed) {
+        tests_passed++;
+    } else {
+        all_tests_passed = false;
     }
     
     // Test 2: Load a value
@@ -98,6 +111,7 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
     // Verify the result
     bool match = (expected_gray == actual_gray);
     bool binary_match = (binary_value == 10);
+    bool test2_passed = match && binary_match;
     
     std::cout << "Loaded Binary: " << std::bitset<4>(binary_value) 
               << " (Expected: 1010), Result: " << (binary_match ? "PASS" : "FAIL") << std::endl;
@@ -105,12 +119,20 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
               << " (Expected: " << std::bitset<4>(expected_gray) << "), Result: " 
               << (match ? "PASS" : "FAIL") << std::endl;
     
+    if (test2_passed) {
+        tests_passed++;
+    } else {
+        all_tests_passed = false;
+    }
+    
     // Test 3: Count down
     std::cout << "\nTest 3: Counting Down" << std::endl;
     std::cout << "Binary\tExpected Gray\tActual Gray\tResult" << std::endl;
     
     counter->enable = 1;
     counter->direction = 1;  // Count down
+    
+    bool test3_passed = true;
     
     for (int i = 0; i < 8; i++) {
         // Clock low
@@ -132,6 +154,7 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
         
         // Verify the result
         bool match = (expected_gray == actual_gray);
+        test3_passed &= match;
         
         std::cout << std::bitset<4>(binary_value) << "\t" 
                   << std::bitset<4>(expected_gray) << "\t\t" 
@@ -142,6 +165,17 @@ void check_operation(std::unique_ptr<Vgray_counter>& counter, VerilatedVcdC* tfp
             std::cout << "ERROR: Gray code mismatch at binary value " << static_cast<int>(binary_value) << std::endl;
         }
     }
+    
+    if (test3_passed) {
+        tests_passed++;
+    } else {
+        all_tests_passed = false;
+    }
+    
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -167,6 +201,5 @@ int main(int argc, char** argv) {
     tfp->close();
     counter->final();
     
-    std::cout << "\nSimulation completed successfully!" << std::endl;
     return 0;
 }

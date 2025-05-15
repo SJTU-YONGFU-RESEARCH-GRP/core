@@ -29,6 +29,16 @@ VERILATOR_FLAGS_BOOTH_MULTIPLIER = -Wall --trace --cc --build -j --Mdir $(OBJDIR
 VERILATOR_FLAGS_CONFIG_PRNG = -Wall --trace --cc --build -j --Mdir $(OBJDIR) -GWIDTH=16 -GMODE=0
 VERILATOR_FLAGS_CONFIG_PRNG_GALOIS = -Wall --trace --cc --build -j --Mdir $(OBJDIR) -GWIDTH=16 -GMODE=1
 VERILATOR_FLAGS_RADIX4_BOOTH_MULTIPLIER = -Wall --trace --cc --build -j --Mdir $(OBJDIR) -GWIDTH=8
+VERILATOR_FLAGS_NON_RESTORING_DIVIDER = -Wall --trace --cc --build -j --Mdir $(OBJDIR) -GWIDTH=8
+VERILATOR_FLAGS_PARAM_SCRAMBLER = -Wall --trace --cc --build -j --Mdir $(OBJDIR) -GWIDTH=16 -GPOLYNOMIAL=16'h8016 -GSELF_SYNCHRONIZED=0
+VERILATOR_FLAGS_MULTI_PHASE_PWM = -Wall -Wno-WIDTHTRUNC -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) -GCHANNELS=3 -GCNT_WIDTH=8 -GPHASE_WIDTH=10 -GDEADTIME_WIDTH=6 -GPOLARITY=1
+VERILATOR_FLAGS_SINE_COSINE_GENERATOR = -Wall -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -I./libraries/cordic --trace --cc --build -j --Mdir $(OBJDIR) -GDATA_WIDTH=16 -GPHASE_WIDTH=16 -GITERATIONS=10 -GPIPELINE=1
+VERILATOR_FLAGS_PARAM_CAM = -Wall --trace --cc --build -j --Mdir $(OBJDIR) -GDATA_WIDTH=8 -GADDR_WIDTH=4 -GNUM_ENTRIES=16 -GPRIORITY_ENCODER=1
+VERILATOR_FLAGS_PARAM_DDS = -Wall -Wno-UNUSEDSIGNAL -Wno-REDEFMACRO -Wno-DECLFILENAME --trace --cc --build -j --Mdir $(OBJDIR) -GPHASE_WIDTH=16 -GOUTPUT_WIDTH=12 -GLUT_ADDR_WIDTH=8 -GUSE_QUARTER_SINE=1
+VERILATOR_FLAGS_PARAM_I2C_MASTER = -Wall -Wno-UNUSEDSIGNAL -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) -GCLK_FREQ=50000000 -GI2C_FREQ=100000
+VERILATOR_FLAGS_AHB_LITE_MASTER = -Wall -Wno-BLKSEQ --trace --cc --build -j --Mdir $(OBJDIR) -GADDR_WIDTH=32 -GDATA_WIDTH=32 -GBURST_SIZE=4 -GRESET_ACTIVE_LOW=1
+VERILATOR_FLAGS_PARAM_ROTATION_SIPO = -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) -GWIDTH=8 -GROTATION=2 -GMSB_FIRST=1
+VERILATOR_FLAGS_DIGITAL_THERMOMETER = -Wall -Wno-EOFNEWLINE -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC -Wno-UNUSEDPARAM -Wno-UNUSEDSIGNAL --trace --cc --build -j --Mdir $(OBJDIR) -GCLK_FREQ_HZ=1000000 -GUPDATE_RATE_HZ=2 -GADC_WIDTH=10 -GTEMP_WIDTH=8 -GFILTER_DEPTH=4 -GUNITS_CELSIUS=1 -GALERT_THRESHOLD=40
 
 # Library directories and module categories
 LIB_DIR = libraries
@@ -46,6 +56,7 @@ FILTERS_DIR = $(LIB_DIR)/filters
 FSM_DIR = $(LIB_DIR)/fsm
 MEMS_DIR = $(LIB_DIR)/mems
 MULTIPLIERS_DIR = $(LIB_DIR)/multipliers
+NOC_DIR = $(LIB_DIR)/noc
 REGISTERS_DIR = $(LIB_DIR)/registers
 SIGNALS_DIR = $(LIB_DIR)/signals
 VOTERS_DIR = $(LIB_DIR)/voters
@@ -96,6 +107,7 @@ DUAL_EDGE_REGISTER_TARGET = dual_edge_register
 TOGGLE_REGISTER_TARGET = toggle_register
 ONEHOT_DECODER_REGISTER_TARGET = onehot_decoder_register
 SYNC_PRESET_REGISTER_TARGET = sync_preset_register
+PARAM_ROTATION_SIPO_TARGET = parameterized_rotation_sipo
 
 # ALU and arithmetic modules
 ALU_TARGET = alu
@@ -131,9 +143,14 @@ LZC_TARGET = leading_zero_counter
 CONFIG_CLZ_CLO_TARGET = configurable_clz_clo
 MESH_ROUTER_TARGET = configurable_mesh_router
 PARAM_CRC_GEN_TARGET = parameterized_crc_generator
+PARAM_SCRAMBLER_TARGET = parameterized_scrambler
+
+# Network-on-Chip modules
+CROSSBAR_TARGET = crossbar_switch
 
 # Memory modules
 DUAL_PORT_RAM_TARGET = dual_port_ram
+PARAM_CAM_TARGET = parameterized_cam
 
 # Filter modules
 FIR_FILTER_TARGET = fir_filter
@@ -143,7 +160,6 @@ CONFIG_FIR_FILTER_TARGET = configurable_fir_filter
 SEQ_DETECTOR_TARGET = sequence_detector_fsm
 
 # Communication modules
-CROSSBAR_TARGET = crossbar_switch
 PARAM_SERDES_TARGET = parameterized_serdes
 PARAM_UART_TX_TARGET = parameterized_uart_tx
 PARAM_UART_RX_TARGET = parameterized_uart_rx
@@ -152,12 +168,15 @@ SPI_MASTER_TARGET = spi_master
 FIXED_SPI_MASTER_TARGET = fixed_spi_master
 BASIC_SPI_MASTER_TARGET = basic_spi_master
 PARAM_SPI_MASTER_TARGET = parameterized_spi_master
+PARAM_I2C_MASTER_TARGET = parameterized_i2c_master
+AHB_LITE_MASTER_TARGET = ahb_lite_master
 
 # Voter modules
 MAJORITY_VOTER_TARGET = majority_voter
 
 # CORDIC module
 CORDIC_TARGET = cordic
+SINE_COSINE_GENERATOR_TARGET = sine_cosine_generator
 
 # Signal modules
 PWM_TARGET = pwm_generator
@@ -165,34 +184,41 @@ PULSE_WIDTH_DETECTOR_TARGET = pulse_width_detector
 PARAM_CLOCK_GATING_TARGET = parameterized_clock_gating
 PARAM_PWM_TARGET = parameterized_pwm
 CONFIG_PRNG_TARGET = configurable_prng
+MULTI_PHASE_PWM_TARGET = multi_phase_pwm_controller
+DIGITAL_THERMOMETER_TARGET = digital_thermometer_controller
 
 # DSP modules
 PARAM_FFT_TARGET = parameterized_fft
+PARAM_DDS_TARGET = parameterized_dds
 
 # Multiplier modules
 RADIX4_BOOTH_MULT_TARGET = radix4_booth_multiplier
+
+# Divider modules
+NON_RESTORING_DIVIDER_TARGET = non_restoring_divider
 
 # Module categories for convenient building
 ADDERS_MODULES = run_configurable_carry_lookahead_adder run_configurable_kogge_stone_adder run_configurable_brent_kung_adder run_configurable_conditional_sum_adder run_configurable_carry_skip_adder run_configurable_carry_select_adder
 FIFO_MODULES = run_fifo run_configurable_sync_fifo run_configurable_param_fifo run_dual_clock_fifo run_parameterized_priority_queue run_circular_buffer_fifo run_credit_based_fifo run_skid_buffer run_elastic_buffer run_async_fifo run_fwft_fifo run_showahead_fifo run_sync_fifo run_memory_mapped_fifo run_pipelined_fifo run_barrel_shifter_fifo run_clock_domain_crossing_fifo run_multi_ported_fifo run_smart_fifo run_cache_fifo
 SHIFTER_MODULES = run_shift_register_right run_shift_register_left run_sipo_register run_piso_register run_siso_register
-REGISTER_MODULES = $(SHIFTER_MODULES) run_barrel_rotator run_parameterized_barrel_rotator run_barrel_shifter run_lfsr run_configurable_lfsr run_universal_shift_register run_bidirectional_shift_register run_johnson_counter run_loadable_updown_counter run_register_file run_scan_register run_shadow_register run_dual_edge_register run_toggle_register run_onehot_decoder_register run_sync_preset_register
+REGISTER_MODULES = $(SHIFTER_MODULES) run_barrel_rotator run_parameterized_barrel_rotator run_barrel_shifter run_lfsr run_configurable_lfsr run_universal_shift_register run_bidirectional_shift_register run_johnson_counter run_loadable_updown_counter run_register_file run_scan_register run_shadow_register run_dual_edge_register run_toggle_register run_onehot_decoder_register run_sync_preset_register run_parameterized_rotation_sipo
 ALU_MODULES = run_alu run_configurable_mult run_configurable_fp_adder run_configurable_comparator run_configurable_signed_comparator run_booth_multiplier run_radix4_booth_multiplier
-CORDIC_MODULES = run_cordic
+CORDIC_MODULES = run_cordic run_sine_cosine_generator
 COUNTERS = run_gray_counter run_configurable_clz_clo run_parameterized_johnson_counter run_multi_flop_synchronizer run_parameterized_gray_counter
-DIVIDERS = run_clock_divider run_parameterized_freq_divider
+DIVIDERS = run_clock_divider run_parameterized_freq_divider run_non_restoring_divider
 ARBITERS = run_arbiter run_arbiter_rr run_fair_priority_arbiter run_matrix_arbiter
-CODINGS = run_binary_to_gray run_gray_to_binary run_hamming_code run_priority_encoder run_configurable_priority_encoder run_leading_zero_counter run_configurable_mesh_router run_parameterized_crc_generator
-DSP_MODULES = run_parameterized_fft
-MEMS = run_dual_port_ram
+CODINGS = run_binary_to_gray run_gray_to_binary run_hamming_code run_priority_encoder run_configurable_priority_encoder run_leading_zero_counter run_parameterized_crc_generator run_parameterized_scrambler
+NOC_MODULES = run_configurable_mesh_router run_crossbar_switch
+DSP_MODULES = run_parameterized_fft run_parameterized_dds
+MEMS = run_dual_port_ram run_parameterized_cam
 FILTERS = run_fir_filter run_configurable_fir_filter
 FSM_MODULES = run_sequence_detector_fsm
-COMMS = run_crossbar_switch run_parameterized_serdes run_parameterized_uart_tx run_parameterized_uart_rx run_simple_spi_master run_spi_master run_fixed_spi_master run_basic_spi_master run_parameterized_spi_master run_parameterized_deserializer
-SIGNALS = run_pwm_generator run_pulse_width_detector run_parameterized_clock_gating run_parameterized_pwm run_configurable_prng
+COMMS = run_parameterized_serdes run_parameterized_uart_tx run_parameterized_uart_rx run_simple_spi_master run_spi_master run_fixed_spi_master run_basic_spi_master run_parameterized_spi_master run_parameterized_deserializer run_parameterized_i2c_master run_ahb_lite_master
+SIGNALS = run_pwm_generator run_pulse_width_detector run_parameterized_clock_gating run_parameterized_pwm run_configurable_prng run_multi_phase_pwm_controller run_digital_thermometer_controller
 VOTERS_MODULES = run_majority_voter
 
 # All modules combined
-ALL_MODULES = $(ADDERS_MODULES) $(FIFO_MODULES) $(REGISTER_MODULES) $(ALU_MODULES) $(CORDIC_MODULES) $(COUNTERS) $(DIVIDERS) $(ARBITERS) $(CODINGS) $(DSP_MODULES) $(MEMS) $(FILTERS) $(FSM_MODULES) $(COMMS) $(SIGNALS) $(VOTERS_MODULES)
+ALL_MODULES = $(ADDERS_MODULES) $(FIFO_MODULES) $(REGISTER_MODULES) $(ALU_MODULES) $(CORDIC_MODULES) $(COUNTERS) $(DIVIDERS) $(ARBITERS) $(CODINGS) $(NOC_MODULES) $(DSP_MODULES) $(MEMS) $(FILTERS) $(FSM_MODULES) $(COMMS) $(SIGNALS) $(VOTERS_MODULES)
 
 # Default target to build and run all modules
 all: $(ALL_MODULES)
@@ -287,8 +313,9 @@ $(foreach module,run_priority_encoder,$(eval $(call build_module_rule,$(module),
 $(foreach module,run_configurable_priority_encoder,$(eval $(call build_module_rule,$(module),CONFIG_PRIORITY_ENC,CODINGS_DIR)))
 $(foreach module,run_leading_zero_counter,$(eval $(call build_module_rule,$(module),LZC,COUNTERS_DIR)))
 $(foreach module,run_configurable_clz_clo,$(eval $(call build_module_rule,$(module),CONFIG_CLZ_CLO,COUNTERS_DIR)))
-$(foreach module,run_configurable_mesh_router,$(eval $(call build_module_rule,$(module),MESH_ROUTER,CODINGS_DIR)))
+$(foreach module,run_configurable_mesh_router,$(eval $(call build_module_rule,$(module),MESH_ROUTER,NOC_DIR)))
 $(foreach module,run_parameterized_crc_generator,$(eval $(call build_module_rule,$(module),PARAM_CRC_GEN,CODINGS_DIR)))
+$(foreach module,run_parameterized_scrambler,$(eval $(call build_module_rule,$(module),PARAM_SCRAMBLER,CODINGS_DIR)))
 
 $(foreach module,run_dual_port_ram,$(eval $(call build_module_rule,$(module),DUAL_PORT_RAM,MEMS_DIR)))
 
@@ -297,7 +324,7 @@ $(foreach module,run_configurable_fir_filter,$(eval $(call build_module_rule,$(m
 
 $(foreach module,run_sequence_detector_fsm,$(eval $(call build_module_rule,$(module),SEQ_DETECTOR,FSM_DIR)))
 
-$(foreach module,run_crossbar_switch,$(eval $(call build_module_rule,$(module),CROSSBAR,CODINGS_DIR)))
+$(foreach module,run_crossbar_switch,$(eval $(call build_module_rule,$(module),CROSSBAR,NOC_DIR)))
 $(foreach module,run_parameterized_serdes,$(eval $(call build_module_rule,$(module),PARAM_SERDES,COMMS_DIR)))
 $(foreach module,run_parameterized_uart_tx,$(eval $(call build_module_rule,$(module),PARAM_UART_TX,COMMS_DIR)))
 
@@ -306,6 +333,13 @@ $(foreach module,run_majority_voter,$(eval $(call build_module_rule,$(module),MA
 
 # Add CORDIC module
 $(foreach module,run_cordic,$(eval $(call build_module_rule,$(module),CORDIC,CORDIC_DIR)))
+
+# Add rule for the sine_cosine_generator module
+build_run_sine_cosine_generator: $(CORDIC_DIR)/$(SINE_COSINE_GENERATOR_TARGET).v $(CORDIC_DIR)/cordic_core.v $(CORDIC_DIR)/tb_$(SINE_COSINE_GENERATOR_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_SINE_COSINE_GENERATOR) $(VERILATOR_CPP_FLAGS) $(CORDIC_DIR)/$(SINE_COSINE_GENERATOR_TARGET).v $(CORDIC_DIR)/cordic_core.v $(CORDIC_DIR)/tb_$(SINE_COSINE_GENERATOR_TARGET).cpp
+
+run_sine_cosine_generator: build_run_sine_cosine_generator
+	./$(OBJDIR)/V$(SINE_COSINE_GENERATOR_TARGET)
 
 # Special rule for SPI master
 build_run_simple_spi_master: $(COMMS_DIR)/$(SIMPLE_SPI_MASTER_TARGET).v $(COMMS_DIR)/tb_$(SIMPLE_SPI_MASTER_TARGET).cpp
@@ -359,6 +393,7 @@ counters: $(COUNTERS)
 dividers: $(DIVIDERS)
 arbiters: $(ARBITERS)
 codings: $(CODINGS)
+noc: $(NOC_MODULES)
 dsp: $(DSP_MODULES)
 mems: $(MEMS)
 filters: $(FILTERS) run_config_fir_low_pass run_config_fir_high_pass
@@ -373,10 +408,11 @@ clean:
 	rm -f *.vcd
 
 # PHONY targets to prevent conflicts with file names
-.PHONY: all clean $(ALL_MODULES) run_configurable_signed_comparator \
-	adders fifos registers alu cordic counters dividers arbiters codings dsp mems filters fsm comms signals voters \
+.PHONY: all clean $(ALL_MODULES) run_configurable_signed_comparator run_parameterized_cam \
+	adders fifos registers alu cordic counters dividers arbiters codings noc dsp mems filters fsm comms signals voters \
 	build_config_fir_low_pass run_config_fir_low_pass build_config_fir_high_pass run_config_fir_high_pass \
-	run_async_fifo run_fwft_fifo run_showahead_fifo run_sync_fifo run_memory_mapped_fifo run_pipelined_fifo run_barrel_shifter_fifo run_clock_domain_crossing_fifo run_multi_ported_fifo run_smart_fifo run_cache_fifo
+	run_async_fifo run_fwft_fifo run_showahead_fifo run_sync_fifo run_memory_mapped_fifo run_pipelined_fifo run_barrel_shifter_fifo run_clock_domain_crossing_fifo run_multi_ported_fifo run_smart_fifo run_cache_fifo \
+	run_ahb_lite_master build_run_ahb_lite_master run_parameterized_rotation_sipo run_digital_thermometer_controller
 
 # Add rule for the parameterized clock gating module
 build_run_parameterized_clock_gating: $(SIGNALS_DIR)/$(PARAM_CLOCK_GATING_TARGET).v $(SIGNALS_DIR)/tb_$(PARAM_CLOCK_GATING_TARGET).cpp
@@ -513,9 +549,65 @@ build_run_configurable_prng_galois: $(SIGNALS_DIR)/$(CONFIG_PRNG_TARGET).v $(SIG
 run_configurable_prng_galois: build_run_configurable_prng_galois
 	./$(OBJDIR)/V$(CONFIG_PRNG_TARGET)_galois
 
+# Add rule for the non-restoring divider
+build_run_non_restoring_divider: $(DIVIDERS_DIR)/$(NON_RESTORING_DIVIDER_TARGET).v $(DIVIDERS_DIR)/tb_$(NON_RESTORING_DIVIDER_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_NON_RESTORING_DIVIDER) $(VERILATOR_CPP_FLAGS) $(DIVIDERS_DIR)/$(NON_RESTORING_DIVIDER_TARGET).v $(DIVIDERS_DIR)/tb_$(NON_RESTORING_DIVIDER_TARGET).cpp
+
+run_non_restoring_divider: build_run_non_restoring_divider
+	./$(OBJDIR)/V$(NON_RESTORING_DIVIDER_TARGET)
+
 # Add rule for Radix-4 Booth multiplier
 build_run_radix4_booth_multiplier: $(MULTIPLIERS_DIR)/$(RADIX4_BOOTH_MULT_TARGET).v $(MULTIPLIERS_DIR)/tb_$(RADIX4_BOOTH_MULT_TARGET).cpp
 	$(VERILATOR) $(VERILATOR_FLAGS_RADIX4_BOOTH_MULTIPLIER) $(VERILATOR_CPP_FLAGS) $(MULTIPLIERS_DIR)/$(RADIX4_BOOTH_MULT_TARGET).v $(MULTIPLIERS_DIR)/tb_$(RADIX4_BOOTH_MULT_TARGET).cpp
 
 run_radix4_booth_multiplier: build_run_radix4_booth_multiplier
 	./$(OBJDIR)/V$(RADIX4_BOOTH_MULT_TARGET)
+
+# Add rule for the multi_phase_pwm_controller
+build_run_multi_phase_pwm_controller: $(SIGNALS_DIR)/$(MULTI_PHASE_PWM_TARGET).v $(SIGNALS_DIR)/tb_$(MULTI_PHASE_PWM_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_MULTI_PHASE_PWM) $(VERILATOR_CPP_FLAGS) $(SIGNALS_DIR)/$(MULTI_PHASE_PWM_TARGET).v $(SIGNALS_DIR)/tb_$(MULTI_PHASE_PWM_TARGET).cpp
+
+run_multi_phase_pwm_controller: build_run_multi_phase_pwm_controller
+	./$(OBJDIR)/V$(MULTI_PHASE_PWM_TARGET)
+
+# Add rule for the parameterized CAM
+build_run_parameterized_cam: $(MEMS_DIR)/$(PARAM_CAM_TARGET).v $(MEMS_DIR)/tb_$(PARAM_CAM_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_PARAM_CAM) $(VERILATOR_CPP_FLAGS) $(MEMS_DIR)/$(PARAM_CAM_TARGET).v $(MEMS_DIR)/tb_$(PARAM_CAM_TARGET).cpp
+
+run_parameterized_cam: build_run_parameterized_cam
+	./$(OBJDIR)/V$(PARAM_CAM_TARGET)
+
+# Add rule for the parameterized DDS
+build_run_parameterized_dds: $(DSP_DIR)/$(PARAM_DDS_TARGET).v $(DSP_DIR)/tb_$(PARAM_DDS_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_PARAM_DDS) $(VERILATOR_CPP_FLAGS) $(DSP_DIR)/$(PARAM_DDS_TARGET).v $(DSP_DIR)/tb_$(PARAM_DDS_TARGET).cpp
+
+run_parameterized_dds: build_run_parameterized_dds
+	./$(OBJDIR)/V$(PARAM_DDS_TARGET)
+
+# Add rule for the parameterized I2C master
+build_run_parameterized_i2c_master: $(COMMS_DIR)/$(PARAM_I2C_MASTER_TARGET).v $(COMMS_DIR)/tb_$(PARAM_I2C_MASTER_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_PARAM_I2C_MASTER) $(VERILATOR_CPP_FLAGS) $(COMMS_DIR)/$(PARAM_I2C_MASTER_TARGET).v $(COMMS_DIR)/tb_$(PARAM_I2C_MASTER_TARGET).cpp
+
+run_parameterized_i2c_master: build_run_parameterized_i2c_master
+	./$(OBJDIR)/V$(PARAM_I2C_MASTER_TARGET)
+
+# Add rule for the digital thermometer controller
+build_run_digital_thermometer_controller: $(SIGNALS_DIR)/$(DIGITAL_THERMOMETER_TARGET).v $(SIGNALS_DIR)/tb_$(DIGITAL_THERMOMETER_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_DIGITAL_THERMOMETER) $(VERILATOR_CPP_FLAGS) $(SIGNALS_DIR)/$(DIGITAL_THERMOMETER_TARGET).v $(SIGNALS_DIR)/tb_$(DIGITAL_THERMOMETER_TARGET).cpp
+
+run_digital_thermometer_controller: build_run_digital_thermometer_controller
+	./$(OBJDIR)/V$(DIGITAL_THERMOMETER_TARGET)
+
+# Add rule for parameterized rotation SIPO
+build_run_parameterized_rotation_sipo: $(REGISTERS_DIR)/$(PARAM_ROTATION_SIPO_TARGET).v $(REGISTERS_DIR)/tb_$(PARAM_ROTATION_SIPO_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_PARAM_ROTATION_SIPO) $(VERILATOR_CPP_FLAGS) $(REGISTERS_DIR)/$(PARAM_ROTATION_SIPO_TARGET).v $(REGISTERS_DIR)/tb_$(PARAM_ROTATION_SIPO_TARGET).cpp
+
+run_parameterized_rotation_sipo: build_run_parameterized_rotation_sipo
+	./$(OBJDIR)/V$(PARAM_ROTATION_SIPO_TARGET)
+
+# Add rule for AHB Lite master
+build_run_ahb_lite_master: $(COMMS_DIR)/$(AHB_LITE_MASTER_TARGET).v $(COMMS_DIR)/tb_$(AHB_LITE_MASTER_TARGET).cpp
+	$(VERILATOR) $(VERILATOR_FLAGS_AHB_LITE_MASTER) $(VERILATOR_CPP_FLAGS) $(COMMS_DIR)/$(AHB_LITE_MASTER_TARGET).v $(COMMS_DIR)/tb_$(AHB_LITE_MASTER_TARGET).cpp
+
+run_ahb_lite_master: build_run_ahb_lite_master
+	./$(OBJDIR)/V$(AHB_LITE_MASTER_TARGET)

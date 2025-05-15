@@ -98,6 +98,14 @@ int main(int argc, char** argv) {
     dut->trace(m_trace, 5);
     m_trace->open("waveform_sync_fifo.vcd");
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 3; // Three test cases
+    bool test1_pass = true;
+    bool test2_pass = true;
+    bool test3_pass = true;
+    
     // Initialize signals
     dut->src_clk = 0;
     dut->dst_clk = 0;
@@ -134,14 +142,19 @@ int main(int argc, char** argv) {
             std::cout << "Data sent successfully" << std::endl;
         } else {
             std::cout << "Failed to send data" << std::endl;
+            test1_pass = false;
         }
         
         // Receive data at destination
         if (receive_data(dut, m_trace, received_data)) {
             std::cout << "Received data: 0x" << std::hex << (int)received_data << std::dec;
             std::cout << " (Expected: 0x" << std::hex << (int)test_data[i] << std::dec << ")" << std::endl;
+            if (received_data != test_data[i]) {
+                test1_pass = false;
+            }
         } else {
             std::cout << "Failed to receive data" << std::endl;
+            test1_pass = false;
         }
     }
     
@@ -199,8 +212,12 @@ int main(int argc, char** argv) {
         if (receive_data(dut, m_trace, received_data)) {
             std::cout << "Received data: 0x" << std::hex << (int)received_data << std::dec;
             std::cout << " (Expected: 0x" << std::hex << (int)rapid_data[i] << std::dec << ")" << std::endl;
+            if (received_data != rapid_data[i]) {
+                test2_pass = false;
+            }
         } else {
             std::cout << "Failed to receive data" << std::endl;
+            test2_pass = false;
         }
     }
     
@@ -238,11 +255,24 @@ int main(int argc, char** argv) {
     if (receive_data(dut, m_trace, received_data)) {
         std::cout << "Received data: 0x" << std::hex << (int)received_data << std::dec;
         std::cout << " (Expected: 0x" << std::hex << (int)slow_dst_data << std::dec << ")" << std::endl;
+        if (received_data != slow_dst_data) {
+            test3_pass = false;
+        }
     } else {
         std::cout << "Failed to receive data" << std::endl;
+        test3_pass = false;
     }
     
-    std::cout << "\nSynchronization FIFO test completed!" << std::endl;
+    // Track test results
+    if (test1_pass) tests_passed++;
+    if (test2_pass) tests_passed++;
+    if (test3_pass) tests_passed++;
+    all_tests_pass = test1_pass && test2_pass && test3_pass;
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();

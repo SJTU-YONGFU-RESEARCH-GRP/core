@@ -6,6 +6,10 @@
 #include <ctime>
 #include "Vmajority_voter.h"
 
+// Global test counters
+int total_tests = 0;
+int passed_tests = 0;
+
 void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     const int INPUT_WIDTH = 8;
     const int NUM_INPUTS = 5;
@@ -14,6 +18,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     uint8_t test_inputs[NUM_INPUTS];
     
     // Test case 1: Simple majority (3 of 5 inputs are 0x55)
+    total_tests++;
     test_inputs[0] = 0x55;
     test_inputs[1] = 0x55;
     test_inputs[2] = 0x55;
@@ -35,6 +40,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     // Check the result
     if (voter->majority_out == 0x55 && voter->valid == 1) {
         std::cout << "Test Case 1 PASSED: Majority correctly identified as 0x55" << std::endl;
+        passed_tests++;
     } else {
         std::cout << "Test Case 1 FAILED: Expected 0x55, got 0x" 
                   << std::hex << (int)voter->majority_out 
@@ -42,6 +48,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     }
     
     // Test case 2: No majority
+    total_tests++;
     test_inputs[0] = 0x11;
     test_inputs[1] = 0x22;
     test_inputs[2] = 0x33;
@@ -63,6 +70,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     // Check the result - should be no valid majority
     if (voter->valid == 0) {
         std::cout << "Test Case 2 PASSED: Correctly identified no majority" << std::endl;
+        passed_tests++;
     } else {
         std::cout << "Test Case 2 FAILED: Expected no majority, but got value 0x" 
                   << std::hex << (int)voter->majority_out 
@@ -70,6 +78,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     }
     
     // Test case 3: All inputs are the same (unanimous)
+    total_tests++;
     test_inputs[0] = 0xCC;
     test_inputs[1] = 0xCC;
     test_inputs[2] = 0xCC;
@@ -91,6 +100,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     // Check the result
     if (voter->majority_out == 0xCC && voter->valid == 1) {
         std::cout << "Test Case 3 PASSED: Unanimous majority correctly identified as 0xCC" << std::endl;
+        passed_tests++;
     } else {
         std::cout << "Test Case 3 FAILED: Expected 0xCC, got 0x" 
                   << std::hex << (int)voter->majority_out 
@@ -98,6 +108,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     }
     
     // Test case 4: Exactly threshold majority (3 of 5)
+    total_tests++;
     test_inputs[0] = 0x77;
     test_inputs[1] = 0x77;
     test_inputs[2] = 0x77;
@@ -119,6 +130,7 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     // Check the result
     if (voter->majority_out == 0x77 && voter->valid == 1) {
         std::cout << "Test Case 4 PASSED: Majority correctly identified as 0x77" << std::endl;
+        passed_tests++;
     } else {
         std::cout << "Test Case 4 FAILED: Expected 0x77, got 0x" 
                   << std::hex << (int)voter->majority_out 
@@ -148,6 +160,11 @@ int main(int argc, char** argv) {
     
     // Run tests
     check_operation(voter, tfp, sim_time);
+    
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Cleanup
     #ifdef TRACE

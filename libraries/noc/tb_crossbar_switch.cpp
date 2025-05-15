@@ -46,7 +46,7 @@ uint8_t get_select(Vcrossbar_switch* crossbar, int output_index) {
     return (crossbar->select >> (output_index * SELECT_WIDTH)) & ((1 << SELECT_WIDTH) - 1);
 }
 
-void check_crossbar_operation(std::unique_ptr<Vcrossbar_switch>& crossbar, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+void check_crossbar_operation(std::unique_ptr<Vcrossbar_switch>& crossbar, VerilatedVcdC* tfp, vluint64_t& sim_time, bool& all_tests_pass, int& tests_passed, int& total_tests) {
     // Parameters from the design
     const int NUM_INPUTS = 4;
     const int NUM_OUTPUTS = 4;
@@ -106,6 +106,10 @@ void check_crossbar_operation(std::unique_ptr<Vcrossbar_switch>& crossbar, Veril
         {{0, 1, 0, 1}, "Alternating inputs 0 and 1"}
     };
     
+    // Test case 1 consists of routing configurations
+    total_tests += test_cases.size();
+    int basic_routing_passed = 0;
+    
     for (size_t tc = 0; tc < test_cases.size(); tc++) {
         std::cout << "\nTest Case " << tc + 1 << ": " << test_cases[tc].description << std::endl;
         
@@ -152,10 +156,14 @@ void check_crossbar_operation(std::unique_ptr<Vcrossbar_switch>& crossbar, Veril
         
         if (all_correct) {
             std::cout << "Test Case " << tc + 1 << " PASSED" << std::endl;
+            basic_routing_passed++;
         } else {
             std::cout << "Test Case " << tc + 1 << " FAILED" << std::endl;
+            all_tests_pass = false;
         }
     }
+    
+    tests_passed += basic_routing_passed;
     
     // Test 2: Dynamic routing changes
     std::cout << "\nTest 2: Dynamic Routing Changes" << std::endl;
@@ -180,6 +188,10 @@ void check_crossbar_operation(std::unique_ptr<Vcrossbar_switch>& crossbar, Veril
         {3, 3, 3, 3},
         {3, 2, 1, 0}
     };
+    
+    // Test case 2 consists of dynamic routing changes
+    total_tests += 5;
+    int dynamic_routing_passed = 0;
     
     for (int step = 0; step < 5; step++) {
         std::cout << "\nDynamic Step " << step + 1 << ":" << std::endl;
@@ -226,10 +238,14 @@ void check_crossbar_operation(std::unique_ptr<Vcrossbar_switch>& crossbar, Veril
         
         if (all_correct) {
             std::cout << "Dynamic Step " << step + 1 << " PASSED" << std::endl;
+            dynamic_routing_passed++;
         } else {
             std::cout << "Dynamic Step " << step + 1 << " FAILED" << std::endl;
+            all_tests_pass = false;
         }
     }
+    
+    tests_passed += dynamic_routing_passed;
 }
 
 int main(int argc, char** argv) {
@@ -248,13 +264,22 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Test tracking variables
+    bool all_tests_pass = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
     // Run tests
-    check_crossbar_operation(crossbar, tfp.get(), sim_time);
+    check_crossbar_operation(crossbar, tfp.get(), sim_time, all_tests_pass, tests_passed, total_tests);
     
     // Cleanup
     tfp->close();
     crossbar->final();
     
-    std::cout << "\nSimulation completed successfully!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << std::dec << tests_passed << " of " << std::dec << total_tests << std::endl;
+    
     return 0;
 } 
