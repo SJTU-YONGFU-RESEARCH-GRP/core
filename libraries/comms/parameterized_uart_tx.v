@@ -3,66 +3,56 @@
 // data width and baud rate settings
 
 module parameterized_uart_tx #(
-    parameter DATA_WIDTH = 8,             // Data width (typically 5-9)
-    parameter PARITY_EN = 0,              // Enable parity bit (0: disabled, 1: enabled)
-    parameter PARITY_TYPE = 0,            // Parity type (0: even, 1: odd)
-    parameter STOP_BITS = 1,              // Number of stop bits (1 or 2)
-    parameter CLOCK_FREQ = 50_000_000,    // Clock frequency in Hz
-    parameter BAUD_RATE = 115200          // Baud rate in bits per second
+    parameter CLK_FREQ = 50000,     // Clock frequency in Hz (reduced for simulation)
+    parameter BAUD_RATE = 1000,     // Baud rate in bits per second (reduced for simulation)
+    parameter DATA_WIDTH = 8,        // Data width (5-9 bits)
+    parameter PARITY_EN = 0,         // Parity enable (0=disabled, 1=enabled)
+    parameter PARITY_TYPE = 0,       // Parity type (0=even, 1=odd)
+    parameter STOP_BITS = 1          // Number of stop bits (1 or 2)
 ) (
-    input wire clk,                       // System clock
-    input wire rst_n,                     // Active low reset
-    input wire [DATA_WIDTH-1:0] data_in,  // Data to transmit
-    input wire tx_start,                  // Start transmission
-    output reg tx,                        // UART TX line
-    output reg tx_busy                    // Transmitter busy flag
+    input wire clk,                  // System clock
+    input wire rst_n,                // Active low reset
+    input wire tx_start,             // Start transmission
+    input wire [DATA_WIDTH-1:0] data_in, // Data to transmit
+    output reg tx,                   // UART TX line
+    output reg tx_busy               // Transmitter busy flag
 );
 
-    // Calculate clock ticks per bit based on baud rate
-    localparam CLKS_PER_BIT = CLOCK_FREQ / BAUD_RATE;
+    // Derived parameters
+    localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;
+    
+    // Define bit widths for counters
+    localparam BIT_TIMER_WIDTH = $clog2(CLKS_PER_BIT);
+    localparam BIT_COUNTER_WIDTH = $clog2(DATA_WIDTH);
     
     // State definitions
-    localparam IDLE     = 3'd0;
-    localparam START    = 3'd1;
-    localparam DATA     = 3'd2;
-    localparam PARITY   = 3'd3;
-    localparam STOP     = 3'd4;
+    localparam IDLE = 3'd0;
+    localparam START = 3'd1;
+    localparam DATA = 3'd2;
+    localparam PARITY = 3'd3;
+    localparam STOP = 3'd4;
     
     // Internal registers
     reg [2:0] state;
-    reg [$clog2(CLKS_PER_BIT)-1:0] bit_timer;
-    reg [$clog2(DATA_WIDTH)-1:0] bit_counter;
+    reg [BIT_TIMER_WIDTH-1:0] clk_counter;
+    reg [BIT_COUNTER_WIDTH-1:0] bit_index;
     reg [DATA_WIDTH-1:0] data_reg;
     reg parity_bit;
-    reg [$clog2(STOP_BITS+1)-1:0] stop_bit_counter;
-
-    // Define constants for comparison with proper widths
-    localparam [$clog2(CLKS_PER_BIT)-1:0] CLKS_PER_BIT_M1_WIDTH = $clog2(CLKS_PER_BIT)'(CLKS_PER_BIT - 1);
-    localparam [$clog2(DATA_WIDTH)-1:0] DATA_WIDTH_M1_WIDTH = $clog2(DATA_WIDTH)'(DATA_WIDTH - 1);
+    reg stop_bit_index;
     
-    // Function to reverse the bit order for LSB-first transmission
-    function [DATA_WIDTH-1:0] reverse_bits;
-        input [DATA_WIDTH-1:0] data;
-        integer i;
-        begin
-            for (i = 0; i < DATA_WIDTH; i = i + 1)
-                reverse_bits[i] = data[DATA_WIDTH-1-i];
-        end
-    endfunction
+    // Constants for width-matching comparisons
+    /* verilator lint_off WIDTHTRUNC */
+    localparam [BIT_TIMER_WIDTH-1:0] CLKS_PER_BIT_M1 = CLKS_PER_BIT - 1;
+    localparam [BIT_COUNTER_WIDTH-1:0] DATA_WIDTH_M1 = DATA_WIDTH - 1;
+    /* verilator lint_on WIDTHTRUNC */
     
-    // Function to calculate parity
-    function parity_calc;
-        input [DATA_WIDTH-1:0] data;
-        input parity_type;
-        integer i;
-        begin
-            parity_calc = 0;
-            for (i = 0; i < DATA_WIDTH; i = i + 1)
-                parity_calc = parity_calc ^ data[i];
-            if (parity_type)
-                parity_calc = ~parity_calc;
-        end
-    endfunction
+    // Debug signals
+    // synthesis translate_off
+    initial begin
+        $display("UART TX Parameters: CLK_FREQ=%0d, BAUD_RATE=%0d, CLKS_PER_BIT=%0d", 
+                 CLK_FREQ, BAUD_RATE, CLKS_PER_BIT);
+    end
+    // synthesis translate_on
     
     // State machine
     always @(posedge clk or negedge rst_n) begin
@@ -70,95 +60,135 @@ module parameterized_uart_tx #(
             state <= IDLE;
             tx <= 1'b1;           // Idle state is high
             tx_busy <= 1'b0;
-            bit_timer <= 0;
-            bit_counter <= 0;
+            clk_counter <= 0;
+            bit_index <= 0;
             data_reg <= 0;
             parity_bit <= 0;
-            stop_bit_counter <= 0;
+            stop_bit_index <= 0;
         end else begin
-            // Debug output for tx and state
-            $display("[UART TX] time=%0t state=%0d tx=%b bit_counter=%0d bit_timer=%0d stop_bit_counter=%0d", $time, state, tx, bit_counter, bit_timer, stop_bit_counter);
             case (state)
                 IDLE: begin
                     tx <= 1'b1;             // Idle state is high
-                    bit_timer <= 0;
-                    bit_counter <= 0;
-                    stop_bit_counter <= 0;
+                    clk_counter <= 0;
+                    bit_index <= 0;
+                    stop_bit_index <= 0;
+                    tx_busy <= 1'b0;        // Ensure tx_busy is clear in IDLE
                     
+                    // Check for tx_start signal
                     if (tx_start) begin
-                        tx_busy <= 1'b1;
-                        // Store data for LSB-first transmission (no need to reverse since we'll transmit LSB first)
+                        // Store data and start transmission
                         data_reg <= data_in;
-                        if (PARITY_EN != 0) begin
-                            parity_bit <= parity_calc(data_in, PARITY_TYPE);
-                        end
+                        tx_busy <= 1'b1;
                         state <= START;
+                        
+                        // synthesis translate_off
+                        $display("[UART TX] Starting transmission of 0x%h at time %0t", data_in, $time);
+                        // synthesis translate_on
                     end
                 end
                 
                 START: begin
-                    tx <= 1'b0; // Start bit is low
-                    if (bit_timer < CLKS_PER_BIT_M1_WIDTH) begin
-                        bit_timer <= bit_timer + 1'b1;
+                    // Start bit is low
+                    tx <= 1'b0;
+                    
+                    if (clk_counter < CLKS_PER_BIT_M1) begin
+                        clk_counter <= clk_counter + 1;
                     end else begin
-                        bit_timer <= 0;
+                        clk_counter <= 0;
                         state <= DATA;
+                        
+                        // Initialize parity calculation
+                        if (PARITY_EN)
+                            parity_bit <= PARITY_TYPE;
+                            
+                        // synthesis translate_off
+                        $display("[UART TX] Start bit complete at time %0t", $time);
+                        // synthesis translate_on
                     end
                 end
                 
                 DATA: begin
-                    tx <= data_reg[bit_counter];
-                    if (bit_timer < CLKS_PER_BIT_M1_WIDTH) begin
-                        bit_timer <= bit_timer + 1'b1;
+                    // Transmit data bits (LSB first)
+                    tx <= data_reg[bit_index];
+                    
+                    // Update parity if enabled
+                    if (PARITY_EN && clk_counter == 0)
+                        parity_bit <= parity_bit ^ data_reg[bit_index];
+                    
+                    if (clk_counter < CLKS_PER_BIT_M1) begin
+                        clk_counter <= clk_counter + 1;
                     end else begin
-                        bit_timer <= 0;
-                        if (bit_counter < DATA_WIDTH_M1_WIDTH) begin
-                            bit_counter <= bit_counter + 1'b1;
+                        clk_counter <= 0;
+                        
+                        if (bit_index < DATA_WIDTH_M1) begin
+                            bit_index <= bit_index + 1;
+                            // synthesis translate_off
+                            $display("[UART TX] Sending bit %0d = %0b at time %0t", 
+                                     bit_index, data_reg[bit_index], $time);
+                            // synthesis translate_on
                         end else begin
-                            bit_counter <= 0; // Reset bit_counter after last data bit
-                            if (PARITY_EN != 0) begin
+                            bit_index <= 0;
+                            if (PARITY_EN)
                                 state <= PARITY;
-                            end else begin
-                                stop_bit_counter <= 0;
+                            else
                                 state <= STOP;
-                            end
+                                
+                            // synthesis translate_off
+                            $display("[UART TX] All data bits sent at time %0t", $time);
+                            // synthesis translate_on
                         end
                     end
                 end
                 
                 PARITY: begin
+                    // Transmit parity bit
                     tx <= parity_bit;
-                    if (bit_timer < CLKS_PER_BIT_M1_WIDTH) begin
-                        bit_timer <= bit_timer + 1'b1;
+                    
+                    if (clk_counter < CLKS_PER_BIT_M1) begin
+                        clk_counter <= clk_counter + 1;
                     end else begin
-                        bit_timer <= 0;
-                        stop_bit_counter <= 0;
+                        clk_counter <= 0;
                         state <= STOP;
+                        
+                        // synthesis translate_off
+                        $display("[UART TX] Parity bit sent at time %0t", $time);
+                        // synthesis translate_on
                     end
                 end
                 
                 STOP: begin
-                    tx <= 1'b1;  // Stop bit is high
-                    if (bit_timer < CLKS_PER_BIT_M1_WIDTH) begin
-                        bit_timer <= bit_timer + 1'b1;
+                    // Stop bit is high
+                    tx <= 1'b1;
+                    
+                    if (clk_counter < CLKS_PER_BIT_M1) begin
+                        clk_counter <= clk_counter + 1;
                     end else begin
-                        bit_timer <= 0;
+                        clk_counter <= 0;
+                        
                         /* verilator lint_off UNSIGNED */
-                        if (stop_bit_counter < (STOP_BITS - 1)) begin
-                            stop_bit_counter <= stop_bit_counter + 1'b1;
-                        end else begin
-                            stop_bit_counter <= 0;  // Reset stop bit counter
-                            state <= IDLE;
-                            tx_busy <= 1'b0;
-                        end
+                        if (stop_bit_index < (STOP_BITS - 1)) begin
                         /* verilator lint_on UNSIGNED */
+                            stop_bit_index <= stop_bit_index + 1;
+                            // synthesis translate_off
+                            $display("[UART TX] Stop bit %0d sent at time %0t", 
+                                     stop_bit_index + 1, $time);
+                            // synthesis translate_on
+                        end else begin
+                            state <= IDLE;
+                            tx_busy <= 1'b0;  // Transmission complete
+                            // synthesis translate_off
+                            $display("[UART TX] Transmission complete at time %0t", $time);
+                            // synthesis translate_on
+                        end
                     end
                 end
                 
-                default: state <= IDLE;
+                default: begin
+                    state <= IDLE;
+                    tx_busy <= 1'b0;  // Make sure tx_busy is cleared in case of error
+                end
             endcase
         end
     end
 
 endmodule 
-

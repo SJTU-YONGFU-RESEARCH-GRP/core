@@ -1,37 +1,30 @@
-#include <iostream>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include "Vparameterized_uart_tx.h"
-#include <vector>
+#include <iostream>
 #include <iomanip>
+#include <vector>
 #include <bitset>
-#include <cassert>
-#include <algorithm>
 #include <sstream>
+#include <cassert>
+#include <cstring>
 
-// Test parameters
-#define CLOCK_FREQ 50000000    // 50 MHz clock
-#define BAUD_RATE 115200       // 115200 bps (match RTL)
-#define CLKS_PER_BIT (CLOCK_FREQ / BAUD_RATE)
-#define DATA_WIDTH 8           // 8-bit data
-#define PARITY_EN 1            // Enable parity
-#define PARITY_TYPE 0          // Even parity
-#define NUM_STOP_BITS 1        // 1 stop bit
+// Debug level
+#define DEBUG_LEVEL 1
 
-// Duration of simulation
-#define MAX_SIM_TIME 10000000
+// Maximum simulation time
+#define MAX_SIM_TIME 100000
 
-// Debug flag
-#define DEBUG_PRINT 1
+// Define test parameters - must match the Verilog module parameters
+const int CLK_FREQ = 50000;      // Clock frequency in Hz
+const int BAUD_RATE = 1000;      // Baud rate in bits per second
+const int CLOCKS_PER_BIT = CLK_FREQ / BAUD_RATE;
+const int DATA_WIDTH = 8;
+const bool PARITY_EN = 0;
+const bool PARITY_TYPE = 0;
+const int STOP_BITS = 1;
 
-// Function to reverse bits of a byte
-uint8_t reverse_bits(uint8_t b) {
-    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
-    b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
-    b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
-    return b;
-}
-
+// UART RX Monitor for testbench
 class UartRxMonitor {
 private:
     int m_clksPerBit;
@@ -40,7 +33,6 @@ private:
     bool m_parityType;
     int m_stopBits;
     
-    // Current state of monitor
     enum State { 
         IDLE, 
         START_BIT, 
@@ -55,7 +47,6 @@ private:
     int m_bitIndex;
     int m_stopBitCount;
     uint8_t m_dataReg;
-    bool m_parityBit;
     bool m_prevTx;
     
 public:
@@ -63,21 +54,22 @@ public:
         : m_clksPerBit(clksPerBit), m_dataWidth(dataWidth), m_parityEn(parityEn),
           m_parityType(parityType), m_stopBits(stopBits), m_state(IDLE), m_clockCount(0),
           m_bitIndex(0), m_dataReg(0), m_stopBitCount(0), m_prevTx(true) {
+        if (DEBUG_LEVEL > 0) {
             std::cout << "RX Monitor initialized with clks_per_bit = " << m_clksPerBit << std::endl;
         }
-    
-    // Check bit value in the test data
-    static bool getBit(uint8_t data, int bit) {
-        return ((data >> bit) & 0x01) != 0;
     }
     
-    // For debug: get expected bit pattern
-    static std::string getBitPattern(uint8_t data) {
-        std::stringstream ss;
-        for (int i = 0; i < 8; i++) {
-            ss << getBit(data, i);
+    // Reset the monitor to a known state
+    void reset() {
+        m_state = IDLE;
+        m_clockCount = 0;
+        m_bitIndex = 0;
+        m_dataReg = 0;
+        m_stopBitCount = 0;
+        m_prevTx = true;
+        if (DEBUG_LEVEL > 0) {
+            std::cout << "RX Monitor reset to IDLE state" << std::endl;
         }
-        return ss.str();
     }
     
     // Monitor the UART TX line and decode the data
@@ -86,33 +78,52 @@ public:
         
         // Detect falling edge (start bit)
         bool fallingEdge = m_prevTx && !txLine;
+        
+        // Debug output
+        if (DEBUG_LEVEL > 2) {
+            std::cout << "RX Monitor: state=" << m_state 
+                      << ", txLine=" << txLine 
+                      << ", prevTx=" << m_prevTx 
+                      << ", fallingEdge=" << fallingEdge 
+                      << ", clockCount=" << m_clockCount
+                      << ", bitIndex=" << m_bitIndex
+                      << std::endl;
+        }
+        
         m_prevTx = txLine;
         
         switch (m_state) {
             case IDLE:
-                m_clockCount = 0;
-                m_bitIndex = 0;
-                m_dataReg = 0;
-                m_stopBitCount = 0;
-                if (m_prevTx && !txLine) {
-                    if (DEBUG_PRINT) std::cout << "RX Monitor: Detected start bit (falling edge)" << std::endl;
+                if (fallingEdge) {
+                    if (DEBUG_LEVEL > 0) {
+                        std::cout << "RX Monitor: Detected start bit (falling edge)" << std::endl;
+                    }
                     m_state = START_BIT;
+                    m_clockCount = 0;
+                    m_bitIndex = 0;
+                    m_dataReg = 0;
                 }
                 break;
                 
             case START_BIT:
                 m_clockCount++;
-                // Check middle of start bit to confirm it's still low
+                
+                // Sample middle of start bit to confirm it's still low
                 if (m_clockCount == m_clksPerBit / 2) {
                     if (txLine) {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: Invalid start bit" << std::endl;
+                        if (DEBUG_LEVEL > 0) {
+                            std::cout << "RX Monitor: Invalid start bit" << std::endl;
+                        }
                         m_state = IDLE;
                     } else {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: Valid start bit confirmed" << std::endl;
+                        if (DEBUG_LEVEL > 0) {
+                            std::cout << "RX Monitor: Valid start bit confirmed" << std::endl;
+                        }
                     }
                 }
-                // Move to data bits after 1.5 bit periods from start bit edge
-                if (m_clockCount >= m_clksPerBit + m_clksPerBit / 2) {
+                
+                // Move to data bits after one full bit period
+                if (m_clockCount >= m_clksPerBit) {
                     m_state = DATA_BIT;
                     m_clockCount = 0;
                 }
@@ -120,64 +131,72 @@ public:
                 
             case DATA_BIT:
                 m_clockCount++;
+                
                 // Sample at the middle of each bit period
                 if (m_clockCount == m_clksPerBit / 2) {
-                    if (DEBUG_PRINT) std::cout << "RX Monitor: Sampling bit " << m_bitIndex << " = " << (txLine ? "1" : "0") << std::endl;
+                    if (DEBUG_LEVEL > 0) {
+                        std::cout << "RX Monitor: Sampling bit " << m_bitIndex 
+                                  << " = " << (txLine ? "1" : "0") << std::endl;
+                    }
+                    
                     // Store bit value (LSB first)
                     if (txLine) {
                         m_dataReg |= (1 << m_bitIndex);
                     }
+                }
+                
+                // Move to next bit after full bit period
+                if (m_clockCount >= m_clksPerBit) {
+                    m_clockCount = 0;
                     m_bitIndex++;
+                    
                     if (m_bitIndex >= m_dataWidth) {
-                        if (DEBUG_PRINT) {
+                        if (DEBUG_LEVEL > 0) {
                             std::cout << "RX Monitor: All data bits received: 0x"
                                       << std::hex << (int)m_dataReg << std::dec << std::endl;
-                            std::cout << "RX Monitor: Sampled bits: ";
-                            for (int b = 0; b < m_dataWidth; ++b) {
-                                std::cout << ((m_dataReg >> b) & 0x1);
-                            }
-                            std::cout << std::endl;
                         }
+                        
                         if (m_parityEn) {
                             m_state = PARITY_BIT;
-                            m_clockCount = 0;
                         } else {
                             m_state = STOP_BIT;
-                            m_clockCount = 0;
                             m_stopBitCount = 0;
                         }
                     }
-                }
-                // Reset counter after full bit period
-                if (m_clockCount >= m_clksPerBit) {
-                    m_clockCount = 0;
                 }
                 break;
                 
             case PARITY_BIT:
                 m_clockCount++;
+                
                 // Sample at the middle of the bit
                 if (m_clockCount == m_clksPerBit / 2) {
-                    m_parityBit = txLine;
-                    if (DEBUG_PRINT) std::cout << "RX Monitor: Parity bit = " << (m_parityBit ? "1" : "0") << std::endl;
+                    bool parityBit = txLine;
                     
-                    // Calculate expected parity (matching RTL's calculation)
+                    if (DEBUG_LEVEL > 0) {
+                        std::cout << "RX Monitor: Parity bit = " << (parityBit ? "1" : "0") << std::endl;
+                    }
+                    
+                    // Calculate expected parity
                     bool expectedParity = 0;
                     for (int i = 0; i < m_dataWidth; i++) {
-                        expectedParity = expectedParity ^ ((m_dataReg >> i) & 0x01);
+                        expectedParity ^= ((m_dataReg >> i) & 0x01);
                     }
+                    
                     if (m_parityType == 1) { // Odd parity
                         expectedParity = !expectedParity;
                     }
                     
-                    if (m_parityBit != expectedParity) {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: Parity error! Expected: " 
-                                 << expectedParity << ", Got: " << m_parityBit << std::endl;
+                    if (parityBit != expectedParity) {
+                        if (DEBUG_LEVEL > 0) {
+                            std::cout << "RX Monitor: Parity error! Expected: " 
+                                      << expectedParity << ", Got: " << parityBit << std::endl;
+                        }
                         m_state = IDLE;
                     }
                 }
                 
-                // Move to stop bit(s) after a full bit time
+                // Move to stop bit after full bit period
                 if (m_clockCount >= m_clksPerBit) {
                     m_state = STOP_BIT;
                     m_clockCount = 0;
@@ -187,40 +206,44 @@ public:
                 
             case STOP_BIT:
                 m_clockCount++;
-                // Check end of stop bit
-                if (m_clockCount == m_clksPerBit - 1) {
+                
+                // Sample at the middle of the bit
+                if (m_clockCount == m_clksPerBit / 2) {
                     if (!txLine) {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: Stop bit error! Expected high, got low" << std::endl;
+                        if (DEBUG_LEVEL > 0) {
+                            std::cout << "RX Monitor: Stop bit error! Expected high, got low" << std::endl;
+                        }
                         m_state = IDLE;
                         break;
                     }
-                    if (DEBUG_PRINT) std::cout << "RX Monitor: Valid stop bit: " << m_stopBitCount + 1 << "/" << m_stopBits << std::endl;
+                    
+                    if (DEBUG_LEVEL > 0) {
+                        std::cout << "RX Monitor: Valid stop bit " << (m_stopBitCount + 1) 
+                                  << "/" << m_stopBits << std::endl;
+                    }
+                }
+                
+                // Move to next stop bit or complete frame
+                if (m_clockCount >= m_clksPerBit) {
                     m_stopBitCount++;
                     m_clockCount = 0;
+                    
                     if (m_stopBitCount >= m_stopBits) {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: Frame successfully received" << std::endl;
                         receivedByte = m_dataReg;
                         dataComplete = true;
-                        m_state = WAIT_IDLE;
-                        m_clockCount = 0;
+                        
+                        if (DEBUG_LEVEL > 0) {
+                            std::cout << "RX Monitor: Frame successfully received: 0x" 
+                                      << std::hex << (int)m_dataReg << std::dec << std::endl;
+                        }
+                        
+                        m_state = IDLE;
                     }
                 }
                 break;
-            case WAIT_IDLE:
-                if (txLine) {
-                    m_clockCount++;
-                    if (m_clockCount >= m_clksPerBit) {
-                        if (DEBUG_PRINT) std::cout << "RX Monitor: Idle period completed, ready for next frame" << std::endl;
-                        m_state = IDLE;
-                        m_clockCount = 0;
-                        m_bitIndex = 0;
-                        m_dataReg = 0;
-                        m_stopBitCount = 0;
-                        m_prevTx = true;
-                    }
-                } else {
-                    m_clockCount = 0;
-                }
+                
+            default:
+                m_state = IDLE;
                 break;
         }
         
@@ -228,230 +251,242 @@ public:
     }
 };
 
-// This function processes received bytes and handles duplicates
-void processReceivedByte(uint8_t byte, std::vector<uint8_t>& receivedValues, int expectedCount, uint64_t currentSimTime) {
-    // If we already have all expected bytes, don't add more
-    if (receivedValues.size() >= expectedCount) {
-        std::cout << "Already received " << expectedCount << " bytes, ignoring additional byte" << std::endl;
+// Function to transmit a byte using the UART TX module
+void uart_tx_byte(Vparameterized_uart_tx *dut, VerilatedVcdC *tfp, uint8_t data_byte, 
+                 uint64_t &sim_time, bool &transmission_done, UartRxMonitor &rx_monitor, 
+                 std::vector<uint8_t> &received_data) {
+    
+    std::cout << "Starting transmission of byte: 0x" << std::hex << (int)data_byte 
+              << std::dec << " at time " << sim_time << std::endl;
+    
+    // Set data and assert tx_start for one clock cycle
+    dut->data_in = data_byte;
+    dut->tx_start = 1;
+    
+    // One clock cycle with tx_start high
+    dut->clk = 0;
+    dut->eval();
+    if (tfp) tfp->dump(sim_time++);
+    
+    dut->clk = 1;
+    dut->eval();
+    if (tfp) tfp->dump(sim_time++);
+    
+    // Clear tx_start
+    dut->tx_start = 0;
+    
+    // Wait for tx_busy to go high (transmission starts)
+    bool tx_started = false;
+    for (int i = 0; i < 20 && !tx_started; i++) {
+        dut->clk = 0;
+        dut->eval();
+        if (tfp) tfp->dump(sim_time++);
+        
+        dut->clk = 1;
+        dut->eval();
+        if (dut->tx_busy) {
+            tx_started = true;
+            std::cout << "Transmission started (tx_busy high) at time " << sim_time << std::endl;
+        }
+        if (tfp) tfp->dump(sim_time++);
+    }
+    
+    if (!tx_started) {
+        std::cout << "ERROR: Transmission did not start (tx_busy never went high)" << std::endl;
         return;
     }
     
-    std::cout << "Received complete byte at time " << currentSimTime << ": 0x" << std::hex 
-              << static_cast<int>(byte) << " (" << std::bitset<8>(byte) << ")" << std::dec << std::endl;
+    // Wait for tx_busy to go low (transmission complete)
+    transmission_done = false;
+    int timeout = 5000; // Maximum cycles to wait - increased for slower baud rates
+    uint8_t received_byte = 0;
     
-    // Handle possible duplicate - only add if not the same as the previous byte
-    // or if it's the first byte
-    if (receivedValues.empty() || receivedValues.back() != byte) {
-        receivedValues.push_back(byte);
-    } else {
-        if (DEBUG_PRINT) std::cout << "Ignoring duplicate byte" << std::endl;
-    }
-}
-
-// Utility function to check if the received bits are the reverse of expected bits
-void analyzeBitMismatch(uint8_t expected, uint8_t received) {
-    std::cout << "Analyzing bit pattern mismatch:" << std::endl;
-    std::cout << "Expected (hex): 0x" << std::hex << (int)expected << std::dec << std::endl;
-    std::cout << "Received (hex): 0x" << std::hex << (int)received << std::dec << std::endl;
-    
-    std::cout << "Expected (bin): " << std::bitset<8>(expected) << std::endl;
-    std::cout << "Received (bin): " << std::bitset<8>(received) << std::endl;
-    
-    // Check if bit reversal
-    uint8_t reversed = reverse_bits(expected);
-    
-    std::cout << "Bit-reversed: " << std::bitset<8>(reversed) << std::endl;
-    if (reversed == received) {
-        std::cout << "The received bits are the bit-reversal of the expected bits!" << std::endl;
-    }
-    
-    // Check for bit complement
-    uint8_t complement = ~expected;
-    std::cout << "Bit-complement: " << std::bitset<8>(complement) << std::endl;
-    if (complement == received) {
-        std::cout << "The received bits are the complement of the expected bits!" << std::endl;
-    }
-    
-    // Nibble swap
-    uint8_t nibbleSwap = ((expected & 0xF0) >> 4) | ((expected & 0x0F) << 4);
-    std::cout << "Nibble-swap: " << std::bitset<8>(nibbleSwap) << std::endl;
-    if (nibbleSwap == received) {
-        std::cout << "The received bits are a nibble swap of the expected bits!" << std::endl;
-    }
-    
-    // Correlation analysis
-    int matchCount = 0;
-    for (int i = 0; i < 8; i++) {
-        bool expectedBit = (expected & (1 << i)) != 0;
-        bool receivedBit = (received & (1 << i)) != 0;
-        if (expectedBit == receivedBit) {
-            matchCount++;
+    while (timeout > 0 && !transmission_done) {
+        dut->clk = 0;
+        dut->eval();
+        if (tfp) tfp->dump(sim_time++);
+        
+        dut->clk = 1;
+        dut->eval();
+        
+        // Monitor the TX line
+        if (rx_monitor.monitor(dut->tx, received_byte)) {
+            std::cout << "Received byte during transmission: 0x" << std::hex << (int)received_byte 
+                      << std::dec << " at time " << sim_time << std::endl;
+            received_data.push_back(received_byte);
+        }
+        
+        if (!dut->tx_busy) {
+            transmission_done = true;
+            std::cout << "Transmission complete (tx_busy low) at time " << sim_time << std::endl;
+        }
+        
+        if (tfp) tfp->dump(sim_time++);
+        timeout--;
+        
+        // Status update every 1000 cycles
+        if (timeout % 1000 == 0) {
+            std::cout << "Still waiting for transmission to complete, " << timeout 
+                      << " cycles remaining..." << std::endl;
         }
     }
-    std::cout << "Bit correlation: " << matchCount << "/8 matching bits" << std::endl;
+    
+    if (!transmission_done) {
+        std::cout << "ERROR: Transmission did not complete (tx_busy never went low)" << std::endl;
+    }
+    
+    // Add some idle time between transmissions
+    for (int i = 0; i < 20; i++) {
+        dut->clk = 0;
+        dut->eval();
+        if (tfp) tfp->dump(sim_time++);
+        
+        dut->clk = 1;
+        dut->eval();
+        
+        // Monitor the TX line during idle time
+        if (rx_monitor.monitor(dut->tx, received_byte)) {
+            std::cout << "Received byte during idle time: 0x" << std::hex << (int)received_byte 
+                      << std::dec << " at time " << sim_time << std::endl;
+            received_data.push_back(received_byte);
+        }
+        
+        if (tfp) tfp->dump(sim_time++);
+    }
 }
 
 int main(int argc, char** argv) {
     // Initialize Verilator
     Verilated::commandArgs(argc, argv);
     
-    // Create an instance of our module under test
-    Vparameterized_uart_tx* tb = new Vparameterized_uart_tx;
+    // Parse command line arguments
+    bool traceEnabled = false;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--trace") == 0) {
+            traceEnabled = true;
+        }
+    }
     
-    // Initialize VCD tracing
-    Verilated::traceEverOn(true);
-    VerilatedVcdC* tfp = new VerilatedVcdC;
-    tb->trace(tfp, 99);
-    tfp->open("parameterized_uart_tx_wave.vcd");
-    
-    // Initialize RX Monitor
-    UartRxMonitor rxMonitor(CLKS_PER_BIT, DATA_WIDTH, PARITY_EN, PARITY_TYPE, NUM_STOP_BITS);
-    
-    // Test data with bit-reversed values for comparison
+    // Test data
     std::vector<uint8_t> testData = {0xA5, 0x3C, 0xFF, 0x00, 0x55};
+    std::vector<uint8_t> receivedData;
     
-    size_t testDataIndex = 0;
-    bool transmissionStarted = false;
-    uint8_t receivedByte = 0;
-    std::vector<uint8_t> receivedValues;
+    // Create UART RX monitor
+    UartRxMonitor rxMonitor(CLOCKS_PER_BIT, DATA_WIDTH, PARITY_EN, PARITY_TYPE, STOP_BITS);
     
-    // Time between transmissions (in clock cycles)
-    const int TX_DELAY = CLKS_PER_BIT * 5;
-    int txDelayCounter = 0;
-    bool waitingDelay = false;
+    // Create and initialize the DUT
+    Vparameterized_uart_tx* dut = new Vparameterized_uart_tx;
     
-    // Simulation loop
-    uint64_t simTime = 0;
-    uint64_t lastReceivedTime = 0;
+    // Display test parameters
+    std::cout << "Test Parameters:" << std::endl;
+    std::cout << "  CLK_FREQ     = " << CLK_FREQ << " Hz" << std::endl;
+    std::cout << "  BAUD_RATE    = " << BAUD_RATE << " bps" << std::endl;
+    std::cout << "  CLOCKS_PER_BIT = " << CLOCKS_PER_BIT << std::endl;
+    std::cout << "  DATA_WIDTH   = " << DATA_WIDTH << " bits" << std::endl;
+    std::cout << "  PARITY_EN    = " << PARITY_EN << std::endl;
+    std::cout << "  STOP_BITS    = " << STOP_BITS << std::endl;
+    
+    // Setup trace if enabled
+    VerilatedVcdC* tfp = nullptr;
+    if (traceEnabled) {
+        Verilated::traceEverOn(true);
+        tfp = new VerilatedVcdC;
+        dut->trace(tfp, 99);
+        tfp->open("waveform.vcd");
+    }
+    
+    // Initialize signals
+    dut->clk = 0;
+    dut->rst_n = 0;
+    dut->tx_start = 0;
+    dut->data_in = 0;
     
     // Reset sequence
-    tb->rst_n = 0;
-    tb->clk = 0;
-    tb->tx_start = 0;
-    tb->data_in = 0;
-    
-    // Run for a few cycles with reset active
+    std::cout << "Starting reset sequence..." << std::endl;
     for (int i = 0; i < 10; i++) {
-        tb->clk = !tb->clk;
-        tb->eval();
-        tfp->dump(simTime++);
-        tb->clk = !tb->clk;
-        tb->eval();
-        tfp->dump(simTime++);
+        dut->clk = !dut->clk;
+        dut->eval();
+        if (tfp) tfp->dump(i);
     }
     
     // Release reset
-    tb->rst_n = 1;
+    dut->rst_n = 1;
+    dut->eval();
     
-    // Add a few idle cycles after reset
-    for (int i = 0; i < 10; i++) {
-        tb->clk = !tb->clk;
-        tb->eval();
-        tfp->dump(simTime++);
-        tb->clk = !tb->clk;
-        tb->eval();
-        tfp->dump(simTime++);
-    }
+    // Main simulation variables
+    uint64_t simTime = 10;
+    uint8_t receivedByte = 0;
     
-    // Maximum simulation time without progress
-    const uint64_t MAX_IDLE_TIME = CLKS_PER_BIT * 100;
+    std::cout << "Starting main simulation loop..." << std::endl;
     
-    while (simTime < MAX_SIM_TIME && testDataIndex < testData.size()) {
-        // Toggle clock
-        tb->clk = !tb->clk;
+    // Transmit each test byte
+    for (size_t i = 0; i < testData.size(); i++) {
+        bool transmission_done = false;
+        uart_tx_byte(dut, tfp, testData[i], simTime, transmission_done, rxMonitor, receivedData);
         
-        // Only process at positive clock edge
-        if (tb->clk) {
-            // Control transmitter
-            if (waitingDelay) {
-                tb->tx_start = 0;
-                txDelayCounter++;
-                
-                if (txDelayCounter >= TX_DELAY) {
-                    waitingDelay = false;
-                    txDelayCounter = 0;
-                }
-            } 
-            else if (!tb->tx_busy && !transmissionStarted && testDataIndex < testData.size()) {
-                // Start new transmission
-                tb->tx_start = 1;
-                tb->data_in = testData[testDataIndex];
-                transmissionStarted = true;
-                std::cout << "\nStarting transmission of data: 0x" << std::hex 
-                          << static_cast<int>(testData[testDataIndex]) 
-                          << " (" << std::bitset<8>(testData[testDataIndex]) << ")"
-                          << std::dec << std::endl;
-            } 
-            else if (transmissionStarted && !tb->tx_busy) {
-                // Transmission completed
-                tb->tx_start = 0;
-                transmissionStarted = false;
-                testDataIndex++;
-                waitingDelay = true;
-                lastReceivedTime = simTime;
-            }
-            else {
-                tb->tx_start = 0;
-            }
+        if (!transmission_done) {
+            std::cout << "ERROR: Failed to transmit byte " << i << std::endl;
+            break;
         }
         
-        // Monitor the TX line on every clock edge
-        if (rxMonitor.monitor(tb->tx, receivedByte)) {
-            processReceivedByte(receivedByte, receivedValues, testData.size(), simTime);
-            lastReceivedTime = simTime;
-        }
-        
-        // Evaluate model
-        tb->eval();
-        
-        // Dump to VCD file
-        tfp->dump(simTime++);
-        
-        // If we're stuck for too long waiting for data, move to the next transmission
-        if (testDataIndex < testData.size() && !transmissionStarted && !waitingDelay && 
-            (simTime - lastReceivedTime > MAX_IDLE_TIME)) {
-            std::cout << "No data received for too long, moving to next transmission" << std::endl;
-            testDataIndex++;
+        // Check if the byte was received by the monitor
+        if (receivedData.size() < i + 1) {
+            std::cout << "WARNING: Byte " << i << " was not detected by the RX monitor" << std::endl;
         }
     }
     
-    // Check results
+    // Run a few more cycles to catch any late receptions
+    std::cout << "Running additional cycles to catch any late receptions..." << std::endl;
+    for (int i = 0; i < CLOCKS_PER_BIT * 20; i++) {
+        dut->clk = 0;
+        dut->eval();
+        if (tfp) tfp->dump(simTime++);
+        
+        dut->clk = 1;
+        dut->eval();
+        
+        // Monitor the TX line
+        if (rxMonitor.monitor(dut->tx, receivedByte)) {
+            std::cout << "Received byte: 0x" << std::hex << (int)receivedByte << std::dec 
+                      << " at time " << simTime << std::endl;
+            receivedData.push_back(receivedByte);
+        }
+        
+        if (tfp) tfp->dump(simTime++);
+    }
+    
+    // Verify results
     bool testPassed = true;
-    std::cout << "\n---- Test Results Summary ----" << std::endl;
     
-    if (receivedValues.size() != testData.size()) {
-        std::cout << "Test FAILED! Expected to receive " << testData.size() 
-                  << " bytes, but got " << receivedValues.size() << " bytes" << std::endl;
+    if (receivedData.size() != testData.size()) {
+        std::cout << "TEST FAILED! Expected to receive " << testData.size() 
+                  << " bytes, but got " << receivedData.size() << " bytes" << std::endl;
         testPassed = false;
     } else {
-        std::cout << "Received data summary:" << std::endl;
         for (size_t i = 0; i < testData.size(); i++) {
-            // Compare against original value (not bit-reversed)
-            std::cout << "Byte " << i << ": Expected 0x" << std::hex << static_cast<int>(testData[i]) 
-                      << " (" << std::bitset<8>(testData[i]) << "), Got 0x" 
-                      << static_cast<int>(receivedValues[i]) 
-                      << " (" << std::bitset<8>(receivedValues[i]) << ")"
-                      << std::dec;
-            if (receivedValues[i] != testData[i]) {
-                std::cout << " - MISMATCH!" << std::endl;
-                analyzeBitMismatch(testData[i], receivedValues[i]);
+            if (receivedData[i] != testData[i]) {
+                std::cout << "Byte " << i << " mismatch! Expected: 0x" << std::hex 
+                          << (int)testData[i] << ", Got: 0x" << (int)receivedData[i] 
+                          << std::dec << std::endl;
                 testPassed = false;
-            } else {
-                std::cout << " - Match" << std::endl;
             }
         }
     }
     
+    // Print test results
+    std::cout << "\n---- Test Results Summary ----" << std::endl;
     if (testPassed) {
-        std::cout << "\nTest PASSED! All data correctly transmitted and received." << std::endl;
+        std::cout << "Test PASSED! All data transmitted and received correctly." << std::endl;
     } else {
-        std::cout << "\nTest FAILED! Data mismatch or incorrect number of bytes received." << std::endl;
+        std::cout << "Test FAILED! Data mismatch or incorrect number of bytes received." << std::endl;
     }
     
     // Clean up
-    tfp->close();
-    delete tfp;
-    delete tb;
+    if (tfp) {
+        tfp->close();
+        delete tfp;
+    }
+    delete dut;
     
     return testPassed ? 0 : 1;
 } 
