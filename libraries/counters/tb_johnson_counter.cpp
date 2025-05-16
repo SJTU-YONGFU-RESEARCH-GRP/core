@@ -101,4 +101,4 @@ int main(int argc, char** argv) {
     delete m_trace;
     
     return EXIT_SUCCESS;
-} 
+}

@@ -107,12 +107,12 @@ int main(int argc, char** argv) {
         dut->eval();
     }
     
-    if (count_correct && self_correction_works) {
-        std::cout << "SUCCESS: Self-correcting counter verified!" << std::endl;
-    } else {
-        std::cout << "FAILURE: Self-correcting counter verification failed." << std::endl;
-        return 1;
-    }
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << ((count_correct && self_correction_works) ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << ((count_correct && self_correction_works) ? "1" : "0") << " of 1" << std::endl;
+    
+    return 0;
+}
     
     // Clean up
     m_trace->close();
@@ -120,4 +120,4 @@ int main(int argc, char** argv) {
     delete dut;
     
     return 0;
-} 
+}

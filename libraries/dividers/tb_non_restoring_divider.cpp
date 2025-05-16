@@ -59,16 +59,10 @@ bool test_division(Vnon_restoring_divider *dut, VerilatedVcdC *vcd,
     uint8_t expected_quotient = dividend / divisor;
     uint8_t expected_remainder = dividend % divisor;
     
-    // Display results
-    std::cout << (int)expected_quotient << " remainder " << (int)expected_remainder;
-    std::cout << " (got: q=" << (int)dut->quotient << ", r=" << (int)dut->remainder << ")";
-    
-    // Check results
-    bool correct = (dut->quotient == expected_quotient) && (dut->remainder == expected_remainder);
-    std::cout << " - " << (correct ? "CORRECT" : "WRONG") << std::endl;
-    
-    // Extra tick to go back to idle
-    tick(dut, vcd);
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (correct ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << (correct ? "1" : "0") << " of 1" << std::endl;
     
     return correct;
 }
@@ -110,4 +104,4 @@ int main(int argc, char** argv) {
     delete vcd;
     
     return all_tests_passed ? 0 : 1;
-} 
+}

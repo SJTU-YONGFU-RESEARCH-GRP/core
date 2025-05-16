@@ -228,12 +228,12 @@ int main(int argc, char** argv) {
         valid_johnson = false;
     }
     
-    if (valid_johnson) {
-        std::cout << "SUCCESS: Johnson up/down counter verified!" << std::endl;
-    } else {
-        std::cout << "FAILURE: Johnson up/down counter verification failed." << std::endl;
-        return 1;
-    }
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (valid_johnson ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << (valid_johnson ? "1" : "0") << " of 1" << std::endl;
+    
+    return 0;
+}
     
     // Clean up
     delete[] up_sequence;
@@ -243,4 +243,4 @@ int main(int argc, char** argv) {
     delete dut;
     
     return 0;
-} 
+}

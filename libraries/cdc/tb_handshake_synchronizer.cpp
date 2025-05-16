@@ -95,8 +95,20 @@ int main(int argc, char** argv) {
         }
     }
     
-    // Print test results in the standardized format
-    std::cout << "==== Test Summary ====" << std::endl;
+    // Print detailed test results
+    std::cout << "\n==== Detailed Test Results ====" << std::endl;
+    std::cout << "Test# | Sent Data | Received Data | Status" << std::endl;
+    std::cout << "------|-----------|---------------|-------" << std::endl;
+    for (int i = 0; i < TEST_COUNT; i++) {
+        std::cout << std::setw(5) << i << " | " 
+                  << std::setw(9) << test_data[i] << " | " 
+                  << std::setw(13) << received_data[i] << " | " 
+                  << (received_data[i] == test_data[i] ? "PASS" : "FAIL") 
+                  << std::endl;
+    }
+
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
     std::cout << "Result: " << (passed_tests == TEST_COUNT ? "Pass" : "Fail") << std::endl;
     std::cout << "Tests: " << passed_tests << " of " << TEST_COUNT << std::endl;
     
@@ -136,4 +148,4 @@ void wait_cycles(Vhandshake_synchronizer *dut, VerilatedVcdC *m_trace, int cycle
         src_clock_cycle(dut, m_trace);
         dst_clock_cycle(dut, m_trace);
     }
-} 
+}
