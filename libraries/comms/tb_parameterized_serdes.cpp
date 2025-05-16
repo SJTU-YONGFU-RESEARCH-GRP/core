@@ -273,20 +273,33 @@ int main(int argc, char** argv) {
         {0x3C, "Pattern 0x3C"}
     };
     
+    // Track test results
+    int total_tests = 0;
+    int passed_tests = 0;
+    
     // Run serializer tests
     for (const auto& test : test_cases) {
+        total_tests++;
         test_serializer(serdes, tfp.get(), sim_time, test);
+        // Check if test passed based on error flag in test_serializer
+        if (!error) passed_tests++;
     }
     
     // Run deserializer tests
     for (const auto& test : test_cases) {
+        total_tests++;
         test_deserializer(serdes, tfp.get(), sim_time, test);
+        // Check if test passed based on received_data matching test.data
+        if (received_data == test.data) passed_tests++;
     }
     
     // Cleanup
     tfp->close();
     serdes->final();
     
-    std::cout << "\nSimulation completed!" << std::endl;
-    return 0;
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return (passed_tests == total_tests) ? 0 : 1;
 }

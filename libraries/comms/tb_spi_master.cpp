@@ -130,16 +130,35 @@ int main(int argc, char** argv) {
     std::cout << "Expected: 0x" << std::hex << (int)expected << std::endl;
     std::cout << "Received: 0x" << std::hex << (int)rx_data << std::endl;
     
-    bool test_passed = (rx_data == expected);
+    // Track test results
+    int total_tests = 3;  // Testing: transmission completion, data match, and timing
+    int passed_tests = 0;
+    
+    // Test 1: Transmission completed
+    if (transmission_complete) {
+        passed_tests++;
+    } else {
+        std::cout << "Error: Transmission did not complete" << std::endl;
+    }
+    
+    // Test 2: Data matches expected value
+    if (rx_data == expected) {
+        passed_tests++;
+    } else {
+        std::cout << "Error: Data mismatch" << std::endl;
+    }
+    
+    // Test 3: Completed within expected time
+    if (sim_time < MAX_SIM_TIME) {
+        passed_tests++;
+    } else {
+        std::cout << "Error: Test exceeded maximum simulation time" << std::endl;
+    }
     
     // Print standardized test summary
     std::cout << "\n==== Test Summary ====" << std::endl;
-    std::cout << "Result: " << (test_passed ? "Pass" : "Fail") << std::endl;
-    std::cout << "Tests: 1 of 1" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
-    if (test_passed) {
-        return 0;
-    } else {
-        return 1;
-    }
+    return (passed_tests == total_tests) ? 0 : 1;
 }

@@ -457,6 +457,8 @@ int main(int argc, char** argv) {
     
     // Verify results
     bool testPassed = true;
+    int total_tests = testData.size();
+    int passed_tests = 0;
     
     if (receivedData.size() != testData.size()) {
         std::cout << "TEST FAILED! Expected to receive " << testData.size() 
@@ -464,22 +466,20 @@ int main(int argc, char** argv) {
         testPassed = false;
     } else {
         for (size_t i = 0; i < testData.size(); i++) {
-            if (receivedData[i] != testData[i]) {
+            if (receivedData[i] == testData[i]) {
+                passed_tests++;
+            } else {
                 std::cout << "Byte " << i << " mismatch! Expected: 0x" << std::hex 
                           << (int)testData[i] << ", Got: 0x" << (int)receivedData[i] 
                           << std::dec << std::endl;
-                testPassed = false;
             }
         }
     }
     
     // Print test results
-    std::cout << "\n---- Test Results Summary ----" << std::endl;
-    if (testPassed) {
-        std::cout << "Test PASSED! All data transmitted and received correctly." << std::endl;
-    } else {
-        std::cout << "Test FAILED! Data mismatch or incorrect number of bytes received." << std::endl;
-    }
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Clean up
     if (tfp) {
@@ -488,5 +488,5 @@ int main(int argc, char** argv) {
     }
     delete dut;
     
-    return testPassed ? 0 : 1;
+    return (passed_tests == total_tests) ? 0 : 1;
 } 
