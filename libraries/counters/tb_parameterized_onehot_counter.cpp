@@ -138,10 +138,13 @@ int main(int argc, char** argv) {
     }
     
     if (valid_onehot) {
-        std::cout << "SUCCESS: One-hot counter verified!" << std::endl;
+        std::cout << "\n==== Test Summary ====" << std::endl;
+        std::cout << "Result: Pass" << std::endl;
+        std::cout << "Tests: 4 of 4" << std::endl;
     } else {
-        std::cout << "FAILURE: One-hot counter verification failed." << std::endl;
-        return 1;
+        std::cout << "\n==== Test Summary ====" << std::endl;
+        std::cout << "Result: Fail" << std::endl;
+        std::cout << "Tests: 0 of 4" << std::endl;
     }
     
     // Clean up
@@ -150,5 +153,5 @@ int main(int argc, char** argv) {
     delete m_trace;
     delete dut;
     
-    return 0;
+    return valid_onehot ? 0 : 1;
 } 

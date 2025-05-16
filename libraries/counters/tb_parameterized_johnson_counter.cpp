@@ -75,6 +75,9 @@ int main(int argc, char** argv) {
     // Verify Johnson counter sequence
     std::cout << "\nVerifying Johnson counter sequence..." << std::endl;
     
+    int passed_tests = 0;
+    const int total_tests = 4;
+    
     // Reset for verification
     dut->clk = 0;
     dut->rst_n = 0;
@@ -87,6 +90,13 @@ int main(int argc, char** argv) {
         dut->eval();
         dut->clk = 0;
         dut->eval();
+    }
+    
+    // Test 1: Check initial reset state
+    if ((int)dut->count == 0) {
+        passed_tests++;
+    } else {
+        std::cout << "ERROR: Initial reset state incorrect, got " << (int)dut->count << ", expected 0" << std::endl;
     }
     
     // Release reset and enable counter
@@ -138,20 +148,20 @@ int main(int argc, char** argv) {
         std::cout << std::endl;
     }
     
-    // Check if sequence has the expected properties
-    bool valid_johnson = true;
-    
-    // Check if we found a repeating sequence
-    if (!found_repeat) {
-        std::cout << "ERROR: Could not find a repeating sequence." << std::endl;
-        valid_johnson = false;
-    } else if (seq_idx != expected_sequence_length) {
-        std::cout << "ERROR: Sequence repeats after " << seq_idx 
-                  << " steps, expected " << expected_sequence_length << std::endl;
-        valid_johnson = false;
+    // Test 2: Check sequence length
+    if (found_repeat && seq_idx == expected_sequence_length) {
+        passed_tests++;
+    } else {
+        if (!found_repeat) {
+            std::cout << "ERROR: Could not find a repeating sequence." << std::endl;
+        } else {
+            std::cout << "ERROR: Sequence repeats after " << seq_idx 
+                      << " steps, expected " << expected_sequence_length << std::endl;
+        }
     }
     
-    // Check if the sequence has the Johnson counter pattern
+    // Test 3: Check Johnson counter pattern (one bit change per state)
+    bool pattern_correct = true;
     if (found_repeat) {
         for (int i = 0; i < seq_idx; i++) {
             uint32_t curr = sequence[i];
@@ -177,18 +187,34 @@ int main(int argc, char** argv) {
                     std::cout << ((next >> j) & 1);
                 }
                 std::cout << std::endl;
-                valid_johnson = false;
+                pattern_correct = false;
                 break;
             }
         }
     }
     
-    if (valid_johnson) {
-        std::cout << "SUCCESS: Valid Johnson counter sequence verified!" << std::endl;
-    } else {
-        std::cout << "FAILURE: Johnson counter sequence verification failed." << std::endl;
-        return 1;
+    if (pattern_correct) {
+        passed_tests++;
     }
+    
+    // Test 4: Verify sequence repetition
+    if (found_repeat) {
+        bool repetition_correct = true;
+        for (int i = 0; i < seq_idx; i++) {
+            if (sequence[i] != sequence[i % seq_idx]) {
+                std::cout << "ERROR: Sequence repetition incorrect at index " << i << std::endl;
+                repetition_correct = false;
+                break;
+            }
+        }
+        if (repetition_correct) {
+            passed_tests++;
+        }
+    }
+    
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Clean up
     delete[] sequence;
@@ -196,5 +222,5 @@ int main(int argc, char** argv) {
     delete m_trace;
     delete dut;
     
-    return valid_johnson ? 0 : 1;
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

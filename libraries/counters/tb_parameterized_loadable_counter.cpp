@@ -157,10 +157,13 @@ int main(int argc, char** argv) {
     }
     
     if (counting_correct) {
-        std::cout << "SUCCESS: Loadable counter verified!" << std::endl;
+        std::cout << "\n==== Test Summary ====" << std::endl;
+        std::cout << "Result: Pass" << std::endl;
+        std::cout << "Tests: 3 of 3" << std::endl;
     } else {
-        std::cout << "FAILURE: Loadable counter verification failed." << std::endl;
-        return 1;
+        std::cout << "\n==== Test Summary ====" << std::endl;
+        std::cout << "Result: Fail" << std::endl;
+        std::cout << "Tests: 0 of 3" << std::endl;
     }
     
     // Clean up
@@ -168,5 +171,5 @@ int main(int argc, char** argv) {
     delete m_trace;
     delete dut;
     
-    return 0;
+    return counting_correct ? 0 : 1;
 } 

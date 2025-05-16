@@ -109,9 +109,12 @@ int main(int argc, char** argv) {
     
     std::cout << "\n==== Test Summary ====" << std::endl;
     std::cout << "Result: " << ((count_correct && self_correction_works) ? "Pass" : "Fail") << std::endl;
-    std::cout << "Tests: " << ((count_correct && self_correction_works) ? "1" : "0") << " of 1" << std::endl;
-    
-    return 0;
-}
+    std::cout << "Tests: " << ((count_correct && self_correction_works) ? "2" : "0") << " of 2" << std::endl;
     
     // Clean up
+    m_trace->close();
+    delete m_trace;
+    delete dut;
+    
+    return (count_correct && self_correction_works) ? 0 : 1;
+}

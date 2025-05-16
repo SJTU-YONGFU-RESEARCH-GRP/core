@@ -57,13 +57,93 @@ int main(int argc, char** argv) {
         sim_time++;
     }
     
-    // Simple verification - just check that the simulation ran without errors
-    std::cout << "\nSimulation completed successfully!" << std::endl;
+    // Verify ring counter
+    std::cout << "\nVerifying Ring Counter..." << std::endl;
+    
+    int passed_tests = 0;
+    const int total_tests = 4;
+    
+    // Reset for verification
+    dut->clk = 0;
+    dut->rst_n = 0;
+    dut->enable = 1;
+    dut->eval();
+    dut->clk = 1;
+    dut->eval();
+    
+    // Test 1: Check initial reset state (should be 0001)
+    if ((int)dut->count == 1) {
+        passed_tests++;
+    } else {
+        std::cout << "ERROR: Initial state incorrect, got " << (int)dut->count << ", expected 1" << std::endl;
+    }
+    
+    // Release reset
+    dut->clk = 0;
+    dut->rst_n = 1;
+    dut->eval();
+    
+    // Test 2: Verify ring counting sequence
+    bool sequence_correct = true;
+    uint32_t expected = 1;
+    for (int i = 0; i < WIDTH; i++) {
+        dut->clk = 1;
+        dut->eval();
+        
+        if ((int)dut->count != expected) {
+            std::cout << "ERROR: Sequence incorrect at step " << i 
+                      << ", got " << (int)dut->count << ", expected " << expected << std::endl;
+            sequence_correct = false;
+            break;
+        }
+        
+        expected = (expected << 1) | (expected >> (WIDTH-1));
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    if (sequence_correct) {
+        passed_tests++;
+    }
+    
+    // Test 3: Verify bit rotation
+    bool rotation_correct = true;
+    for (int i = 0; i < WIDTH; i++) {
+        dut->clk = 1;
+        dut->eval();
+        
+        // Check that only one bit is set
+        if (__builtin_popcount(dut->count) != 1) {
+            std::cout << "ERROR: Multiple bits set at step " << i << std::endl;
+            rotation_correct = false;
+            break;
+        }
+        
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    if (rotation_correct) {
+        passed_tests++;
+    }
+    
+    // Test 4: Verify wrapping behavior
+    dut->clk = 1;
+    dut->eval();
+    if ((int)dut->count == 1) {
+        passed_tests++;
+    } else {
+        std::cout << "ERROR: Counter did not wrap correctly, got " << (int)dut->count << ", expected 1" << std::endl;
+    }
+    
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Clean up
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

@@ -85,9 +85,13 @@ int main(int argc, char** argv) {
     dut->eval();
     
     // Check counter is reset
-    if ((int)dut->count != 0) {
+    int passed_tests = 0;
+    const int total_tests = 3;
+    
+    if ((int)dut->count == 0) {
+        passed_tests++;
+    } else {
         std::cout << "ERROR: Counter not reset properly, got " << (int)dut->count << std::endl;
-        return 1;
     }
     
     // Release reset and check counting
@@ -121,28 +125,30 @@ int main(int argc, char** argv) {
         dut->eval();
     }
     
+    if (counting_correct) {
+        passed_tests++;
+    }
+    
     // Apply synchronous reset in the middle of counting
     dut->sync_rst = 1;
     dut->clk = 1;  // Clock edge with reset active
     dut->eval();
     
     // Check counter is reset
-    if ((int)dut->count != 0) {
+    if ((int)dut->count == 0) {
+        passed_tests++;
+    } else {
         std::cout << "ERROR: Counter not reset properly on synchronous reset, got " << (int)dut->count << std::endl;
-        counting_correct = false;
     }
     
-    if (counting_correct) {
-        std::cout << "SUCCESS: Synchronous reset counter verified!" << std::endl;
-    } else {
-        std::cout << "FAILURE: Synchronous reset counter verification failed." << std::endl;
-        return 1;
-    }
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Clean up
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

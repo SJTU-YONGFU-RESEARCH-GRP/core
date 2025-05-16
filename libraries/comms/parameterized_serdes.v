@@ -40,20 +40,11 @@ module parameterized_serdes #(
         end else if (enable && !mode) begin // Serializer mode
             if (load) begin
                 // Load parallel data into shift register
-                // For MSB_FIRST: Reverse the bits since testbench shifts left and inserts at LSB
-                // For LSB_FIRST: Keep bits in order since testbench shifts right and inserts at MSB
-                tx_shift_reg <= MSB_FIRST ? 
-                    {parallel_in[0], parallel_in[1], parallel_in[2], parallel_in[3],
-                     parallel_in[4], parallel_in[5], parallel_in[6], parallel_in[7]} :
-                    parallel_in;
+                tx_shift_reg <= parallel_in;
                 tx_bit_counter <= 0;
                 tx_done_reg <= 0;
             end else if (!tx_done_reg) begin
                 if (tx_bit_counter < DATA_WIDTH - 1) begin
-                    // Shift based on mode
-                    tx_shift_reg <= MSB_FIRST ?
-                        {tx_shift_reg[DATA_WIDTH-2:0], 1'b0} :  // Shift left for MSB first
-                        {1'b0, tx_shift_reg[DATA_WIDTH-1:1]};   // Shift right for LSB first
                     tx_bit_counter <= tx_bit_counter + 1;
                 end else begin
                     // All bits sent
@@ -105,9 +96,12 @@ module parameterized_serdes #(
     end
     
     // Output assignments
-    // For MSB_FIRST: Output MSB of reversed data (which is original LSB)
-    // For LSB_FIRST: Output LSB of original data
-    assign serial_out = MSB_FIRST ? tx_shift_reg[DATA_WIDTH-1] : tx_shift_reg[0];
+    // For MSB_FIRST: Send bits in same order as deserializer test (7 down to 0)
+    // For LSB_FIRST: Send bits in same order as deserializer test (0 up to 7)
+    wire [$clog2(DATA_WIDTH)-1:0] bit_index = MSB_FIRST ? 
+        (DATA_WIDTH - 1 - tx_bit_counter) :  // Send in order 7,6,5,4,3,2,1,0
+        tx_bit_counter;                      // Send in order 0,1,2,3,4,5,6,7
+    assign serial_out = tx_shift_reg[bit_index];
     assign tx_done = tx_done_reg;
 
 endmodule 

@@ -9,6 +9,7 @@ module parameterized_self_correcting_counter #(
 );
 
     reg [WIDTH-1:0] counter_reg;
+    reg [WIDTH-1:0] next_count;
     
     // Function to check if a value is valid (less than MODULO)
     function automatic is_valid;
@@ -18,18 +19,23 @@ module parameterized_self_correcting_counter #(
         end
     endfunction
     
+    // Next state logic
+    always @(*) begin
+        if (!is_valid(counter_reg)) begin
+            next_count = {WIDTH{1'b0}}; // Self-correction: reset to 0 if in invalid state
+        end else if (counter_reg == MODULO - 1) begin
+            next_count = {WIDTH{1'b0}}; // Wrap around to 0
+        end else begin
+            next_count = counter_reg + 1'b1; // Normal increment
+        end
+    end
+    
+    // State register
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             counter_reg <= {WIDTH{1'b0}}; // Reset to 0
         end else if (enable) begin
-            // Normal counting operation
-            if (counter_reg == MODULO - 1) begin
-                counter_reg <= {WIDTH{1'b0}}; // Wrap around to 0
-            end else if (is_valid(counter_reg)) begin
-                counter_reg <= counter_reg + 1'b1;
-            end else begin
-                counter_reg <= {WIDTH{1'b0}}; // Self-correction: reset to 0 if in invalid state
-            end
+            counter_reg <= next_count;
         end
     end
     
