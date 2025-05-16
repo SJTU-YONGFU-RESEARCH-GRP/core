@@ -19,7 +19,7 @@ module arbiter_rr #(
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             grant <= {NUM_PORTS{1'b0}};
-            priority_ptr <= 0;  // Initialize priority pointer to 0
+            priority_ptr <= NUM_PORTS-1;  // Initialize to highest port
         end
         else begin
             // Default: no grants
@@ -50,17 +50,17 @@ module arbiter_rr #(
                     ptr = priority_ptr;  // Convert to integer
                     /* verilator lint_on WIDTHEXPAND */
                     
-                    // Check all ports starting from priority_ptr
+                    // Check all ports starting from priority_ptr, going down
                     for (i = 0; i < NUM_PORTS; i = i + 1) begin
-                        check_idx = (ptr + i) % NUM_PORTS;
+                        check_idx = (ptr - i + NUM_PORTS) % NUM_PORTS;
                         
                         if (request[check_idx] && !granted) begin
                             grant[check_idx] <= 1'b1;
                             granted = 1'b1;
                             
                             /* verilator lint_off WIDTHTRUNC */
-                            // Update priority pointer for next cycle
-                            priority_ptr <= (check_idx + 1) % NUM_PORTS;
+                            // Update priority pointer for next cycle (move down)
+                            priority_ptr <= (check_idx - 1 + NUM_PORTS) % NUM_PORTS;
                             /* verilator lint_on WIDTHTRUNC */
                         end
                     end
