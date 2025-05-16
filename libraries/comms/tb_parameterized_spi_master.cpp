@@ -136,16 +136,13 @@ int main(int argc, char** argv) {
         std::cout << "\n==== Test Summary ====" << std::endl;
         std::cout << "Result: Pass" << std::endl;
         std::cout << "Tests: 1 of 1" << std::endl;
-        return 0;
     } else {
         std::cout << "\n==== Test Summary ====" << std::endl;
         std::cout << "Result: Fail" << std::endl;
         std::cout << "Tests: 0 of 1" << std::endl;
-        return 1;
     }
-}
     
-    // Clean up
+    // Clean up - moved inside main function
     vcd_trace->close();
     delete vcd_trace;
     delete spi_master;
