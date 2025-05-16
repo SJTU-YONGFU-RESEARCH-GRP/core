@@ -11,7 +11,7 @@ Tests: X of X
 - Arithmetic Done
 - CORDIC Done
 - Clock Domain Crossing Done
-  - Communication
+- Communication
   - Counters
   - Debugging
   - Digital Signal Processing

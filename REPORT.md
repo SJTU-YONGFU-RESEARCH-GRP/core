@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-17 02:45:58
+Generated on: 2025-05-17 03:13:21
 
 ## Table of Contents
 
@@ -42,8 +42,8 @@ Generated on: 2025-05-17 02:45:58
 - Timeouts: 0
 - Total tests executed: 65
 - Total tests passed: 63 (96.9%)
-- Total runtime: 6.81 seconds
-- Average runtime per module: 0.45 seconds
+- Total runtime: 7.38 seconds
+- Average runtime per module: 0.49 seconds
 
 ## Category Overview
 
@@ -55,7 +55,7 @@ Generated on: 2025-05-17 02:45:58
 | [CORDIC](#category-cordic) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Communication](#category-communication) | 12 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Counters](#category-counters) | 15 | 11 | 4 | 73.3% | 63/65 | 0.45 |
+| [Counters](#category-counters) | 15 | 11 | 4 | 73.3% | 63/65 | 0.49 |
 | [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encoding/Decoding](#category-encoding/decoding) | 7 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -162,36 +162,36 @@ Generated on: 2025-05-17 02:45:58
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | 24/24 | 4.79 | 24 of 24 |
+| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | 24/24 | 5.35 | 24 of 24 |
 | gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | 0.15 | 3 of 3 |
-| johnson_counter | libraries/counters/johnson_counter.v | ✗ FAIL | 3/4 | 0.15 | 3 of 4
+| johnson_counter | libraries/counters/johnson_counter.v | ✗ FAIL | 3/4 | 0.14 | 3 of 4
 
 Error output sample:
 make: *** [Makefile:106: verify_johnson_counter] Error 1 |
-| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | 0.16 | 20 of 20 |
+| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | 0.14 | 20 of 20 |
 | loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | 6/6 | 0.14 | 6 of 6 |
-| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✓ PASS | 2/2 | 0.15 | 2 of 2 |
+| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✓ PASS | 2/2 | 0.14 | 2 of 2 |
 | parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | 3/3 | 0.15 | 3 of 3 |
-| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | 0.14 | Sequence repeats after 8 steps, expected 12
+| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | 0.15 | Sequence repeats after 8 steps, expected 12
 
 Error output sample:
 make: *** [Makefile:106: verify_parameterized_johnson_counter] Error 1
 Error: Sequence repeats after 8 steps, expected 12 |
 | parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✓ PASS | 1/1 | 0.14 | 1 of 1 |
-| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | 0.14 | Count failed at 0, got 1
+| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | 0.15 | Count failed at 0, got 1
 
 Error output sample:
 make: *** [Makefile:106: verify_parameterized_loadable_counter] Error 1
 Error: Count failed at 0, got 1 |
-| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | 0.14 | Initial state is not correct (LSB should be 1)
+| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | 0.15 | Initial state is not correct (LSB should be 1)
 
 Error output sample:
 make: *** [Makefile:106: verify_parameterized_onehot_counter] Error 1
 Error: Initial state is not correct (LSB should be 1) |
 | parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | 0.14 | Execution completed successfully |
-| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✓ PASS | 0/1 | 0.15 | Execution completed successfully |
-| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | 0.14 | Execution completed successfully |
-| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | 0.14 | 1 of 1 |
+| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✓ PASS | 0/1 | 0.14 | Execution completed successfully |
+| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | 0.15 | Execution completed successfully |
+| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | 0.15 | 1 of 1 |
 
 <a name='category-debugging'></a>
 ### Debugging
