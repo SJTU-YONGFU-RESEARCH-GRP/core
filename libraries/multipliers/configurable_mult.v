@@ -14,13 +14,11 @@ module configurable_mult #(
     // Perform multiplication based on sign mode
     always @(*) begin
         if (is_signed) begin
-            // For signed mode, interpret the inputs as signed values
-            // and compute the product, keeping only the lower 2*WIDTH bits
-            product = $signed(a) * $signed(b);
+            // For signed mode, properly handle signed multiplication
+            product = $signed({{1{a[WIDTH-1]}}, a}) * $signed({{1{b[WIDTH-1]}}, b});
         end else begin
             // Unsigned multiplication
             product = a * b;
         end
     end
-
-endmodule 
+endmodule
