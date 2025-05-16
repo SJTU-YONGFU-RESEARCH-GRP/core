@@ -224,7 +224,7 @@ def run_make_target(target):
     print(f"\n📋 Running target: {target}")
     try:
         start_time = time.time()
-        process = subprocess.run(["make", target], 
+        process = subprocess.run(["make", target, "VERBOSE=1"], 
                                 capture_output=True, 
                                 text=True, 
                                 check=False,
@@ -248,7 +248,17 @@ def run_make_target(target):
                 details = "Execution completed successfully"
         else:
             result = "❌ FAILED"
-            if test_results["result"] == "Fail":
+            
+            # Check for build errors specifically
+            if "Error: Module" in process.stderr or "Error: Module" in process.stdout:
+                build_error_lines = [line for line in process.stderr.splitlines() + process.stdout.splitlines() 
+                                    if "Error: Module" in line or "not found" in line]
+                details = "Build failed: " + (build_error_lines[0] if build_error_lines else "Unknown build error")
+            elif "error:" in process.stderr.lower():
+                # Extract compilation errors
+                error_lines = [line for line in process.stderr.splitlines() if "error:" in line.lower()]
+                details = "Compilation error: " + (error_lines[0] if error_lines else "Unknown compilation error")
+            elif test_results["result"] == "Fail":
                 details = test_results["details"] if test_results["details"] else "Tests failed"
             # Try to find error message
             elif test_results.get("error_message"):
@@ -261,6 +271,11 @@ def run_make_target(target):
                 details = warning_lines[0] if warning_lines else "Warnings caused failure"
             else:
                 details = f"Process exited with code {process.returncode}"
+                
+            # Save the first 10 lines of stderr for debugging
+            if process.stderr.strip():
+                stderr_sample = "\n".join(process.stderr.splitlines()[:10])
+                details += f"\n\nError output sample:\n{stderr_sample}"
         
         # Add coverage information to output if available
         coverage_info = ""
@@ -583,4 +598,4 @@ def main():
     print(f"Total runtime: {total_runtime:.2f} seconds")
 
 if __name__ == "__main__":
-    main() 
+    main()
