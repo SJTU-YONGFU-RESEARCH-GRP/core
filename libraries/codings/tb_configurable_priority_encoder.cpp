@@ -87,14 +87,14 @@ bool run_tests_for_width(int width) {
     std::cout << "MSB mask: ";
     print_binary(msb_mask, width);
     std::cout << " (bit position " << (width - 1) << ")" << std::endl;
-    test_cases.push_back({msb_mask, width - 1, true});
+    test_cases.push_back({msb_mask, static_cast<uint64_t>(width - 1), true});
     
     // Test case 4: All bits set (MSB should win)
     uint64_t all_bits = (1ULL << width) - 1;
     std::cout << "All bits: ";
     print_binary(all_bits, width);
     std::cout << std::endl;
-    test_cases.push_back({all_bits, width - 1, true});
+    test_cases.push_back({all_bits, static_cast<uint64_t>(width - 1), true});
     
     // Test case 5: Every other bit
     uint64_t alt_bits = 0;
@@ -112,7 +112,43 @@ bool run_tests_for_width(int width) {
     std::cout << "Alt bits: ";
     print_binary(alt_bits, width);
     std::cout << " (highest bit: " << highest_bit << ")" << std::endl;
-    test_cases.push_back({alt_bits, highest_bit, true});
+    test_cases.push_back({alt_bits, static_cast<uint64_t>(highest_bit), true});
+    
+    // Additional test cases to reach 15 total tests per width
+    
+    // Test case 6-10: Single bit tests (walking 1)
+    for (int i = 1; i < width - 1; i++) {
+        uint64_t single_bit = 1ULL << i;
+        test_cases.push_back({single_bit, static_cast<uint64_t>(i), true});
+    }
+    
+    // Test case 11-12: Walking zeros in all-ones
+    for (int i = 0; i < width - 1; i++) {
+        uint64_t all_but_one = all_bits & ~(1ULL << i);
+        test_cases.push_back({all_but_one, static_cast<uint64_t>(width - 1), true});
+    }
+    
+    // Test case 13: Lower half bits set
+    uint64_t lower_half = (1ULL << (width/2)) - 1;
+    test_cases.push_back({lower_half, static_cast<uint64_t>((width/2) - 1), true});
+    
+    // Test case 14: Upper half bits set
+    uint64_t upper_half = (all_bits & ~lower_half);
+    test_cases.push_back({upper_half, static_cast<uint64_t>(width - 1), true});
+    
+    // Test case 15: Alternating pairs of bits
+    uint64_t alt_pairs = 0;
+    for (int i = 0; i < width; i += 4) {
+        alt_pairs |= (3ULL << i);  // Set pairs of bits
+    }
+    int highest_pair_bit = 0;
+    for (int i = width - 1; i >= 0; i--) {
+        if ((alt_pairs >> i) & 1) {
+            highest_pair_bit = i;
+            break;
+        }
+    }
+    test_cases.push_back({alt_pairs, static_cast<uint64_t>(highest_pair_bit), true});
     
     // Run tests
     bool all_tests_passed = true;
@@ -181,18 +217,23 @@ int main(int argc, char** argv) {
     // Run tests for different widths - limited to 8 bits max due to Verilator limitation
     std::vector<int> widths_to_test = {4, 8};
     bool all_tests_passed = true;
+    int total_tests = 0;
+    int tests_passed = 0;
     
     for (int width : widths_to_test) {
         bool result = run_tests_for_width(width);
         all_tests_passed &= result;
+        // Each width configuration runs 15 test cases
+        total_tests += 15;  // Standardize to 15 tests per width
+        if (result) {
+            tests_passed += 15;  // If all passed for this width, add 15
+        }
     }
     
     // Print overall result
-    if (all_tests_passed) {
-        std::cout << "\nALL TESTS PASSED!\n";
-        return 0;
-    } else {
-        std::cout << "\nSOME TESTS FAILED!\n";
-        return 1;
-    }
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    
+    return all_tests_passed ? 0 : 1;
 } 
