@@ -7,11 +7,50 @@ import sys
 import time
 from datetime import datetime
 import glob
+import argparse
+from typing import List, Dict, Optional
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[
+    logging.FileHandler("verification.log"),
+    logging.StreamHandler()
+])
 
 # Define the base directory
 BASE_DIR = os.getcwd()
 LIBRARIES_DIR = os.path.join(BASE_DIR, "libraries")
 REPORT_FILE = os.path.join(BASE_DIR, "REPORT.md")
+
+# Define category mappings
+DIRECTORY_TO_CATEGORY = {
+    "adders": "Adders",
+    "arbiters": "Arbitration", 
+    "alu": "Arithmetic",
+    "comms": "Communication",
+    "codings": "Encoding/Decoding",
+    "counters": "Counters",
+    "dividers": "Division",
+    "fifos": "FIFOs",
+    "filters": "Filters",
+    "fsm": "State Machines",
+    "mems": "Memory",
+    "multipliers": "Multiplication",
+    "registers": "Registers",
+    "signals": "Signal Processing",
+    "cdc": "Clock Domain Crossing",
+    "debug": "Debugging",
+    "dsp": "Digital Signal Processing",
+    "encryption": "Encryption",
+    "interfaces": "Interfaces",
+    "io": "Input/Output",
+    "math": "Mathematics",
+    "noc": "Network on Chip",
+    "power": "Power Management",
+    "test": "Testing",
+    "voters": "Voting",
+    "cordic": "CORDIC"
+}
 
 # Get all make targets from Makefile
 def get_make_targets():
@@ -206,22 +245,32 @@ def extract_test_results(stdout, stderr):
 
 # Run a make target and capture the result with timing information
 def run_make_target(target):
-    print(f"\n📋 Running target: {target}")
+    logging.info(f"Running target: {target}")
     try:
         start_time = time.time()
         process = subprocess.run(["make", target, "VERBOSE=1"], 
                                 capture_output=True, 
-                                text=True, 
+                                text=False,  # Change to False to handle binary output
                                 check=False,
                                 timeout=120)  # Set timeout to 2 minutes
+        
+        # Decode the output with error handling
+        stdout = process.stdout.decode('utf-8', errors='replace')
+        stderr = process.stderr.decode('utf-8', errors='replace')
+        
         end_time = time.time()
         elapsed_time = end_time - start_time
         
+        # Log the output and errors
+        logging.debug(f"STDOUT: {stdout}")
+        logging.debug(f"STDERR: {stderr}")
+        logging.debug(f"Return code: {process.returncode}")
+        
         # Extract test results
-        test_results = extract_test_results(process.stdout, process.stderr)
+        test_results = extract_test_results(stdout, stderr)
         
         # Check if the test summary format was found and indicates a pass
-        if "==== Test Summary ====" in process.stdout and test_results["result"] == "Pass":
+        if "==== Test Summary ====" in stdout and test_results["result"] == "Pass":
             result = "✅ PASSED"
             details = test_results["details"] if test_results["details"] else "All tests passed"
         # Otherwise check process return code
@@ -235,39 +284,41 @@ def run_make_target(target):
             result = "❌ FAILED"
             
             # Check for build errors specifically
-            if "Error: Module" in process.stderr or "Error: Module" in process.stdout:
-                build_error_lines = [line for line in process.stderr.splitlines() + process.stdout.splitlines() 
+            if "Error: Module" in stderr or "Error: Module" in stdout:
+                build_error_lines = [line for line in stderr.splitlines() + stdout.splitlines() 
                                     if "Error: Module" in line or "not found" in line]
                 details = "Build failed: " + (build_error_lines[0] if build_error_lines else "Unknown build error")
-            elif "error:" in process.stderr.lower():
+            elif "error:" in stderr.lower():
                 # Extract compilation errors
-                error_lines = [line for line in process.stderr.splitlines() if "error:" in line.lower()]
+                error_lines = [line for line in stderr.splitlines() if "error:" in line.lower()]
                 details = "Compilation error: " + (error_lines[0] if error_lines else "Unknown compilation error")
             elif test_results["result"] == "Fail":
                 details = test_results["details"] if test_results["details"] else "Tests failed"
             # Try to find error message
             elif test_results.get("error_message"):
                 details = test_results["error_message"]
-            elif "Error" in process.stderr:
-                error_lines = [line for line in process.stderr.splitlines() if "Error" in line]
+            elif "Error" in stderr:
+                error_lines = [line for line in stderr.splitlines() if "Error" in line]
                 details = error_lines[0] if error_lines else "Unknown error"
-            elif "Warning" in process.stderr and "Exiting due to" in process.stderr:
-                warning_lines = [line for line in process.stderr.splitlines() if "Warning" in line]
+            elif "Warning" in stderr and "Exiting due to" in stderr:
+                warning_lines = [line for line in stderr.splitlines() if "Warning" in line]
                 details = warning_lines[0] if warning_lines else "Warnings caused failure"
             else:
                 details = f"Process exited with code {process.returncode}"
                 
             # Save the first 10 lines of stderr for debugging
-            if process.stderr.strip():
-                stderr_sample = "\n".join(process.stderr.splitlines()[:10])
+            if stderr.strip():
+                stderr_sample = "\n".join(stderr.splitlines()[:10])
                 details += f"\n\nError output sample:\n{stderr_sample}"
+        
+        logging.info(f"Result for {target}: {result} - {details}")
         
         return {
             "target": target,
             "status": result,
             "details": details,
-            "stdout": process.stdout,
-            "stderr": process.stderr,
+            "stdout": stdout,
+            "stderr": stderr,
             "runtime": elapsed_time,
             "passed_tests": test_results["passed_tests"],
             "total_tests": test_results["total_tests"],
@@ -275,6 +326,7 @@ def run_make_target(target):
             "error_message": test_results.get("error_message")
         }
     except subprocess.TimeoutExpired:
+        logging.error(f"Timeout expired for target: {target}")
         return {
             "target": target,
             "status": "⚠️ TIMEOUT",
@@ -288,6 +340,7 @@ def run_make_target(target):
             "error_message": "Test execution timed out after 2 minutes"
         }
     except Exception as e:
+        logging.exception(f"Exception occurred while running target: {target}")
         return {
             "target": target,
             "status": "❌ ERROR",
@@ -305,36 +358,6 @@ def run_make_target(target):
 def categorize_modules(module_mappings):
     categories = {}
     
-    # Create a mapping from directory to category
-    dir_to_category = {
-        "adders": "Adders",
-        "arbiters": "Arbitration",
-        "alu": "Arithmetic",
-        "comms": "Communication",
-        "codings": "Encoding/Decoding",
-        "counters": "Counters",
-        "dividers": "Division",
-        "fifo": "FIFOs",
-        "filters": "Filters",
-        "fsm": "State Machines",
-        "mems": "Memory",
-        "multipliers": "Multiplication",
-        "registers": "Registers",
-        "signals": "Signal Processing",
-        "cdc": "Clock Domain Crossing",
-        "debug": "Debugging",
-        "dsp": "Digital Signal Processing",
-        "encryption": "Encryption",
-        "interfaces": "Interfaces",
-        "io": "Input/Output",
-        "math": "Mathematics",
-        "noc": "Network on Chip",
-        "power": "Power Management",
-        "test": "Testing",
-        "voters": "Voting",
-        "cordic": "CORDIC"
-    }
-    
     # Map each target to its category
     for target, info in module_mappings.items():
         directory = info["directory"]
@@ -343,7 +366,7 @@ def categorize_modules(module_mappings):
         if not directory and "fp_adder" in info["module_name"]:
             category = "Arithmetic"
         else:
-            category = dir_to_category.get(directory, "Miscellaneous")
+            category = DIRECTORY_TO_CATEGORY.get(directory, "Miscellaneous")
             
         if category not in categories:
             categories[category] = []
@@ -506,7 +529,54 @@ def generate_report(results, module_mappings):
         f.write("- Runtime measurements include compilation and execution time\n")
         f.write("- Error messages are extracted from test output when available\n")
 
+def filter_targets_by_categories(targets: List[str], module_mappings: Dict[str, Dict], selected_categories: Optional[List[str]] = None) -> List[str]:
+    """Filter targets based on selected categories."""
+    if not selected_categories:
+        return targets
+        
+    # Convert selected categories to title case for consistent matching
+    selected_categories = [cat.title() for cat in selected_categories]
+    
+    # Get category for each target
+    filtered_targets = []
+    for target in targets:
+        if target in module_mappings:
+            directory = module_mappings[target]["directory"]
+            # Special case for fp_adder in root directory
+            if not directory and "fp_adder" in module_mappings[target]["module_name"]:
+                category = "Arithmetic"
+            else:
+                category = DIRECTORY_TO_CATEGORY.get(directory, "Miscellaneous")
+            
+            # Case-insensitive comparison for category matching
+            if any(cat.lower() == category.lower() for cat in selected_categories):
+                filtered_targets.append(target)
+                
+    return filtered_targets
+
+def setup_argument_parser() -> argparse.ArgumentParser:
+    """Set up command line argument parser."""
+    parser = argparse.ArgumentParser(
+        description="RTL Verification Script",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="Available categories:\n" + "\n".join(f"  - {cat}" for cat in sorted(set(DIRECTORY_TO_CATEGORY.values())))
+    )
+    
+    parser.add_argument(
+        "-c", "--categories",
+        nargs="+",
+        help="Specify one or more categories to verify (default: all categories)",
+        choices=sorted(set(DIRECTORY_TO_CATEGORY.values())),
+        metavar="CATEGORY"
+    )
+    
+    return parser
+
 def main():
+    # Set up argument parser
+    parser = setup_argument_parser()
+    args = parser.parse_args()
+    
     print("🔍 Scanning for RTL files and their testbenches...")
     rtl_files = scan_rtl_files()
     print(f"Found {len(rtl_files)} RTL modules, including those without testbenches.")
@@ -528,6 +598,15 @@ def main():
     # Filter targets that have a matching RTL file and testbench
     valid_targets = [t for t in targets if t in valid_module_mappings]
     print(f"Found {len(valid_targets)} valid targets with matching RTL files and testbenches.")
+    
+    # Filter targets by selected categories
+    if args.categories:
+        valid_targets = filter_targets_by_categories(valid_targets, module_mappings, args.categories)
+        print(f"Filtered to {len(valid_targets)} targets in selected categories: {', '.join(args.categories)}")
+    
+    if not valid_targets:
+        print("No valid targets found for the selected categories.")
+        sys.exit(1)
     
     print("🧪 Running tests for each target...")
     results = []

@@ -203,5 +203,5 @@ int main(int argc, char** argv) {
     tfp_left->close();
     sr_left->final();
     
-    return 0;
+    return all_tests_pass ? 0 : 1;
 } 

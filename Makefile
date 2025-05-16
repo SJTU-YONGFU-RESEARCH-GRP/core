@@ -154,7 +154,7 @@ verify_adders: init
 	@echo "\nAll adder verifications completed."
 
 verify_fifos: init
-	@for module in $(filter $(patsubst build_%,%,$(filter build_%fifo build_%buffer,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%fifo build_%buffer build_%queue,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
 		echo "\n=== Verifying FIFO: $$module ==="; \
 		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
 	done

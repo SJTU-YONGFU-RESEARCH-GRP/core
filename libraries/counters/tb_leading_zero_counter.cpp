@@ -27,9 +27,8 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
     const int DATA_WIDTH = 32;  // Must match the DATA_WIDTH parameter in the Verilog module
     const int COUNT_WIDTH = std::log2(DATA_WIDTH + 1);
     
-    bool all_tests_pass = true;
-    int tests_passed = 0;
     int total_tests = 0;
+    int passed_tests = 0;
     
     std::cout << "Testing Leading Zero Counter with DATA_WIDTH=" << DATA_WIDTH << std::endl;
     
@@ -80,9 +79,7 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
         
         if (pass) {
             std::cout << " - PASS";
-            tests_passed++;
-        } else {
-            all_tests_pass = false;
+            passed_tests++;
         }
         std::cout << std::endl;
     }
@@ -122,17 +119,15 @@ void check_operation(std::unique_ptr<Vleading_zero_counter>& lzc, VerilatedVcdC*
         
         if (pass) {
             std::cout << " - PASS";
-            tests_passed++;
-        } else {
-            all_tests_pass = false;
+            passed_tests++;
         }
         std::cout << std::endl;
     }
     
-    // Print test summary
+    // Print standardized test summary
     std::cout << "\n==== Test Summary ====" << std::endl;
-    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
-    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

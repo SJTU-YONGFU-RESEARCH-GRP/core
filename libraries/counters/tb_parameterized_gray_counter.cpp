@@ -15,7 +15,7 @@ int binary_to_gray(int binary, int width) {
 }
 
 void dut_test(Vparameterized_gray_counter *dut, VerilatedVcdC *m_trace, 
-              int test_width, int test_mode, int test_initial) {
+              int test_width, int test_mode, int test_initial, int &passed_tests) {
     
     // Initialize signals
     dut->rst_n = 0;
@@ -42,6 +42,7 @@ void dut_test(Vparameterized_gray_counter *dut, VerilatedVcdC *m_trace,
     
     // Create a mask for the width of our counter
     int mask = (1 << test_width) - 1;
+    bool test_passed = true;
     
     // Main test loop
     for (int i = 0; i < (1 << test_width) * 2; i++) {
@@ -59,11 +60,13 @@ void dut_test(Vparameterized_gray_counter *dut, VerilatedVcdC *m_trace,
                 if ((dut->gray_out & mask) != (expected_gray & mask)) {
                     std::cout << "ERROR at time " << sim_time << ": Gray output mismatch.\n";
                     std::cout << "Expected: " << (expected_gray & mask) << ", Got: " << (dut->gray_out & mask) << std::endl;
+                    test_passed = false;
                 }
                 
                 if ((dut->binary_out & mask) != (expected_binary & mask)) {
                     std::cout << "ERROR at time " << sim_time << ": Binary output mismatch.\n";
                     std::cout << "Expected: " << (expected_binary & mask) << ", Got: " << (dut->binary_out & mask) << std::endl;
+                    test_passed = false;
                 }
             }
             
@@ -77,6 +80,10 @@ void dut_test(Vparameterized_gray_counter *dut, VerilatedVcdC *m_trace,
             }
             expected_gray = binary_to_gray(expected_binary, test_width);
         }
+    }
+    
+    if (test_passed) {
+        passed_tests++;
     }
 }
 
@@ -92,23 +99,30 @@ int main(int argc, char** argv) {
     
     std::cout << "Testing parameterized_gray_counter..." << std::endl;
     
+    // Track test results
+    int total_tests = 3;  // We have 3 test cases
+    int passed_tests = 0;
+    
     // Test case 1: 4-bit up counter starting from 0
     std::cout << "Test case 1: 4-bit up counter" << std::endl;
-    dut_test(dut, m_trace, 4, 0, 0);
+    dut_test(dut, m_trace, 4, 0, 0, passed_tests);
     
     // Test case 2: 3-bit down counter starting from 7
     std::cout << "Test case 2: 3-bit down counter" << std::endl;
-    dut_test(dut, m_trace, 3, 1, 7);
+    dut_test(dut, m_trace, 3, 1, 7, passed_tests);
     
     // Test case 3: 5-bit up counter starting from 10
     std::cout << "Test case 3: 5-bit up counter with non-zero start" << std::endl;
-    dut_test(dut, m_trace, 5, 0, 10);
+    dut_test(dut, m_trace, 5, 0, 10, passed_tests);
     
-    std::cout << "Tests completed!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     m_trace->close();
     delete dut;
     delete m_trace;
     
-    return 0;
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

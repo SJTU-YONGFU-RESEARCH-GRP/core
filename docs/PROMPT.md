@@ -5,3 +5,29 @@ can you standardize the output information from the testbench (cpp) files? For t
 ==== Test Summary ====
 Result: Pass|Fail
 Tests: X of X 
+
+- Adders Done
+- Arbitration 
+  - Arithmetic
+  - CORDIC
+  - Clock Domain Crossing
+  - Communication
+  - Counters
+  - Debugging
+  - Digital Signal Processing
+  - Encoding/Decoding
+  - Encryption
+  - FIFOs
+- Filters Done
+  - Input/Output
+  - Interfaces
+  - Mathematics
+- Memory Done
+- Multiplication Done
+  - Network on Chip
+  - Power Management
+  - Registers
+  - Signal Processing
+- State Machines Done
+- Testing Done
+- Voting Done

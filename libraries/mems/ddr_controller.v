@@ -3,7 +3,7 @@ module ddr_controller #(
     parameter ADDR_WIDTH = 28,          // Row + Bank + Column address
     parameter DATA_WIDTH = 64,          // Data width
     parameter BURST_LENGTH = 8,
-    parameter CAS_LATENCY = 11,
+    parameter CAS_LATENCY = 15,
     parameter ROW_WIDTH = 14,
     parameter COL_WIDTH = 10,
     parameter BANK_WIDTH = 3,
@@ -68,8 +68,8 @@ module ddr_controller #(
     localparam CMD_NOP   = 3'b111;  // No Operation
     
     // Timing parameters (in clock cycles)
-    localparam tRCD      = 5;       // ACT to READ/WRITE delay
-    localparam tRP       = 5;       // PRE to ACT delay
+    localparam tRCD      = 10;       // ACT to READ/WRITE delay
+    localparam tRP       = 10;       // PRE to ACT delay
     localparam tRC       = 15;      // ACT to ACT (same bank) delay
     localparam tRAS      = 15;      // ACT to PRE delay
     localparam tREFI     = 1950;    // Refresh interval
@@ -115,9 +115,9 @@ module ddr_controller #(
     assign bank_addr = cmd_addr[ADDR_WIDTH-ROW_WIDTH-1:ADDR_WIDTH-ROW_WIDTH-BANK_WIDTH];
     
     generate
-        if (DDR_TYPE == "DDR4" || DDR_TYPE == "DDR5") begin
+        if (DDR_TYPE == "DDR4" || DDR_TYPE == "DDR5") begin : gen_ddr_type
             assign bank_group_addr = cmd_addr[ADDR_WIDTH-ROW_WIDTH-BANK_WIDTH-1:ADDR_WIDTH-ROW_WIDTH-BANK_WIDTH-BANK_GROUP_WIDTH];
-        end else begin
+        end else begin : gen_no_ddr_type
             assign bank_group_addr = {BANK_GROUP_WIDTH{1'b0}};
         end
     endgenerate
@@ -143,7 +143,7 @@ module ddr_controller #(
             // Default values
             cmd_reg <= CMD_NOP;
             cmd_reg_valid <= 1'b1;
-            rd_valid_reg <= 1'b0;
+            rd_valid_reg <= 1'b0;  // Default to 0, only set to 1 in specific cases
             wr_ready_reg <= 1'b0;
             
             // Refresh counter
@@ -224,6 +224,10 @@ module ddr_controller #(
                                 refresh_counter <= 16'h0;
                             end
                         end
+                        default: begin
+                            // Handle unexpected states
+                            init_state <= 4'h0;
+                        end
                     endcase
                 end
                 
@@ -279,13 +283,21 @@ module ddr_controller #(
                 
                 READ_WRITE: begin
                     if (timer == 0) begin
+                        if (cmd_reg == CMD_RD) begin
+                            rd_valid_reg <= 1'b1;  // Directly assert rd_valid when timer expires
+                        end
                         if (burst_counter > 0) begin
                             // Continue burst
                             burst_counter <= burst_counter - 1;
-                            if (cmd_reg == CMD_RD)
+                            if (cmd_reg == CMD_RD) begin
                                 rd_valid_reg <= 1'b1;
-                            else if (cmd_reg == CMD_WR)
+                                // Ensure rd_valid_reg is deasserted after data is read
+                                if (rd_ready) begin
+                                    rd_valid_reg <= 1'b0;
+                                end
+                            end else if (cmd_reg == CMD_WR) begin
                                 wr_ready_reg <= 1'b1;
+                            end
                         end else begin
                             // Burst complete, auto-precharge and return to IDLE
                             cmd_reg <= CMD_PRE;
@@ -297,6 +309,10 @@ module ddr_controller #(
                     end else if (cmd_reg == CMD_RD && timer <= CAS_LATENCY && timer > 1) begin
                         // Countdown to read data valid
                         timer <= timer - 1;
+                    end else if (cmd_reg == CMD_RD && timer == 1) begin
+                        // Last cycle of CAS latency, data is ready
+                        timer <= 0;
+                        rd_valid_reg <= 1'b1; // Assert rd_valid
                     end else if (cmd_reg == CMD_WR && wr_valid) begin
                         // Write data accepted
                         wr_ready_reg <= 1'b0;
@@ -319,8 +335,9 @@ module ddr_controller #(
     
     // Data path for reads (simplified)
     always @(posedge phy_clk) begin
-        if (curr_state == READ_WRITE && cmd_reg == CMD_RD)
+        if (curr_state == READ_WRITE && cmd_reg == CMD_RD) begin
             rd_data_reg <= phy_dq;
+        end
     end
     
     // Output assignments

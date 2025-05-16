@@ -33,17 +33,26 @@ int main(int argc, char** argv) {
     // Initialize signals
     dut->clk = 0;
     dut->rst_n = 0;  // Start with reset active
-    dut->enable = 1; // Enable the counter
+    dut->enable = 0; // Start with counter disabled
+    dut->eval();
+    
+    // Hold in reset for a few cycles
+    for(int i = 0; i < 3; i++) {
+        dut->clk = 1;
+        dut->eval();
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    // Release reset and enable counter
+    dut->rst_n = 1;
+    dut->enable = 1;
+    dut->eval();
     
     // Run simulation
     while (sim_time < MAX_SIM_TIME) {
         // Toggle clock
         dut->clk = !dut->clk;
-        
-        // Release reset after a few clock cycles
-        if (sim_time == 4) {
-            dut->rst_n = 1;
-        }
         
         // Evaluate model
         dut->eval();
@@ -52,7 +61,7 @@ int main(int argc, char** argv) {
         m_trace->dump(sim_time);
         
         // Print counter value on positive clock edge
-        if (dut->clk && sim_time > 4) {
+        if (dut->clk) {
             std::cout << "Time: " << sim_time << ", Count: ";
             for (int i = width-1; i >= 0; i--) {
                 std::cout << ((dut->count >> i) & 1);
@@ -69,54 +78,59 @@ int main(int argc, char** argv) {
     // Reset for verification
     dut->clk = 0;
     dut->rst_n = 0;
-    dut->enable = 1;
+    dut->enable = 0;
     dut->eval();
-    dut->clk = 1;
-    dut->eval();
-    dut->clk = 0;
+    
+    // Hold in reset for a few cycles
+    for(int i = 0; i < 3; i++) {
+        dut->clk = 1;
+        dut->eval();
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    // Release reset and enable counter
     dut->rst_n = 1;
+    dut->enable = 1;
     dut->eval();
     
     // Store the sequence
-    uint32_t* sequence = new uint32_t[expected_sequence_length];
+    uint32_t* sequence = new uint32_t[expected_sequence_length * 2];
     int seq_idx = 0;
-    bool sequence_repeats = false;
+    bool found_repeat = false;
     
+    // Capture more values than needed to find the repetition
     for (int i = 0; i < expected_sequence_length * 2; i++) {
-        // Clock the design
+        // Rising edge
         dut->clk = 1;
         dut->eval();
+        sequence[i] = dut->count;
         
-        if (i >= 1) { // Skip the first clock after reset
-            sequence[seq_idx] = dut->count;
-            seq_idx++;
-            
-            // Check if we've seen a complete sequence
-            if (seq_idx == expected_sequence_length) {
-                // Verify next values match the start of the sequence
-                uint32_t next_val = dut->count;
-                dut->clk = 0;
-                dut->eval();
-                dut->clk = 1;
-                dut->eval();
-                
-                if (dut->count == sequence[0]) {
-                    sequence_repeats = true;
+        // Check for sequence repetition starting from the second value
+        if (i > 0 && sequence[i] == sequence[0]) {
+            // Found potential repetition point
+            bool is_repeat = true;
+            for (int j = 1; j < i; j++) {
+                if (sequence[j] != sequence[j % i]) {
+                    is_repeat = false;
                     break;
                 }
-                
-                // If not repeating yet, continue collecting
-                seq_idx = 0;
+            }
+            if (is_repeat) {
+                seq_idx = i;
+                found_repeat = true;
+                break;
             }
         }
         
+        // Falling edge
         dut->clk = 0;
         dut->eval();
     }
     
     // Print the sequence
     std::cout << "Johnson counter sequence:" << std::endl;
-    for (int i = 0; i < expected_sequence_length; i++) {
+    for (int i = 0; i < (found_repeat ? seq_idx : expected_sequence_length); i++) {
         std::cout << "  " << i << ": ";
         for (int j = width-1; j >= 0; j--) {
             std::cout << ((sequence[i] >> j) & 1);
@@ -127,29 +141,45 @@ int main(int argc, char** argv) {
     // Check if sequence has the expected properties
     bool valid_johnson = true;
     
-    // Check if the sequence repeats
-    if (!sequence_repeats) {
-        std::cout << "ERROR: Sequence does not repeat after expected length." << std::endl;
+    // Check if we found a repeating sequence
+    if (!found_repeat) {
+        std::cout << "ERROR: Could not find a repeating sequence." << std::endl;
+        valid_johnson = false;
+    } else if (seq_idx != expected_sequence_length) {
+        std::cout << "ERROR: Sequence repeats after " << seq_idx 
+                  << " steps, expected " << expected_sequence_length << std::endl;
         valid_johnson = false;
     }
     
     // Check if the sequence has the Johnson counter pattern
-    for (int i = 0; i < expected_sequence_length-1; i++) {
-        uint32_t curr = sequence[i];
-        uint32_t next = sequence[i+1];
-        
-        // In a Johnson counter, each state should differ from the next by exactly one bit
-        int bit_diff = 0;
-        for (int j = 0; j < width; j++) {
-            if (((curr >> j) & 1) != ((next >> j) & 1)) {
-                bit_diff++;
+    if (found_repeat) {
+        for (int i = 0; i < seq_idx; i++) {
+            uint32_t curr = sequence[i];
+            uint32_t next = sequence[(i + 1) % seq_idx];
+            
+            // In a Johnson counter, each state should differ from the next by exactly one bit
+            int bit_diff = 0;
+            for (int j = 0; j < width; j++) {
+                if (((curr >> j) & 1) != ((next >> j) & 1)) {
+                    bit_diff++;
+                }
             }
-        }
-        
-        if (bit_diff != 1) {
-            std::cout << "ERROR: Invalid transition from state " << i << " to " << (i+1) 
-                      << ". Johnson counter should have exactly 1 bit change." << std::endl;
-            valid_johnson = false;
+            
+            if (bit_diff != 1) {
+                std::cout << "ERROR: Invalid transition from state " << i << " to " << ((i + 1) % seq_idx)
+                          << ". Johnson counter should have exactly 1 bit change." << std::endl;
+                std::cout << "Current state: ";
+                for (int j = width-1; j >= 0; j--) {
+                    std::cout << ((curr >> j) & 1);
+                }
+                std::cout << "\nNext state:    ";
+                for (int j = width-1; j >= 0; j--) {
+                    std::cout << ((next >> j) & 1);
+                }
+                std::cout << std::endl;
+                valid_johnson = false;
+                break;
+            }
         }
     }
     

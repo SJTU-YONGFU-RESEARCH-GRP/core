@@ -16,6 +16,10 @@ int main(int argc, char** argv) {
     dut->trace(m_trace, 5);
     m_trace->open("waveform.vcd");
     
+    // Track test results
+    int total_tests = 4;  // We have 4 test cases
+    int passed_tests = 0;
+    
     // Initialize inputs
     dut->clk = 0;
     dut->rst_n = 0;
@@ -50,12 +54,14 @@ int main(int argc, char** argv) {
     
     // Check output after load
     std::cout << "After load, count = 0x" << std::hex << (int)dut->count << std::dec << std::endl;
+    if (dut->count == 0x5) passed_tests++;
     
     // Test case 2: Johnson counter sequence
     std::cout << "Test Case 2: Johnson Counter Sequence" << std::endl;
+    bool sequence_correct = true;
+    uint8_t expected_sequence[] = {0x5, 0xB, 0x6, 0xD, 0xA, 0x4, 0x9, 0x2, 0x5, 0xB};
     
     // For a 4-bit Johnson counter, we need 8 clock cycles to complete a sequence
-    // The sequence should be: 0101 -> 0010 -> 0001 -> 1000 -> 1100 -> 1110 -> 1111 -> 0111 -> 0011 -> 0001 -> ...
     for (int i = 0; i < 10; i++) {
         dut->clk ^= 1;
         dut->eval();
@@ -64,11 +70,15 @@ int main(int argc, char** argv) {
         dut->eval();
         m_trace->dump(sim_time++);
         std::cout << "Johnson counter state " << i+1 << ": 0x" << std::hex << (int)dut->count << std::dec << std::endl;
+        if (dut->count != expected_sequence[i]) sequence_correct = false;
     }
+    if (sequence_correct) passed_tests++;
     
     // Test case 3: Disable counter
     std::cout << "Test Case 3: Disable Counter" << std::endl;
     dut->enable = 0;
+    uint8_t frozen_value = dut->count;
+    bool disable_correct = true;
     
     // Clock cycles with counter disabled
     for (int i = 0; i < 3; i++) {
@@ -79,26 +89,53 @@ int main(int argc, char** argv) {
         dut->eval();
         m_trace->dump(sim_time++);
         std::cout << "After disable " << i+1 << ", count = 0x" << std::hex << (int)dut->count << std::dec << std::endl;
+        if (dut->count != frozen_value) disable_correct = false;
     }
+    if (disable_correct) passed_tests++;
     
-    // Test case 4: Re-enable counter
+    // Test case 4: Re-enable Counter
     std::cout << "Test Case 4: Re-enable Counter" << std::endl;
     dut->enable = 1;
+    bool reenable_correct = true;
+    // Expected sequence after 0x6: 0xD, 0xA, 0x4, 0x9, 0x2
+    uint8_t expected_reenable[] = {0xD, 0xA, 0x4, 0x9, 0x2};
     
     // Continue Johnson counter sequence
     for (int i = 0; i < 5; i++) {
+        // Clock low
         dut->clk ^= 1;
         dut->eval();
         m_trace->dump(sim_time++);
+        
+        // Clock high - check value after positive edge
         dut->clk ^= 1;
         dut->eval();
         m_trace->dump(sim_time++);
-        std::cout << "Johnson counter state " << i+1 << " after re-enable: 0x" << std::hex << (int)dut->count << std::dec << std::endl;
+        
+        std::cout << "Johnson counter state " << i+1 << " after re-enable: 0x" << std::hex << (int)dut->count 
+                  << " (expected: 0x" << (int)expected_reenable[i] << ")" << std::dec << std::endl;
+        
+        if (dut->count != expected_reenable[i]) {
+            reenable_correct = false;
+            std::cout << "Mismatch at state " << i+1 << ": got 0x" << std::hex << (int)dut->count 
+                      << ", expected 0x" << (int)expected_reenable[i] << std::dec << std::endl;
+        }
     }
+    if (reenable_correct) {
+        passed_tests++;
+        std::cout << "Re-enable test passed!" << std::endl;
+    } else {
+        std::cout << "Re-enable test failed!" << std::endl;
+    }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     m_trace->close();
     delete dut;
     delete m_trace;
     
-    return EXIT_SUCCESS;
+    return (passed_tests == total_tests) ? 0 : 1;
 }

@@ -38,6 +38,10 @@ void check_operation(std::unique_ptr<Vconfigurable_clz_clo>& counter, VerilatedV
     const int DATA_WIDTH = 32;  // Must match the DATA_WIDTH parameter in the Verilog module
     const int COUNT_WIDTH = std::log2(DATA_WIDTH + 1);
     
+    // Track test results
+    int total_tests = 0;
+    int passed_tests = 0;
+    
     std::cout << "Testing Configurable CLZ/CLO with DATA_WIDTH=" << DATA_WIDTH << std::endl;
     
     // Test data patterns
@@ -59,6 +63,7 @@ void check_operation(std::unique_ptr<Vconfigurable_clz_clo>& counter, VerilatedV
     // Test both count modes
     for (uint32_t pattern : test_patterns) {
         for (int mode = 0; mode <= 1; mode++) {
+            total_tests++;
             bool count_ones = (mode == 1);
             
             // Apply inputs
@@ -91,10 +96,16 @@ void check_operation(std::unique_ptr<Vconfigurable_clz_clo>& counter, VerilatedV
                           << ", All Ones=" << expected_all_ones;
             } else {
                 std::cout << " - PASS";
+                passed_tests++;
             }
             std::cout << std::endl;
         }
     }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -120,6 +131,5 @@ int main(int argc, char** argv) {
     tfp->close();
     counter->final();
     
-    std::cout << "Simulation completed!" << std::endl;
     return 0;
 } 

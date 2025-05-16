@@ -37,10 +37,8 @@ module async_fifo #(
     // Synchronization registers for crossing clock domains
     reg [ADDR_WIDTH:0] wr_ptr_gray_sync1;
     reg [ADDR_WIDTH:0] wr_ptr_gray_sync2;
-    reg [ADDR_WIDTH:0] wr_ptr_gray_sync3;  // Added third sync stage
     reg [ADDR_WIDTH:0] rd_ptr_gray_sync1;
     reg [ADDR_WIDTH:0] rd_ptr_gray_sync2;
-    reg [ADDR_WIDTH:0] rd_ptr_gray_sync3;  // Added third sync stage
     
     // Binary to gray code conversion
     function [ADDR_WIDTH:0] bin_to_gray(input [ADDR_WIDTH:0] bin);
@@ -65,11 +63,9 @@ module async_fifo #(
         if (!wr_rst_n) begin
             wr_ptr_bin <= 0;
             wr_ptr_gray <= 0;
-        end else begin
-            if (wr_en && !full) begin
-                wr_ptr_bin <= wr_ptr_bin + 1'b1;
-                wr_ptr_gray <= bin_to_gray(wr_ptr_bin + 1'b1);
-            end
+        end else if (wr_en && !full) begin
+            wr_ptr_bin <= wr_ptr_bin + 1'b1;
+            wr_ptr_gray <= bin_to_gray(wr_ptr_bin + 1'b1);
         end
     end
     
@@ -78,11 +74,9 @@ module async_fifo #(
         if (!rd_rst_n) begin
             rd_ptr_bin <= 0;
             rd_ptr_gray <= 0;
-        end else begin
-            if (rd_en && !empty) begin
-                rd_ptr_bin <= rd_ptr_bin + 1'b1;
-                rd_ptr_gray <= bin_to_gray(rd_ptr_bin + 1'b1);
-            end
+        end else if (rd_en && !empty) begin
+            rd_ptr_bin <= rd_ptr_bin + 1'b1;
+            rd_ptr_gray <= bin_to_gray(rd_ptr_bin + 1'b1);
         end
     end
     
@@ -91,11 +85,9 @@ module async_fifo #(
         if (!rd_rst_n) begin
             wr_ptr_gray_sync1 <= 0;
             wr_ptr_gray_sync2 <= 0;
-            wr_ptr_gray_sync3 <= 0;
         end else begin
             wr_ptr_gray_sync1 <= wr_ptr_gray;
             wr_ptr_gray_sync2 <= wr_ptr_gray_sync1;
-            wr_ptr_gray_sync3 <= wr_ptr_gray_sync2;  // Added third stage
         end
     end
     
@@ -104,11 +96,9 @@ module async_fifo #(
         if (!wr_rst_n) begin
             rd_ptr_gray_sync1 <= 0;
             rd_ptr_gray_sync2 <= 0;
-            rd_ptr_gray_sync3 <= 0;
         end else begin
             rd_ptr_gray_sync1 <= rd_ptr_gray;
             rd_ptr_gray_sync2 <= rd_ptr_gray_sync1;
-            rd_ptr_gray_sync3 <= rd_ptr_gray_sync2;  // Added third stage
         end
     end
     
@@ -120,50 +110,51 @@ module async_fifo #(
     end
     
     // Convert synchronized gray pointers to binary for comparison
-    wire [ADDR_WIDTH:0] wr_ptr_sync_bin = gray_to_bin(wr_ptr_gray_sync3);  // Use sync3
-    wire [ADDR_WIDTH:0] rd_ptr_sync_bin = gray_to_bin(rd_ptr_gray_sync3);  // Use sync3
+    wire [ADDR_WIDTH:0] wr_ptr_sync_bin = gray_to_bin(wr_ptr_gray_sync2);
+    wire [ADDR_WIDTH:0] rd_ptr_sync_bin = gray_to_bin(rd_ptr_gray_sync2);
     
-    // FIFO status signals - made more conservative
-    // Modify full/empty detection to be more robust
-    assign full = (wr_ptr_bin[ADDR_WIDTH] != rd_ptr_sync_bin[ADDR_WIDTH]) && 
-                 (wr_ptr_bin[ADDR_WIDTH-1:0] == rd_ptr_sync_bin[ADDR_WIDTH-1:0]);
+    // Calculate FIFO counts
+    wire [ADDR_WIDTH:0] wr_count_val = wr_ptr_bin - rd_ptr_sync_bin;
+    wire [ADDR_WIDTH:0] rd_count_val = wr_ptr_sync_bin - rd_ptr_bin;
     
-    assign empty = (wr_ptr_sync_bin == rd_ptr_bin);
-
-    // Add delay to almost_full/almost_empty to prevent glitches
-    reg almost_full_reg;
-    reg almost_empty_reg;
+    // FIFO status signals
+    assign full = (wr_ptr_bin[ADDR_WIDTH-1:0] == rd_ptr_sync_bin[ADDR_WIDTH-1:0]) &&
+                 (wr_ptr_bin[ADDR_WIDTH] != rd_ptr_sync_bin[ADDR_WIDTH]);
+                 
+    assign empty = (rd_ptr_bin == wr_ptr_sync_bin);
+    
+    // Almost full/empty flags with hysteresis
+    reg almost_full_reg, almost_empty_reg;
     
     always @(posedge wr_clk or negedge wr_rst_n) begin
         if (!wr_rst_n) begin
             almost_full_reg <= 0;
         end else begin
-            almost_full_reg <= (wr_count_bin >= ((1<<ADDR_WIDTH) - ALMOST_FULL_THRESHOLD));
+            if (wr_count_val >= ((1<<ADDR_WIDTH) - ALMOST_FULL_THRESHOLD)) begin
+                almost_full_reg <= 1;
+            end else if (wr_count_val < ((1<<ADDR_WIDTH) - ALMOST_FULL_THRESHOLD - 1)) begin
+                almost_full_reg <= 0;
+            end
         end
     end
     
     always @(posedge rd_clk or negedge rd_rst_n) begin
         if (!rd_rst_n) begin
-            almost_empty_reg <= 0;
+            almost_empty_reg <= 1;
         end else begin
-            almost_empty_reg <= (rd_count_bin <= ALMOST_EMPTY_THRESHOLD) && !empty;
+            if (rd_count_val <= ALMOST_EMPTY_THRESHOLD) begin
+                almost_empty_reg <= 1;
+            end else if (rd_count_val > ALMOST_EMPTY_THRESHOLD + 1) begin
+                almost_empty_reg <= 0;
+            end
         end
     end
     
+    // Output assignments
     assign almost_full = almost_full_reg;
     assign almost_empty = almost_empty_reg;
-    
-    // Calculate write-domain FIFO count
-    wire [ADDR_WIDTH:0] wr_count_bin = wr_ptr_bin - rd_ptr_sync_bin;
-    assign wr_count = wr_count_bin;
-    
-    // Calculate read-domain FIFO count
-    wire [ADDR_WIDTH:0] rd_count_bin = wr_ptr_sync_bin - rd_ptr_bin;
-    assign rd_count = rd_count_bin;
-    
-    // Almost full/empty flags
-    assign almost_full = (wr_count_bin >= ((1<<ADDR_WIDTH) - ALMOST_FULL_THRESHOLD));
-    assign almost_empty = (rd_count_bin <= ALMOST_EMPTY_THRESHOLD) && !empty;
+    assign wr_count = wr_count_val;
+    assign rd_count = rd_count_val;
     
     // Read data output
     reg [DATA_WIDTH-1:0] rd_data_reg;

@@ -48,6 +48,7 @@ module cache_fifo #(
     reg [TAG_WIDTH-1:0]  cache_tags [0:CACHE_SIZE-1];
     reg [CACHE_SIZE-1:0] cache_valid;
     reg [$clog2(CACHE_SIZE)-1:0] lru_counters [0:CACHE_SIZE-1];
+    reg [$clog2(CACHE_SIZE)-1:0] fifo_replacement_ptr;  // For FIFO replacement policy
     
     // FIFO status signals
     wire [ADDR_WIDTH:0] fifo_count = wr_ptr - rd_ptr;
@@ -66,14 +67,14 @@ module cache_fifo #(
     function [$clog2(CACHE_SIZE)-1:0] find_lru_index;
         input [$clog2(CACHE_SIZE)-1:0] counters [0:CACHE_SIZE-1];
         reg [$clog2(CACHE_SIZE)-1:0] min_idx;
-        reg [$clog2(CACHE_SIZE)-1:0] max_counter;
+        reg [$clog2(CACHE_SIZE)-1:0] min_counter;
         begin
             min_idx = 0;
-            max_counter = counters[0];
+            min_counter = counters[0];
             
             for (integer i = 1; i < CACHE_SIZE; i = i + 1) begin
-                if (counters[i] > max_counter) begin
-                    max_counter = counters[i];
+                if (counters[i] < min_counter) begin
+                    min_counter = counters[i];
                     min_idx = i;
                 end
             end
@@ -86,6 +87,7 @@ module cache_fifo #(
     function [$clog2(CACHE_SIZE)-1:0] find_cache_index;
         input [CACHE_SIZE-1:0] valid;
         input [$clog2(CACHE_SIZE)-1:0] counters [0:CACHE_SIZE-1];
+        input [$clog2(CACHE_SIZE)-1:0] fifo_ptr;
         reg [$clog2(CACHE_SIZE)-1:0] idx;
         reg found_empty;
         begin
@@ -104,11 +106,11 @@ module cache_fifo #(
             // If no invalid entry, use replacement policy
             if (!found_empty) begin
                 if (LRU_POLICY) begin
-                    // LRU replacement
+                    // LRU replacement - find entry with highest counter value
                     idx = find_lru_index(counters);
                 end else begin
-                    // FIFO replacement (round-robin)
-                    idx = (counters[0] % CACHE_SIZE);
+                    // FIFO replacement - use round-robin pointer
+                    idx = fifo_ptr;
                 end
             end
             
@@ -126,10 +128,10 @@ module cache_fifo #(
     
     // FIFO state management
     always @(posedge clk or negedge rst_n) begin
-        integer i, j;
+        integer i;
         reg [$clog2(CACHE_SIZE)-1:0] cache_idx;
         reg [CACHE_SIZE-1:0] matched_tag;
-        reg hit_index;
+        reg [$clog2(CACHE_SIZE)-1:0] hit_index;
         
         if (!rst_n) begin
             wr_ptr <= 0;
@@ -137,6 +139,7 @@ module cache_fifo #(
             rd_hit <= 0;
             cache_hits <= 0;
             cache_misses <= 0;
+            fifo_replacement_ptr <= 0;
             
             // Initialize cache
             for (i = 0; i < CACHE_SIZE; i = i + 1) begin
@@ -178,68 +181,43 @@ module cache_fifo #(
                     rd_hit <= 1;
                     cache_hits <= cache_hits + 1;
                     
-                    // Update LRU counters manually to avoid delayed assignments in loops
+                    // Update LRU counters
                     if (LRU_POLICY) begin
                         for (i = 0; i < CACHE_SIZE; i = i + 1) begin
                             if (i[$clog2(CACHE_SIZE)-1:0] == hit_index) begin
-                                lru_counters[i] <= 0; // Most recently used
-                            end else if (lru_counters[i] < lru_counters[hit_index]) begin
-                                lru_counters[i] <= lru_counters[i] + 1;
+                                lru_counters[i] <= {$clog2(CACHE_SIZE){1'b1}}; // Most recently used
+                            end else if (lru_counters[i] > 0) begin
+                                lru_counters[i] <= lru_counters[i] - 1'b1;
                             end
                         end
                     end
                 end else begin
-                    // Cache miss - search in main FIFO memory
-                    reg [TAG_WIDTH-1:0] found_tag;
-                    reg [DATA_WIDTH-1:0] found_data;
-                    reg tag_found;
-                    reg [ADDR_WIDTH-1:0] found_addr;
+                    // Cache miss - read from FIFO memory
+                    rd_data <= mem[rd_ptr[ADDR_WIDTH-1:0]];
+                    cache_misses <= cache_misses + 1;
                     
-                    tag_found = 0;
-                    found_addr = rd_ptr[ADDR_WIDTH-1:0];
+                    // Add to cache
+                    cache_idx = find_cache_index(cache_valid, lru_counters, fifo_replacement_ptr);
                     
-                    // Search for tag in FIFO memory
-                    for (i = 0; i < fifo_count; i = i + 1) begin
-                        reg [ADDR_WIDTH-1:0] addr;
-                        addr = (rd_ptr + i) % (1<<ADDR_WIDTH);
-                        if (tag_mem[addr] == rd_tag) begin
-                            found_tag = tag_mem[addr];
-                            found_data = mem[addr];
-                            found_addr = addr;
-                            tag_found = 1;
-                            i = fifo_count; // Break the loop
-                        end
-                    end
+                    cache_valid[cache_idx] <= 1;
+                    cache_tags[cache_idx] <= rd_tag;
+                    cache_data[cache_idx] <= mem[rd_ptr[ADDR_WIDTH-1:0]];
                     
-                    if (tag_found) begin
-                        // Found in FIFO but not in cache
-                        rd_data <= found_data;
-                        cache_misses <= cache_misses + 1;
-                        
-                        // Add to cache - find a suitable cache index
-                        cache_idx = find_cache_index(cache_valid, lru_counters);
-                        
-                        cache_valid[cache_idx] <= 1;
-                        cache_tags[cache_idx] <= found_tag;
-                        cache_data[cache_idx] <= found_data;
-                        
-                        // Update LRU counters for the cache insertion
-                        if (LRU_POLICY) begin
-                            for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                                if (i[$clog2(CACHE_SIZE)-1:0] == cache_idx) begin
-                                    lru_counters[i] <= 0; // Most recently used
-                                end else begin
-                                    lru_counters[i] <= lru_counters[i] + 1;
-                                end
+                    // Update replacement policy state
+                    if (LRU_POLICY) begin
+                        for (i = 0; i < CACHE_SIZE; i = i + 1) begin
+                            if (i[$clog2(CACHE_SIZE)-1:0] == cache_idx) begin
+                                lru_counters[i] <= {$clog2(CACHE_SIZE){1'b1}}; // Most recently used
+                            end else if (lru_counters[i] > 0) begin
+                                lru_counters[i] <= lru_counters[i] - 1'b1;
                             end
-                        end else begin
-                            // For FIFO policy, just increment the counter
-                            lru_counters[0] <= lru_counters[0] + 1;
                         end
                     end else begin
-                        // Tag not found in FIFO either - return first item
-                        rd_data <= mem[rd_ptr[ADDR_WIDTH-1:0]];
-                        cache_misses <= cache_misses + 1;
+                        // Update FIFO replacement pointer
+                        fifo_replacement_ptr <= fifo_replacement_ptr + 1'b1;
+                        if (fifo_replacement_ptr == CACHE_SIZE-1) begin
+                            fifo_replacement_ptr <= 0;
+                        end
                     end
                 end
                 

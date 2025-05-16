@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-16 21:31:06
+Generated on: 2025-05-17 01:54:31
 
 ## Table of Contents
 
@@ -14,69 +14,65 @@ Generated on: 2025-05-16 21:31:06
 8. [Communication](#category-communication)
 9. [Counters](#category-counters)
 10. [Debugging](#category-debugging)
-11. [Digital Signal Processing](#category-digital-signal-processing)
-12. [Division](#category-division)
-13. [Encoding/Decoding](#category-encoding/decoding)
-14. [Encryption](#category-encryption)
-15. [FIFOs](#category-fifos)
-16. [Filters](#category-filters)
-17. [Input/Output](#category-input/output)
-18. [Interfaces](#category-interfaces)
-19. [Mathematics](#category-mathematics)
-20. [Memory](#category-memory)
-21. [Multiplication](#category-multiplication)
-22. [Network on Chip](#category-network-on-chip)
-23. [Power Management](#category-power-management)
-24. [Registers](#category-registers)
-25. [Signal Processing](#category-signal-processing)
-26. [State Machines](#category-state-machines)
-27. [Testing](#category-testing)
-28. [Voting](#category-voting)
-29. [Notes](#notes)
+11. [Encoding/Decoding](#category-encoding/decoding)
+12. [Encryption](#category-encryption)
+13. [FIFOs](#category-fifos)
+14. [Filters](#category-filters)
+15. [Input/Output](#category-input/output)
+16. [Interfaces](#category-interfaces)
+17. [Mathematics](#category-mathematics)
+18. [Memory](#category-memory)
+19. [Multiplication](#category-multiplication)
+20. [Network on Chip](#category-network-on-chip)
+21. [Power Management](#category-power-management)
+22. [Registers](#category-registers)
+23. [Signal Processing](#category-signal-processing)
+24. [State Machines](#category-state-machines)
+25. [Testing](#category-testing)
+26. [Voting](#category-voting)
+27. [Notes](#notes)
 
 ## Summary
 
-- Total modules scanned: 138
-- Modules with missing testbenches: 12
-- Total modules tested: 126
-- Passed: 104 (82.5%)
-- Failed: 18 (14.3%)
-- Timeouts: 4
-- Total tests executed: 1450
-- Total tests passed: 1430 (98.6%)
-- Total runtime: 1053.49 seconds
-- Average runtime per module: 8.36 seconds
+- Total modules scanned: 137
+- Modules with missing testbenches: 11
+- Total modules tested: 3
+- Passed: 2 (66.7%)
+- Failed: 1 (33.3%)
+- Timeouts: 0
+- Total tests executed: 10
+- Total tests passed: 10 (100.0%)
+- Total runtime: 5.74 seconds
+- Average runtime per module: 1.91 seconds
 
 ## Category Overview
 
 | Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Runtime (s) |
 |----------|--------:|-------:|-------:|----------:|-------------:|-----------:|
-| [Adders](#category-adders) | 6 | 6 | 0 | 100.0% | 180/180 | 5.17 |
-| [Arbitration](#category-arbitration) | 4 | 4 | 0 | 100.0% | 11/11 | 4.76 |
-| [Arithmetic](#category-arithmetic) | 2 | 2 | 0 | 100.0% | 84/84 | 4.80 |
-| [CORDIC](#category-cordic) | 3 | 1 | 0 | 33.3% | 16/16 | 41.97 |
-| [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 3 | 1 | 75.0% | 77/86 | 3.71 |
-| [Communication](#category-communication) | 13 | 12 | 0 | 92.3% | 23/23 | 5.10 |
-| [Counters](#category-counters) | 15 | 9 | 6 | 60.0% | 24/24 | 4.39 |
+| [Adders](#category-adders) | 6 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Arbitration](#category-arbitration) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Arithmetic](#category-arithmetic) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [CORDIC](#category-cordic) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Communication](#category-communication) | 12 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Counters](#category-counters) | 15 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Digital Signal Processing](#category-digital-signal-processing) | 2 | 1 | 1 | 50.0% | 100/100 | 2.61 |
-| [Division](#category-division) | 1 | 0 | 1 | 0.0% | 0/0 | 0.62 |
-| [Encoding/Decoding](#category-encoding/decoding) | 7 | 7 | 0 | 100.0% | 352/352 | 5.01 |
+| [Encoding/Decoding](#category-encoding/decoding) | 7 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [FIFOs](#category-fifos) | 20 | 15 | 3 | 75.0% | 4/6 | 16.07 |
-| [Filters](#category-filters) | 2 | 1 | 1 | 50.0% | 1/1 | 2.76 |
-| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 2/5 | 2.46 |
+| [FIFOs](#category-fifos) | 20 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Filters](#category-filters) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Input/Output](#category-input/output) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Mathematics](#category-mathematics) | 2 | 1 | 1 | 50.0% | 0/0 | 2.46 |
-| [Memory](#category-memory) | 4 | 3 | 1 | 75.0% | 5/5 | 3.65 |
-| [Multiplication](#category-multiplication) | 3 | 3 | 0 | 100.0% | 16/20 | 5.12 |
-| [Network on Chip](#category-network-on-chip) | 4 | 2 | 1 | 50.0% | 23/23 | 32.56 |
-| [Power Management](#category-power-management) | 5 | 4 | 0 | 80.0% | 3/3 | 4.19 |
-| [Registers](#category-registers) | 20 | 19 | 1 | 95.0% | 448/449 | 5.32 |
-| [Signal Processing](#category-signal-processing) | 7 | 7 | 0 | 100.0% | 24/25 | 5.12 |
-| [State Machines](#category-state-machines) | 1 | 1 | 0 | 100.0% | 26/26 | 5.81 |
-| [Testing](#category-testing) | 2 | 2 | 0 | 100.0% | 7/7 | 4.75 |
-| [Voting](#category-voting) | 1 | 1 | 0 | 100.0% | 4/4 | 4.67 |
+| [Mathematics](#category-mathematics) | 3 | 2 | 1 | 66.7% | 10/10 | 1.91 |
+| [Memory](#category-memory) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Multiplication](#category-multiplication) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Network on Chip](#category-network-on-chip) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Power Management](#category-power-management) | 5 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Registers](#category-registers) | 20 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Signal Processing](#category-signal-processing) | 9 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [State Machines](#category-state-machines) | 1 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Testing](#category-testing) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Voting](#category-voting) | 1 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 
 ## Detailed Results
 
@@ -87,12 +83,12 @@ Generated on: 2025-05-16 21:31:06
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_brent_kung_adder | libraries/adders/configurable_brent_kung_adder.v | ✓ PASS | 30/30 | 4.88 | 30 of 30 |
-| configurable_carry_lookahead_adder | libraries/adders/configurable_carry_lookahead_adder.v | ✓ PASS | 30/30 | 5.08 | 30 of 30 |
-| configurable_carry_select_adder | libraries/adders/configurable_carry_select_adder.v | ✓ PASS | 30/30 | 5.94 | 30 of 30 |
-| configurable_carry_skip_adder | libraries/adders/configurable_carry_skip_adder.v | ✓ PASS | 30/30 | 4.99 | 30 of 30 |
-| configurable_conditional_sum_adder | libraries/adders/configurable_conditional_sum_adder.v | ✓ PASS | 30/30 | 5.10 | 30 of 30 |
-| configurable_kogge_stone_adder | libraries/adders/configurable_kogge_stone_adder.v | ✓ PASS | 30/30 | 5.00 | 30 of 30 |
+| configurable_brent_kung_adder | libraries/adders/configurable_brent_kung_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_carry_lookahead_adder | libraries/adders/configurable_carry_lookahead_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_carry_select_adder | libraries/adders/configurable_carry_select_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_carry_skip_adder | libraries/adders/configurable_carry_skip_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_conditional_sum_adder | libraries/adders/configurable_conditional_sum_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_kogge_stone_adder | libraries/adders/configurable_kogge_stone_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-arbitration'></a>
 ### Arbitration
@@ -101,10 +97,10 @@ Generated on: 2025-05-16 21:31:06
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| arbiter | libraries/arbiters/arbiter.v | ✓ PASS | 2/2 | 4.76 | 2 of 2 |
-| arbiter_rr | libraries/arbiters/arbiter_rr.v | ✓ PASS | 1/1 | 4.70 | 1 of 1 |
-| fair_priority_arbiter | libraries/arbiters/fair_priority_arbiter.v | ✓ PASS | 4/4 | 4.79 | 4 of 4 |
-| matrix_arbiter | libraries/arbiters/matrix_arbiter.v | ✓ PASS | 4/4 | 4.77 | 4 of 4 |
+| arbiter | libraries/arbiters/arbiter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| arbiter_rr | libraries/arbiters/arbiter_rr.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| fair_priority_arbiter | libraries/arbiters/fair_priority_arbiter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| matrix_arbiter | libraries/arbiters/matrix_arbiter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-arithmetic'></a>
 ### Arithmetic
@@ -113,8 +109,8 @@ Generated on: 2025-05-16 21:31:06
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| alu | libraries/alu/alu.v | ✓ PASS | 12/12 | 4.74 | 12 of 12 |
-| configurable_comparator | libraries/alu/configurable_comparator.v | ✓ PASS | 72/72 | 4.87 | 72 of 72 |
+| alu | libraries/alu/alu.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_comparator | libraries/alu/configurable_comparator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-cordic'></a>
 ### CORDIC
@@ -123,10 +119,9 @@ Generated on: 2025-05-16 21:31:06
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| cordic | libraries/cordic/cordic.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
-Error: Test execution timed out after 2 minutes |
+| cordic | libraries/cordic/cordic.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 | cordic_core | libraries/cordic/cordic_core.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | ✓ PASS | 16/16 | 5.90 | 16 of 16 |
+| sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-clock-domain-crossing'></a>
 ### Clock Domain Crossing
@@ -135,23 +130,10 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | ✓ PASS | 1/10 | 4.82 | Execution completed successfully |
-| clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | ✓ PASS | 76/76 | 4.76 | 76 of 76 |
-| handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | ✗ FAIL | N/A | 0.55 | Build failed: MODULE="handshake_synchronizer"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/cdc/tb_handshake_synchronizer.cpp: In function ‘int main(int, char**)’:
-../libraries/cdc/tb_handshake_synchronizer.cpp:103:27: error: ‘setw’ is not a member of ‘std’
-  103 |         std::cout << std::setw(5) << i << " | "
-      |                           ^~~~
-../libraries/cdc/tb_handshake_synchronizer.cpp:6:1: note: ‘std::setw’ is defined in header ‘<iomanip>’; did you forget to ‘#include <iomanip>’?
-    5 | #include "Vhandshake_synchronizer.h"
-  +++ |+#include <iomanip>
-    6 | 
-../libraries/cdc/tb_handshake_synchronizer.cpp:104:27: error: ‘setw’ is not a member of ‘std’
-  104 |                   << std::setw(9) << test_data[i] << " | "
-Error: Module handshake_synchronizer not built or missing executable |
-| multi_flop_synchronizer | libraries/cdc/multi_flop_synchronizer.v | ✓ PASS | N/A | 4.70 | Execution completed successfully |
+| clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| multi_flop_synchronizer | libraries/cdc/multi_flop_synchronizer.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-communication'></a>
 ### Communication
@@ -160,19 +142,18 @@ Error: Module handshake_synchronizer not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| ahb_lite_master | libraries/comms/ahb_lite_master.v | ✓ PASS | 5/5 | 5.04 | Execution completed successfully |
-| basic_spi_master | libraries/comms/basic_spi_master.v | ✓ PASS | 1/1 | 7.73 | 1 of 1 |
-| final_spi_master | libraries/comms/final_spi_master.v | ✓ PASS | 1/1 | 4.75 | 1 of 1 |
-| fixed_spi_master | libraries/comms/fixed_spi_master.v | ✓ PASS | 1/1 | 4.71 | 1 of 1 |
-| parameterized_deserializer | libraries/comms/parameterized_deserializer.v | ✓ PASS | 4/4 | 5.20 | 4 of 4 |
-| parameterized_i2c_master | libraries/comms/parameterized_i2c_master.v | ✓ PASS | 2/2 | 5.47 | 2 of 2 |
-| parameterized_serdes | libraries/comms/parameterized_serdes.v | ✓ PASS | 1/1 | 5.66 | 1 of 1 |
-| parameterized_spi_master | libraries/comms/parameterized_spi_master.v | ✓ PASS | 1/1 | 5.29 | 1 of 1 |
-| parameterized_uart_rx | libraries/comms/parameterized_uart_rx.v | ✓ PASS | 5/5 | 5.21 | 5 of 5 |
-| parameterized_uart_tx | libraries/comms/parameterized_uart_tx.v | ✓ PASS | N/A | 5.40 | Test PASSED! All data transmitted and received correctly. |
-| parameterized_uart_tx_fixed | libraries/comms/parameterized_uart_tx_fixed.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| simple_spi_master | libraries/comms/simple_spi_master.v | ✓ PASS | 1/1 | 5.91 | 1 of 1 |
-| spi_master | libraries/comms/spi_master.v | ✓ PASS | 1/1 | 5.92 | 1 of 1 |
+| ahb_lite_master | libraries/comms/ahb_lite_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| basic_spi_master | libraries/comms/basic_spi_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| final_spi_master | libraries/comms/final_spi_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| fixed_spi_master | libraries/comms/fixed_spi_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_deserializer | libraries/comms/parameterized_deserializer.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_i2c_master | libraries/comms/parameterized_i2c_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_serdes | libraries/comms/parameterized_serdes.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_spi_master | libraries/comms/parameterized_spi_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_uart_rx | libraries/comms/parameterized_uart_rx.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_uart_tx | libraries/comms/parameterized_uart_tx.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| simple_spi_master | libraries/comms/simple_spi_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| spi_master | libraries/comms/spi_master.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-counters'></a>
 ### Counters
@@ -181,63 +162,21 @@ Error: Module handshake_synchronizer not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | N/A | 4.75 | Execution completed successfully |
-| gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | 4.76 | 3 of 3 |
-| johnson_counter | libraries/counters/johnson_counter.v | ✓ PASS | N/A | 4.71 | Execution completed successfully |
-| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | 4.73 | 20 of 20 |
-| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | N/A | 4.73 | Execution completed successfully |
-| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✗ FAIL | N/A | 5.26 | Count failed at 0, got 1 expected 0
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_decade_counter] Error 1
-Error: Count failed at 0, got 1 expected 0 |
-| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | N/A | 5.07 | Execution completed successfully |
-| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | 5.17 | Sequence does not repeat after expected length.
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_johnson_counter] Error 1
-Error: Sequence does not repeat after expected length. |
-| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✗ FAIL | N/A | 0.62 | Build failed: MODULE="parameterized_johnson_updown_counter"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/counters/tb_parameterized_johnson_updown_counter.cpp:239:5: error: expected unqualified-id before ‘delete’
-  239 |     delete[] up_sequence;
-      |     ^~~~~~
-../libraries/counters/tb_parameterized_johnson_updown_counter.cpp:240:5: error: expected unqualified-id before ‘delete’
-  240 |     delete[] down_sequence;
-      |     ^~~~~~
-../libraries/counters/tb_parameterized_johnson_updown_counter.cpp:241:5: error: ‘m_trace’ does not name a type
-  241 |     m_trace->close();
-      |     ^~~~~~~
-../libraries/counters/tb_parameterized_johnson_updown_counter.cpp:242:5: error: expected unqualified-id before ‘delete’
-Error: Module parameterized_johnson_updown_counter not built or missing executable |
-| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | 4.97 | Count failed at 0, got 1
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_loadable_counter] Error 1
-Error: Count failed at 0, got 1 |
-| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | 5.02 | Incorrect shift from state 6 to 7
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_onehot_counter] Error 1
-Error: Incorrect shift from state 6 to 7 |
-| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | 5.02 | Execution completed successfully |
-| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✗ FAIL | N/A | 0.68 | Build failed: MODULE="parameterized_self_correcting_counter"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/counters/tb_parameterized_self_correcting_counter.cpp:118:5: error: ‘m_trace’ does not name a type
-  118 |     m_trace->close();
-      |     ^~~~~~~
-../libraries/counters/tb_parameterized_self_correcting_counter.cpp:119:5: error: expected unqualified-id before ‘delete’
-  119 |     delete m_trace;
-      |     ^~~~~~
-../libraries/counters/tb_parameterized_self_correcting_counter.cpp:120:5: error: expected unqualified-id before ‘delete’
-  120 |     delete dut;
-      |     ^~~~~~
-../libraries/counters/tb_parameterized_self_correcting_counter.cpp:122:5: error: expected unqualified-id before ‘return’
-Error: Module parameterized_self_correcting_counter not built or missing executable |
-| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | 5.17 | Execution completed successfully |
-| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | 5.14 | 1 of 1 |
+| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| gray_counter | libraries/counters/gray_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| johnson_counter | libraries/counters/johnson_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| leading_zero_counter | libraries/counters/leading_zero_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-debugging'></a>
 ### Debugging
@@ -249,47 +188,6 @@ Error: Module parameterized_self_correcting_counter not built or missing executa
 | logic_analyzer | libraries/debug/logic_analyzer.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
 | performance_counter | libraries/debug/performance_counter.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
 
-<a name='category-digital-signal-processing'></a>
-### Digital Signal Processing
-
-[Back to top](#table-of-contents)
-
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|-----------:|----------:|
-| parameterized_dds | libraries/dsp/parameterized_dds.v | ✓ PASS | 100/100 | 5.15 | 100 of 100 |
-| parameterized_fft | libraries/dsp/parameterized_fft.v | ✗ FAIL | N/A | 0.07 | Build failed: MODULE="parameterized_fft"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-%Warning-BLKSEQ: libraries/dsp/parameterized_fft.v:116:21: Blocking assignment '=' in sequential logic process
-                                                         : ... Suggest using delayed assignment '<='
-  116 |                 out = (out << 1) | {{{LOG2_FFT_POINTS-1}{1'b0}}, in[j]};
-      |                     ^
-                 ... For warning description see https://verilator.org/warn/BLKSEQ?v=5.020
-                 ... Use "/* verilator lint_off BLKSEQ */" and lint_on around source to disable this message.
-%Error: Exiting due to 1 warning(s)
-make: *** [Makefile:106: verify_parameterized_fft] Error 1
-Error: Module parameterized_fft not built or missing executable |
-
-<a name='category-division'></a>
-### Division
-
-[Back to top](#table-of-contents)
-
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|-----------:|----------:|
-| non_restoring_divider | libraries/dividers/non_restoring_divider.v | ✗ FAIL | N/A | 0.62 | Build failed: MODULE="non_restoring_divider"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/dividers/tb_non_restoring_divider.cpp: In function ‘bool test_division(Vnon_restoring_divider*, VerilatedVcdC*, uint8_t, uint8_t)’:
-../libraries/dividers/tb_non_restoring_divider.cpp:64:33: error: ‘correct’ was not declared in this scope
-   64 |     std::cout << "Result: " << (correct ? "Pass" : "Fail") << std::endl;
-      |                                 ^~~~~~~
-make[1]: *** [Vnon_restoring_divider.mk:61: tb_non_restoring_divider.o] Error 1
-%Error: make -C build -f Vnon_restoring_divider.mk exited with 2
-%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/bin/verilator_bin -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe libraries/dividers/non_restoring_divider.v libraries/dividers/tb_non_restoring_divider.cpp
-make: *** [Makefile:106: verify_non_restoring_divider] Error 1
-Error: Module non_restoring_divider not built or missing executable |
-
 <a name='category-encoding/decoding'></a>
 ### Encoding/Decoding
 
@@ -297,13 +195,13 @@ Error: Module non_restoring_divider not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| binary_to_gray | libraries/codings/binary_to_gray.v | ✓ PASS | 16/16 | 4.62 | 16 of 16 |
-| configurable_priority_encoder | libraries/codings/configurable_priority_encoder.v | ✓ PASS | 30/30 | 4.78 | 30 of 30 |
-| gray_to_binary | libraries/codings/gray_to_binary.v | ✓ PASS | 16/16 | 4.73 | 16 of 16 |
-| hamming_code | libraries/codings/hamming_code.v | ✓ PASS | 31/31 | 4.86 | 31 of 31 |
-| parameterized_crc_generator | libraries/codings/parameterized_crc_generator.v | ✓ PASS | 1/1 | 5.00 | 1 of 1 |
-| parameterized_scrambler | libraries/codings/parameterized_scrambler.v | ✓ PASS | 2/2 | 5.10 | 2 of 2 |
-| priority_encoder | libraries/codings/priority_encoder.v | ✓ PASS | 256/256 | 5.96 | 256 of 256 |
+| binary_to_gray | libraries/codings/binary_to_gray.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_priority_encoder | libraries/codings/configurable_priority_encoder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| gray_to_binary | libraries/codings/gray_to_binary.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| hamming_code | libraries/codings/hamming_code.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_crc_generator | libraries/codings/parameterized_crc_generator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_scrambler | libraries/codings/parameterized_scrambler.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| priority_encoder | libraries/codings/priority_encoder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-encryption'></a>
 ### Encryption
@@ -322,57 +220,26 @@ Error: Module non_restoring_divider not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| async_fifo | libraries/fifo/async_fifo.v | ✗ FAIL | 1/3 | 4.72 | 1 of 3
-
-Error output sample:
-make: *** [Makefile:106: verify_async_fifo] Error 1 |
-| barrel_shifter_fifo | libraries/fifo/barrel_shifter_fifo.v | ✓ PASS | N/A | 4.74 | Execution completed successfully |
-| bidirectional_fifo | libraries/fifo/bidirectional_fifo.v | ✓ PASS | N/A | 4.94 | Execution completed successfully |
-| cache_fifo | libraries/fifo/cache_fifo.v | ✓ PASS | N/A | 4.88 | Execution completed successfully |
-| circular_buffer_fifo | libraries/fifo/circular_buffer_fifo.v | ✓ PASS | N/A | 4.81 | Execution completed successfully |
-| configurable_param_fifo | libraries/fifo/configurable_param_fifo.v | ✗ FAIL | N/A | 0.57 | Build failed: MODULE="configurable_param_fifo"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/fifo/tb_configurable_param_fifo.cpp:234:247: warning: missing terminating ' character
-  234 | Looking at the error message in the terminal, I can see that the program is crashing with a segmentation fault when testing the medium FIFO configuration (width=16, depth=8). This typically happens when the program tries to access memory it doesn't have permission to access.
-      |                                                                                                                                                                                                                                                       ^
-../libraries/fifo/tb_configurable_param_fifo.cpp:234:247: error: missing terminating ' character
-  234 | Looking at the error message in the terminal, I can see that the program is crashing with a segmentation fault when testing the medium FIFO configuration (width=16, depth=8). This typically happens when the program tries to access memory it doesn't have permission to access.
-      |                                                                                                                                                                                                                                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../libraries/fifo/tb_configurable_param_fifo.cpp:236:29: error: stray ‘`’ in program
-  236 | After examining the code in `tb_configurable_param_fifo.cpp`, I've identified the issue. The problem is in the data masking logic. When working with a 16-bit data width, the mask calculation is incorrect and could lead to accessing invalid memory.
-      |                             ^
-../libraries/fifo/tb_configurable_param_fifo.cpp:236:60: error: stray ‘`’ in program
-Error: Module configurable_param_fifo not built or missing executable |
-| configurable_sync_fifo | libraries/fifo/configurable_sync_fifo.v | ✓ PASS | N/A | 4.81 | ALL TESTS PASSED! |
-| credit_based_fifo | libraries/fifo/credit_based_fifo.v | ✓ PASS | N/A | 4.88 | Final FIFO status - Full: No, Empty: Yes |
-| dual_clock_fifo | libraries/fifo/dual_clock_fifo.v | ✓ PASS | N/A | 4.96 | Execution completed successfully |
-| elastic_buffer | libraries/fifo/elastic_buffer.v | ✓ PASS | N/A | 4.78 | Execution completed successfully |
-| fifo | libraries/fifo/fifo.v | ✓ PASS | 3/3 | 4.79 | 3 of 3 |
-| fwft_fifo | libraries/fifo/fwft_fifo.v | ✓ PASS | N/A | 4.78 | Execution completed successfully |
-| memory_mapped_fifo | libraries/fifo/memory_mapped_fifo.v | ✓ PASS | N/A | 4.75 | Execution completed successfully |
-| multi_ported_fifo | libraries/fifo/multi_ported_fifo.v | ✗ FAIL | N/A | 0.06 | Build failed: MODULE="multi_ported_fifo"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-%Error: libraries/fifo/multi_ported_fifo.v:134:21: syntax error, unexpected IDENTIFIER, expecting "'{"
-  134 |             integer i;
-      |                     ^
-%Error: libraries/fifo/multi_ported_fifo.v:145:21: syntax error, unexpected IDENTIFIER, expecting "'{"
-  145 |             integer rp;
-      |                     ^~
-%Error: libraries/fifo/multi_ported_fifo.v:146:34: syntax error, unexpected IDENTIFIER, expecting "'{"
-  146 |             reg [ADDR_WIDTH-1:0] current_rd_addr;
-      |                                  ^~~~~~~~~~~~~~~
-%Error: Exiting due to 3 error(s)
-Error: Module multi_ported_fifo not built or missing executable |
-| parameterized_priority_queue | libraries/fifo/parameterized_priority_queue.v | ✓ PASS | N/A | 5.23 | Execution completed successfully |
-| pipelined_fifo | libraries/fifo/pipelined_fifo.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
-Error: Test execution timed out after 2 minutes |
-| showahead_fifo | libraries/fifo/showahead_fifo.v | ✓ PASS | N/A | 5.91 | Execution completed successfully |
-| skid_buffer | libraries/fifo/skid_buffer.v | ✓ PASS | N/A | 5.77 | Execution completed successfully |
-| smart_fifo | libraries/fifo/smart_fifo.v | ✓ PASS | N/A | 5.95 | Execution completed successfully |
-| sync_fifo | libraries/fifo/sync_fifo.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
-Error: Test execution timed out after 2 minutes |
+| async_fifo | libraries/fifos/async_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| barrel_shifter_fifo | libraries/fifos/barrel_shifter_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| bidirectional_fifo | libraries/fifos/bidirectional_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| cache_fifo | libraries/fifos/cache_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| circular_buffer_fifo | libraries/fifos/circular_buffer_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_param_fifo | libraries/fifos/configurable_param_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_sync_fifo | libraries/fifos/configurable_sync_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| credit_based_fifo | libraries/fifos/credit_based_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| dual_clock_fifo | libraries/fifos/dual_clock_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| elastic_buffer | libraries/fifos/elastic_buffer.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| fifo | libraries/fifos/fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| fwft_fifo | libraries/fifos/fwft_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| memory_mapped_fifo | libraries/fifos/memory_mapped_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| multi_ported_fifo | libraries/fifos/multi_ported_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_priority_queue | libraries/fifos/parameterized_priority_queue.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| pipelined_fifo | libraries/fifos/pipelined_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| showahead_fifo | libraries/fifos/showahead_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| skid_buffer | libraries/fifos/skid_buffer.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| smart_fifo | libraries/fifos/smart_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| sync_fifo | libraries/fifos/sync_fifo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-filters'></a>
 ### Filters
@@ -381,21 +248,8 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_fir_filter | libraries/filters/configurable_fir_filter.v | ✓ PASS | 1/1 | 4.88 | 1 of 1 |
-| fir_filter | libraries/filters/fir_filter.v | ✗ FAIL | N/A | 0.65 | Build failed: MODULE="fir_filter"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/filters/tb_fir_filter.cpp: In function ‘void check_filter(std::unique_ptr<Vfir_filter>&, VerilatedVcdC*, vluint64_t&)’:
-../libraries/filters/tb_fir_filter.cpp:115:23: error: return-statement with a value, in function returning ‘void’ [-fpermissive]
-  115 |     return has_output && has_non_zero;
-      |            ~~~~~~~~~~~^~~~~~~~~~~~~~~
-../libraries/filters/tb_fir_filter.cpp: In function ‘int main(int, char**)’:
-../libraries/filters/tb_fir_filter.cpp:140:42: error: void value not ignored as it ought to be
-  140 |     bool basic_test_passed = check_filter(filter, tfp.get(), sim_time);
-      |                              ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-make[1]: *** [Vfir_filter.mk:61: tb_fir_filter.o] Error 1
-%Error: make -C build -f Vfir_filter.mk exited with 2
-Error: Module fir_filter not built or missing executable |
+| configurable_fir_filter | libraries/filters/configurable_fir_filter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| fir_filter | libraries/filters/fir_filter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-input/output'></a>
 ### Input/Output
@@ -405,10 +259,7 @@ Error: Module fir_filter not built or missing executable |
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
 | dma_controller | libraries/io/dma_controller.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | 2/5 | 4.91 | 2 of 5
-
-Error output sample:
-make: *** [Makefile:106: verify_gpio_controller] Error 1 |
+| gpio_controller | libraries/io/gpio_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-interfaces'></a>
 ### Interfaces
@@ -429,21 +280,20 @@ make: *** [Makefile:106: verify_gpio_controller] Error 1 |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✗ FAIL | N/A | 0.07 | Build failed: MODULE="fixed_point_sqrt"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✓ PASS | 10/10 | 0.07 | 10 of 10 |
+| floating_point_adder | libraries/math/floating_point_adder.v | ✓ PASS | N/A | 5.13 | Execution completed successfully |
+| non_restoring_divider | libraries/math/non_restoring_divider.v | ✗ FAIL | N/A | 0.54 | Build failed: MODULE="non_restoring_divider"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
 
 Error output sample:
-%Warning-UNDRIVEN: libraries/math/fixed_point_sqrt.v:12:37: Signal is not driven: 'in_ready'
-                                                          : ... note: In instance 'fixed_point_sqrt'
-   12 |     output wire                     in_ready,
-      |                                     ^~~~~~~~
-                   ... For warning description see https://verilator.org/warn/UNDRIVEN?v=5.020
-                   ... Use "/* verilator lint_off UNDRIVEN */" and lint_on around source to disable this message.
-%Warning-UNDRIVEN: libraries/math/fixed_point_sqrt.v:15:37: Signal is not driven: 'out_data'
-                                                          : ... note: In instance 'fixed_point_sqrt'
-   15 |     output reg [OUTPUT_WIDTH-1:0]   out_data,
-      |                                     ^~~~~~~~
-Error: Module fixed_point_sqrt not built or missing executable |
-| floating_point_adder | libraries/math/floating_point_adder.v | ✓ PASS | N/A | 4.85 | Execution completed successfully |
+../libraries/math/tb_non_restoring_divider.cpp: In function ‘bool test_division(Vnon_restoring_divider*, VerilatedVcdC*, uint8_t, uint8_t)’:
+../libraries/math/tb_non_restoring_divider.cpp:64:33: error: ‘correct’ was not declared in this scope
+   64 |     std::cout << "Result: " << (correct ? "Pass" : "Fail") << std::endl;
+      |                                 ^~~~~~~
+make[1]: *** [Vnon_restoring_divider.mk:61: tb_non_restoring_divider.o] Error 1
+%Error: make -C build -f Vnon_restoring_divider.mk exited with 2
+%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/bin/verilator_bin -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe libraries/math/non_restoring_divider.v libraries/math/tb_non_restoring_divider.cpp
+make: *** [Makefile:106: verify_non_restoring_divider] Error 1
+Error: Module non_restoring_divider not built or missing executable |
 
 <a name='category-memory'></a>
 ### Memory
@@ -452,23 +302,10 @@ Error: Module fixed_point_sqrt not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| ddr_controller | libraries/mems/ddr_controller.v | ✗ FAIL | N/A | 0.07 | Build failed: MODULE="ddr_controller"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-%Warning-GENUNNAMED: libraries/mems/ddr_controller.v:118:55: Unnamed generate block 'genblk1' (IEEE 1800-2017 27.6)
-                                                           : ... Suggest assign a label with 'begin : gen_<label_name>'
-  118 |         if (DDR_TYPE == "DDR4" || DDR_TYPE == "DDR5") begin
-      |                                                       ^~~~~
-                     ... For warning description see https://verilator.org/warn/GENUNNAMED?v=5.020
-                     ... Use "/* verilator lint_off GENUNNAMED */" and lint_on around source to disable this message.
-%Warning-GENUNNAMED: libraries/mems/ddr_controller.v:120:18: Unnamed generate block 'genblk1' (IEEE 1800-2017 27.6)
-                                                           : ... Suggest assign a label with 'begin : gen_<label_name>'
-  120 |         end else begin
-      |                  ^~~~~
-Error: Module ddr_controller not built or missing executable |
-| dual_port_ram | libraries/mems/dual_port_ram.v | ✓ PASS | N/A | 4.70 | Execution completed successfully |
-| memory_controller | libraries/mems/memory_controller.v | ✓ PASS | N/A | 4.71 | Execution completed successfully |
-| parameterized_cam | libraries/mems/parameterized_cam.v | ✓ PASS | 5/5 | 5.13 | 5 of 5 |
+| ddr_controller | libraries/mems/ddr_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| dual_port_ram | libraries/mems/dual_port_ram.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| memory_controller | libraries/mems/memory_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_cam | libraries/mems/parameterized_cam.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-multiplication'></a>
 ### Multiplication
@@ -477,9 +314,9 @@ Error: Module ddr_controller not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| booth_multiplier | libraries/multipliers/booth_multiplier.v | ✓ PASS | 4/8 | 4.68 | Execution completed successfully |
-| configurable_mult | libraries/multipliers/configurable_mult.v | ✓ PASS | 6/6 | 4.85 | 6 of 6 |
-| radix4_booth_multiplier | libraries/multipliers/radix4_booth_multiplier.v | ✓ PASS | 6/6 | 5.85 | 6 of 6 |
+| booth_multiplier | libraries/multipliers/booth_multiplier.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_mult | libraries/multipliers/configurable_mult.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| radix4_booth_multiplier | libraries/multipliers/radix4_booth_multiplier.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-network-on-chip'></a>
 ### Network on Chip
@@ -488,24 +325,10 @@ Error: Module ddr_controller not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_mesh_router | libraries/noc/configurable_mesh_router.v | ✓ PASS | 11/11 | 5.36 | 11 of 11 |
-| crossbar_switch | libraries/noc/crossbar_switch.v | ✓ PASS | 12/12 | 4.80 | 12 of 12 |
-| mesh_router | libraries/noc/mesh_router.v | ✗ FAIL | N/A | 0.07 | Build failed: MODULE="mesh_router"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-%Warning-VARHIDDEN: libraries/noc/mesh_router.v:96:21: Declaration of signal hides declaration in upper scope: 'dest_x'
-   96 |         input [3:0] dest_x;
-      |                     ^~~~~~
-                    libraries/noc/mesh_router.v:79:16: ... Location of original declaration
-   79 |     wire [3:0] dest_x [0:PORT_COUNT-1];
-      |                ^~~~~~
-                    ... For warning description see https://verilator.org/warn/VARHIDDEN?v=5.020
-                    ... Use "/* verilator lint_off VARHIDDEN */" and lint_on around source to disable this message.
-%Warning-VARHIDDEN: libraries/noc/mesh_router.v:97:21: Declaration of signal hides declaration in upper scope: 'dest_y'
-   97 |         input [3:0] dest_y;
-Error: Module mesh_router not built or missing executable |
-| network_interface | libraries/noc/network_interface.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
-Error: Test execution timed out after 2 minutes |
+| configurable_mesh_router | libraries/noc/configurable_mesh_router.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| crossbar_switch | libraries/noc/crossbar_switch.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| mesh_router | libraries/noc/mesh_router.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| network_interface | libraries/noc/network_interface.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-power-management'></a>
 ### Power Management
@@ -514,11 +337,11 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| clock_divider | libraries/power/clock_divider.v | ✓ PASS | N/A | 4.73 | Execution completed successfully |
+| clock_divider | libraries/power/clock_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 | clock_gating | libraries/power/clock_gating.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✓ PASS | N/A | 5.16 | Execution completed successfully |
-| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✓ PASS | N/A | 5.22 | ALL TESTS PASSED! |
-| power_domain_controller | libraries/power/power_domain_controller.v | ✓ PASS | 3/3 | 5.86 | 3 of 3 |
+| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| power_domain_controller | libraries/power/power_domain_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-registers'></a>
 ### Registers
@@ -527,37 +350,26 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| barrel_rotator | libraries/registers/barrel_rotator.v | ✓ PASS | 80/80 | 4.75 | 80 of 80 |
-| barrel_shifter | libraries/registers/barrel_shifter.v | ✓ PASS | 300/300 | 4.73 | 300 of 300 |
-| bidirectional_shift_register | libraries/registers/bidirectional_shift_register.v | ✓ PASS | 6/6 | 4.66 | 6 of 6 |
-| dual_edge_register | libraries/registers/dual_edge_register.v | ✓ PASS | 6/6 | 4.68 | 6 of 6 |
-| lfsr | libraries/registers/lfsr.v | ✓ PASS | 2/2 | 4.79 | 2 of 2 |
-| onehot_decoder_register | libraries/registers/onehot_decoder_register.v | ✓ PASS | 5/5 | 4.96 | 5 of 5 |
-| parameterized_barrel_rotator | libraries/registers/parameterized_barrel_rotator.v | ✓ PASS | N/A | 5.04 | Tests: a0 of a0 |
-| parameterized_rotation_sipo | libraries/registers/parameterized_rotation_sipo.v | ✗ FAIL | N/A | 0.06 | Build failed: MODULE="parameterized_rotation_sipo"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-%Warning-SELRANGE: libraries/registers/parameterized_rotation_sipo.v:67:43: [-1:0] Slice range has ascending bit ordering, perhaps you wanted [0:-1]
-                                                                          : ... note: In instance 'parameterized_rotation_sipo'
-   67 |                 parallel_out <= {shift_reg[ROTATION-1:0], shift_reg[WIDTH-1:ROTATION]};
-      |                                           ^
-                   ... For warning description see https://verilator.org/warn/SELRANGE?v=5.020
-                   ... Use "/* verilator lint_off SELRANGE */" and lint_on around source to disable this message.
-%Error: Exiting due to 1 warning(s)
-make: *** [Makefile:106: verify_parameterized_rotation_sipo] Error 1
-Error: Module parameterized_rotation_sipo not built or missing executable |
-| piso_register | libraries/registers/piso_register.v | ✓ PASS | 1/1 | 5.72 | 1 of 1 |
-| register_file | libraries/registers/register_file.v | ✓ PASS | 5/5 | 5.82 | 5 of 5 |
-| scan_register | libraries/registers/scan_register.v | ✓ PASS | 4/4 | 5.81 | 4 of 4 |
-| shadow_register | libraries/registers/shadow_register.v | ✓ PASS | 7/7 | 6.38 | 7 of 7 |
-| shift_register | libraries/registers/shift_register.v | ✓ PASS | 1/2 | 5.98 | Execution completed successfully |
-| shift_register_left | libraries/registers/shift_register_left.v | ✓ PASS | 1/1 | 5.85 | 1 of 1 |
-| shift_register_right | libraries/registers/shift_register_right.v | ✓ PASS | 1/1 | 6.11 | 1 of 1 |
-| sipo_register | libraries/registers/sipo_register.v | ✓ PASS | 4/4 | 5.93 | 4 of 4 |
-| siso_register | libraries/registers/siso_register.v | ✓ PASS | 4/4 | 6.04 | 4 of 4 |
-| sync_preset_register | libraries/registers/sync_preset_register.v | ✓ PASS | 8/8 | 6.49 | 8 of 8 |
-| toggle_register | libraries/registers/toggle_register.v | ✓ PASS | 8/8 | 6.21 | 8 of 8 |
-| universal_shift_register | libraries/registers/universal_shift_register.v | ✓ PASS | 5/5 | 6.43 | 5 of 5 |
+| barrel_rotator | libraries/registers/barrel_rotator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| barrel_shifter | libraries/registers/barrel_shifter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| bidirectional_shift_register | libraries/registers/bidirectional_shift_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| dual_edge_register | libraries/registers/dual_edge_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| lfsr | libraries/registers/lfsr.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| onehot_decoder_register | libraries/registers/onehot_decoder_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_barrel_rotator | libraries/registers/parameterized_barrel_rotator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_rotation_sipo | libraries/registers/parameterized_rotation_sipo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| piso_register | libraries/registers/piso_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| register_file | libraries/registers/register_file.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| scan_register | libraries/registers/scan_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| shadow_register | libraries/registers/shadow_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| shift_register | libraries/registers/shift_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| shift_register_left | libraries/registers/shift_register_left.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| shift_register_right | libraries/registers/shift_register_right.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| sipo_register | libraries/registers/sipo_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| siso_register | libraries/registers/siso_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| sync_preset_register | libraries/registers/sync_preset_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| toggle_register | libraries/registers/toggle_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| universal_shift_register | libraries/registers/universal_shift_register.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-signal-processing'></a>
 ### Signal Processing
@@ -566,13 +378,15 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_lfsr | libraries/signals/configurable_lfsr.v | ✓ PASS | N/A | 4.78 | Execution completed successfully |
-| configurable_prng | libraries/signals/configurable_prng.v | ✓ PASS | 3/3 | 4.82 | 3 of 3 |
-| digital_thermometer_controller | libraries/signals/digital_thermometer_controller.v | ✓ PASS | 5/5 | 4.74 | 5 of 5 |
-| multi_phase_pwm_controller | libraries/signals/multi_phase_pwm_controller.v | ✓ PASS | 5/5 | 4.69 | 5 of 5 |
-| parameterized_pwm | libraries/signals/parameterized_pwm.v | ✓ PASS | 6/6 | 5.09 | 6 of 6 |
-| pulse_width_detector | libraries/signals/pulse_width_detector.v | ✓ PASS | 2/3 | 5.90 | Execution completed successfully |
-| pwm_generator | libraries/signals/pwm_generator.v | ✓ PASS | 3/3 | 5.83 | 3 of 3 |
+| configurable_lfsr | libraries/signals/configurable_lfsr.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_prng | libraries/signals/configurable_prng.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| digital_thermometer_controller | libraries/signals/digital_thermometer_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| multi_phase_pwm_controller | libraries/signals/multi_phase_pwm_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_dds | libraries/signals/parameterized_dds.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_fft | libraries/signals/parameterized_fft.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_pwm | libraries/signals/parameterized_pwm.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| pulse_width_detector | libraries/signals/pulse_width_detector.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| pwm_generator | libraries/signals/pwm_generator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-state-machines'></a>
 ### State Machines
@@ -581,7 +395,7 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| sequence_detector_fsm | libraries/fsm/sequence_detector_fsm.v | ✓ PASS | 26/26 | 5.81 | 26 of 26 |
+| sequence_detector_fsm | libraries/fsm/sequence_detector_fsm.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-testing'></a>
 ### Testing
@@ -590,8 +404,8 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| bist_controller | libraries/test/bist_controller.v | ✓ PASS | 4/4 | 4.83 | 4 of 4 |
-| jtag_controller | libraries/test/jtag_controller.v | ✓ PASS | 3/3 | 4.67 | 3 of 3 |
+| bist_controller | libraries/test/bist_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| jtag_controller | libraries/test/jtag_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-voting'></a>
 ### Voting
@@ -600,7 +414,7 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| majority_voter | libraries/voters/majority_voter.v | ✓ PASS | 4/4 | 4.67 | 4 of 4 |
+| majority_voter | libraries/voters/majority_voter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='notes'></a>
 ## Notes

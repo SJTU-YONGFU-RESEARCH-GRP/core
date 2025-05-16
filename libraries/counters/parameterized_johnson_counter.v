@@ -11,9 +11,9 @@ module parameterized_johnson_counter #(
     
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            counter_reg <= {1'b1, {(WIDTH-1){1'b0}}};  // Initialize with only MSB set
+            counter_reg <= {WIDTH{1'b0}};  // Initialize with all zeros
         end else if (enable) begin
-            // Johnson counter operation: shift right and invert the feedback bit
+            // Johnson counter operation: shift right and feed inverted LSB to MSB
             counter_reg <= {~counter_reg[0], counter_reg[WIDTH-1:1]};
         end
     end

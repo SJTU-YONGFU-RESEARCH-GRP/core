@@ -14,6 +14,10 @@ vluint64_t sim_time = 0;
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
     
+    // Track test results
+    int total_tests = 0;
+    int passed_tests = 0;
+    
     // Initialize Verilator
     Vparameterized_decade_counter* dut = new Vparameterized_decade_counter;
     
@@ -59,43 +63,63 @@ int main(int argc, char** argv) {
         sim_time++;
     }
     
-    // Verify decade counter
     std::cout << "\nVerifying Decade Counter..." << std::endl;
     
-    // Initial state
+    // Test 1: Reset State Test
+    total_tests++;
+    bool reset_test_passed = true;
+    
+    // Initial state - everything disabled/reset
     dut->clk = 0;
     dut->enable = 0;
+    dut->rst_n = 0;  // Assert reset
+    dut->eval();
+    
+    // Hold in reset for a few cycles
+    for(int i = 0; i < 3; i++) {
+        dut->clk = 1;
+        dut->eval();
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    // Release reset
     dut->rst_n = 1;
     dut->eval();
     
-    // Apply reset
-    dut->rst_n = 0;
-    dut->eval();
-    
-    // Clock cycle while in reset
+    // Wait one clock cycle before enabling
     dut->clk = 1;
     dut->eval();
     dut->clk = 0;
     dut->eval();
     
-    // Release reset and enable counter
-    dut->rst_n = 1;
+    // Enable counter and check initial value
     dut->enable = 1;
     dut->eval();
     
+    if ((int)dut->count != 0) {
+        std::cout << "ERROR: Initial count after reset not 0, got " << (int)dut->count << std::endl;
+        reset_test_passed = false;
+    }
+    
+    if (reset_test_passed) passed_tests++;
+    
+    // Test 2: Counting Sequence Test
+    total_tests++;
+    bool count_test_passed = true;
+    
     // Verify counting sequence
-    bool count_correct = true;
     for (int i = 0; i < MODULO * 2; i++) {
-        // Rising edge
+        // Rising edge - counter should increment here
         dut->clk = 1;
         dut->eval();
         
-        // Check value after clock edge
-        int expected = i % MODULO;
+        // Check counter value - should be i+1 since we start at 0
+        int expected = (i + 1) % MODULO;
         if ((int)dut->count != expected) {
-            std::cout << "ERROR: Count failed at " << i << ", got " << (int)dut->count 
+            std::cout << "ERROR: Count failed at cycle " << i << ", got " << (int)dut->count 
                       << " expected " << expected << std::endl;
-            count_correct = false;
+            count_test_passed = false;
             break;
         }
         
@@ -104,7 +128,7 @@ int main(int argc, char** argv) {
         if (dut->tc != expected_tc) {
             std::cout << "ERROR: Terminal count signal incorrect at count " << expected 
                       << ", got " << (dut->tc ? "high" : "low") << std::endl;
-            count_correct = false;
+            count_test_passed = false;
             break;
         }
         
@@ -113,17 +137,17 @@ int main(int argc, char** argv) {
         dut->eval();
     }
     
-    if (count_correct) {
-        std::cout << "SUCCESS: Decade counter verified!" << std::endl;
-    } else {
-        std::cout << "FAILURE: Decade counter verification failed." << std::endl;
-        return 1;
-    }
+    if (count_test_passed) passed_tests++;
     
     // Clean up
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

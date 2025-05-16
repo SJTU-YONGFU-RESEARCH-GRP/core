@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
             if (posedge_cnt == 5) {
                 // Release reset
                 dut->rst_n = 1;
+                std::cout << "Debug: Released reset\n";
             }
             
             // First test: MSB first mode - load 0xA5 (10100101)
@@ -96,6 +97,7 @@ int main(int argc, char** argv) {
                     // Feed data MSB first
                     dut->enable = 1;
                     dut->serial_in = (test_data >> (TEST_WIDTH - 1 - test_bit_idx)) & 1;
+                    std::cout << "Debug: Bit " << test_bit_idx << " = " << ((int)dut->serial_in) << "\n";
                     test_bit_idx++;
                 } else if (posedge_cnt == 6 + TEST_WIDTH) {
                     // Stop shifting
@@ -103,6 +105,7 @@ int main(int argc, char** argv) {
                     test_bit_idx = 0;
                     // Load the shifted data to output
                     dut->load = 1;
+                    std::cout << "Debug: Loading output for MSB test\n";
                 } else if (posedge_cnt == 7 + TEST_WIDTH) {
                     // End load
                     dut->load = 0;
@@ -140,12 +143,14 @@ int main(int argc, char** argv) {
                     // Directly feed the expected output pattern (0x69) bit by bit
                     dut->enable = 1;
                     dut->serial_in = (expected_output >> (TEST_WIDTH - 1 - test_bit_idx)) & 1;
+                    std::cout << "Debug: Rotation Test Bit " << test_bit_idx << " = " << ((int)dut->serial_in) << "\n";
                     test_bit_idx++;
                 } else if (posedge_cnt == 17 + 2*TEST_WIDTH) {
                     // Stop shifting
                     dut->enable = 0;
                     // Load the shift register to output with rotation
                     dut->load = 1;
+                    std::cout << "Debug: Loading output for Rotation test\n";
                 } else if (posedge_cnt == 18 + 2*TEST_WIDTH) {
                     // End load
                     dut->load = 0;
@@ -173,8 +178,8 @@ int main(int argc, char** argv) {
         sim_time++;
     }
     
-    // Output test summary in the requested format
-    std::cout << "==== Test Summary ====" << std::endl;
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
     std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
     std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
