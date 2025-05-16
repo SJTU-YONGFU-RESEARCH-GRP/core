@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
     }
     
     // Print test results in the standardized format
-    std::cout << "==== Test Summary ====" << std::endl;
+    std::cout << "\n==== Test Summary ====" << std::endl;
     std::cout << "Result: " << (passed_tests == TEST_COUNT ? "Pass" : "Fail") << std::endl;
     std::cout << "Tests: " << passed_tests << " of " << TEST_COUNT << std::endl;
     

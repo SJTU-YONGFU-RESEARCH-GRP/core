@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
     dut->clk = 0;
     dut->rst_n = 0;  // Start with reset active
     dut->enable = 1; // Enable the counter
+    dut->eval();
     
     // Run simulation
     while (sim_time < MAX_SIM_TIME) {
@@ -65,9 +66,16 @@ int main(int argc, char** argv) {
     dut->rst_n = 0;
     dut->enable = 1;
     dut->eval();
-    dut->clk = 1;
-    dut->eval();
-    dut->clk = 0;
+    
+    // Hold in reset for a few cycles
+    for (int i = 0; i < 3; i++) {
+        dut->clk = 1;
+        dut->eval();
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    // Release reset
     dut->rst_n = 1;
     dut->eval();
     
@@ -97,6 +105,12 @@ int main(int argc, char** argv) {
     
     // Verify the sequence is correct
     bool valid_onehot = true;
+    
+    // Check initial state (LSB should be 1)
+    if (sequence[0] != 1) {
+        std::cout << "ERROR: Initial state is not correct (LSB should be 1)" << std::endl;
+        valid_onehot = false;
+    }
     
     // Check each state has exactly one bit set (one-hot property)
     for (int i = 0; i < WIDTH; i++) {

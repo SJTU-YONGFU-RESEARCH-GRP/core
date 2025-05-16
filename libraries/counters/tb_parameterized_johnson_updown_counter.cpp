@@ -236,11 +236,3 @@ int main(int argc, char** argv) {
 }
     
     // Clean up
-    delete[] up_sequence;
-    delete[] down_sequence;
-    m_trace->close();
-    delete m_trace;
-    delete dut;
-    
-    return 0;
-}

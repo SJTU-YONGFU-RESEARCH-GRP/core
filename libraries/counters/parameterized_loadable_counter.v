@@ -13,11 +13,13 @@ module parameterized_loadable_counter #(
     
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            counter_reg <= {WIDTH{1'b0}}; // Reset to 0
-        end else if (load) begin
-            counter_reg <= data_in;       // Load parallel data
-        end else if (enable) begin
-            counter_reg <= counter_reg + 1'b1; // Increment counter
+            counter_reg <= 0; // Reset to 0
+        end else begin
+            if (load) begin
+                counter_reg <= data_in;   // Load parallel data
+            end else if (enable) begin
+                counter_reg <= counter_reg + 1'b1; // Increment counter
+            end
         end
     end
     

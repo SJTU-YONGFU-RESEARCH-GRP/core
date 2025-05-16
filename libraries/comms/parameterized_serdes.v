@@ -45,17 +45,7 @@ module parameterized_serdes #(
                 tx_done_reg <= 0;
             end else if (!tx_done_reg) begin
                 if (tx_bit_counter < DATA_WIDTH - 1) begin
-                    // Increment bit counter
                     tx_bit_counter <= tx_bit_counter + 1;
-                    
-                    // Shift the register for the next bit
-                    if (MSB_FIRST) begin
-                        // For MSB first, left shift to bring next MSB to output position
-                        tx_shift_reg <= {tx_shift_reg[DATA_WIDTH-2:0], 1'b0};
-                    end else begin
-                        // For LSB first, right shift to bring next LSB to output position
-                        tx_shift_reg <= {1'b0, tx_shift_reg[DATA_WIDTH-1:1]};
-                    end
                 end else begin
                     // All bits sent
                     tx_bit_counter <= 0;
@@ -106,8 +96,11 @@ module parameterized_serdes #(
     end
     
     // Output assignments
-    // Output the MSB or LSB of the shift register depending on MSB_FIRST
-    assign serial_out = MSB_FIRST ? tx_shift_reg[DATA_WIDTH-1] : tx_shift_reg[0];
+    // For MSB_FIRST: First bit becomes MSB in receiver (bit[7]), second bit becomes bit[6], etc.
+    // For LSB_FIRST: First bit becomes LSB in receiver (bit[0]), second bit becomes bit[1], etc.
+    assign serial_out = MSB_FIRST ? 
+        tx_shift_reg[DATA_WIDTH-1 - tx_bit_counter] :  // Send MSB first, then next MSB, etc.
+        tx_shift_reg[tx_bit_counter];                  // Send LSB first, then next LSB, etc.
     assign tx_done = tx_done_reg;
 
 endmodule 

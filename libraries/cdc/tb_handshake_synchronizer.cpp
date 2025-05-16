@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
+#include <iomanip>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include "Vhandshake_synchronizer.h"

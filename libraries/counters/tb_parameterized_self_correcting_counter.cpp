@@ -115,9 +115,3 @@ int main(int argc, char** argv) {
 }
     
     // Clean up
-    m_trace->close();
-    delete m_trace;
-    delete dut;
-    
-    return 0;
-}

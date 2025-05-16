@@ -30,18 +30,56 @@ module cordic_core #(
     assign atan_table[8] = 16'h0028; // atan(2^-8) = 0.224° = 0.003906 rad
     assign atan_table[9] = 16'h0014; // atan(2^-9) = 0.112° = 0.001953 rad
     
+    // Constants for quadrant handling
+    localparam [PHASE_WIDTH-1:0] HALF_PI = 16'h4000;    // 90 degrees
+    localparam [PHASE_WIDTH-1:0] PI = 16'h8000;         // 180 degrees
+    localparam [PHASE_WIDTH-1:0] THREE_HALF_PI = 16'hC000; // 270 degrees
+    localparam [PHASE_WIDTH-1:0] TWO_PI = 16'h0000;     // 360 degrees (wraps to 0)
+    
     // Intermediate calculation arrays
     reg signed [DATA_WIDTH-1:0] x_stage [0:ITERATIONS];
     reg signed [DATA_WIDTH-1:0] y_stage [0:ITERATIONS];
     reg [PHASE_WIDTH-1:0] z_stage [0:ITERATIONS];
     
+    // Quadrant handling variables
+    reg [1:0] quadrant;
+    reg [PHASE_WIDTH-1:0] z_normalized;
+    reg signed [DATA_WIDTH-1:0] x_start, y_start;
+    reg signed [DATA_WIDTH-1:0] x_final, y_final;
+    
     // CORDIC algorithm implementation
     integer i;
     always @(*) begin
+        // Determine quadrant and normalize angle to first quadrant
+        if (z_in < HALF_PI) begin
+            quadrant = 2'b00;  // First quadrant (0-90)
+            z_normalized = z_in;
+            x_start = x_in;
+            y_start = y_in;
+        end
+        else if (z_in < PI) begin
+            quadrant = 2'b01;  // Second quadrant (90-180)
+            z_normalized = PI - z_in;
+            x_start = x_in;
+            y_start = y_in;
+        end
+        else if (z_in < THREE_HALF_PI) begin
+            quadrant = 2'b10;  // Third quadrant (180-270)
+            z_normalized = z_in - PI;
+            x_start = x_in;
+            y_start = y_in;
+        end
+        else begin
+            quadrant = 2'b11;  // Fourth quadrant (270-360)
+            z_normalized = TWO_PI - z_in;
+            x_start = x_in;
+            y_start = y_in;
+        end
+        
         // Initialize the first stage with inputs
-        x_stage[0] = x_in;
-        y_stage[0] = y_in;
-        z_stage[0] = z_in;
+        x_stage[0] = x_start;
+        y_stage[0] = y_start;
+        z_stage[0] = z_normalized;
         
         // Perform iterations
         for (i = 0; i < ITERATIONS; i = i + 1) begin
@@ -58,11 +96,31 @@ module cordic_core #(
                 z_stage[i+1] = z_stage[i] + atan_table[i];
             end
         end
+        
+        // Adjust final values based on quadrant
+        case (quadrant)
+            2'b00: begin  // First quadrant (0-90)
+                x_final = x_stage[ITERATIONS];
+                y_final = y_stage[ITERATIONS];
+            end
+            2'b01: begin  // Second quadrant (90-180)
+                x_final = -x_stage[ITERATIONS];
+                y_final = y_stage[ITERATIONS];
+            end
+            2'b10: begin  // Third quadrant (180-270)
+                x_final = -x_stage[ITERATIONS];
+                y_final = -y_stage[ITERATIONS];
+            end
+            2'b11: begin  // Fourth quadrant (270-360)
+                x_final = x_stage[ITERATIONS];
+                y_final = -y_stage[ITERATIONS];
+            end
+        endcase
     end
     
-    // Assign outputs from the final stage
-    assign x_out = x_stage[ITERATIONS];
-    assign y_out = y_stage[ITERATIONS];
+    // Assign outputs
+    assign x_out = x_final;
+    assign y_out = y_final;
     
 endmodule
-/* verilator lint_on EOFNEWLINE */ 
+/* verilator lint_on EOFNEWLINE */

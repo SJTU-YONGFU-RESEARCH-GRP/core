@@ -11,13 +11,10 @@ module parameterized_onehot_counter #(
     
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            counter_reg <= {{(WIDTH-1){1'b0}}, 1'b1};  // Initialize with only LSB set (one-hot)
+            counter_reg <= 1;  // Initialize with LSB set (one-hot)
         end else if (enable) begin
-            if (counter_reg[WIDTH-1]) begin
-                counter_reg <= {{(WIDTH-1){1'b0}}, 1'b1};  // Wrap around to first bit
-            end else begin
-                counter_reg <= counter_reg << 1;  // Shift left (next one-hot position)
-            end
+            // Shift left and wrap around to LSB when MSB is set
+            counter_reg <= counter_reg[WIDTH-1] ? 1 : (counter_reg << 1);
         end
     end
     

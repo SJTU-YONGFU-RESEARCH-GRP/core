@@ -11,14 +11,14 @@ module parameterized_johnson_counter #(
     
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            counter_reg <= {WIDTH{1'b0}};  // Initialize with all zeros
+            counter_reg <= 0;  // Initialize with all zeros
         end else if (enable) begin
-            // Johnson counter operation: shift right and feed inverted LSB to MSB
-            counter_reg <= {~counter_reg[0], counter_reg[WIDTH-1:1]};
+            // Johnson counter operation: shift left and feed inverted MSB to LSB
+            counter_reg <= {counter_reg[WIDTH-2:0], ~counter_reg[WIDTH-1]};
         end
     end
     
     assign count = counter_reg;
 
-endmodule 
+endmodule
 

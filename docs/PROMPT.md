@@ -7,10 +7,10 @@ Result: Pass|Fail
 Tests: X of X 
 
 - Adders Done
-- Arbitration 
-  - Arithmetic
-  - CORDIC
-  - Clock Domain Crossing
+- Arbitration Done
+- Arithmetic Done
+- CORDIC Done
+- Clock Domain Crossing Done
   - Communication
   - Counters
   - Debugging

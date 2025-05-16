@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-17 01:54:31
+Generated on: 2025-05-17 02:45:58
 
 ## Table of Contents
 
@@ -35,15 +35,15 @@ Generated on: 2025-05-17 01:54:31
 ## Summary
 
 - Total modules scanned: 137
-- Modules with missing testbenches: 11
-- Total modules tested: 3
-- Passed: 2 (66.7%)
-- Failed: 1 (33.3%)
+- Modules with missing testbenches: 10
+- Total modules tested: 15
+- Passed: 11 (73.3%)
+- Failed: 4 (26.7%)
 - Timeouts: 0
-- Total tests executed: 10
-- Total tests passed: 10 (100.0%)
-- Total runtime: 5.74 seconds
-- Average runtime per module: 1.91 seconds
+- Total tests executed: 65
+- Total tests passed: 63 (96.9%)
+- Total runtime: 6.81 seconds
+- Average runtime per module: 0.45 seconds
 
 ## Category Overview
 
@@ -55,7 +55,7 @@ Generated on: 2025-05-17 01:54:31
 | [CORDIC](#category-cordic) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Communication](#category-communication) | 12 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Counters](#category-counters) | 15 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Counters](#category-counters) | 15 | 11 | 4 | 73.3% | 63/65 | 0.45 |
 | [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encoding/Decoding](#category-encoding/decoding) | 7 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -63,7 +63,7 @@ Generated on: 2025-05-17 01:54:31
 | [Filters](#category-filters) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Input/Output](#category-input/output) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Mathematics](#category-mathematics) | 3 | 2 | 1 | 66.7% | 10/10 | 1.91 |
+| [Mathematics](#category-mathematics) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Memory](#category-memory) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Multiplication](#category-multiplication) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Network on Chip](#category-network-on-chip) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -120,7 +120,7 @@ Generated on: 2025-05-17 01:54:31
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
 | cordic | libraries/cordic/cordic.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| cordic_core | libraries/cordic/cordic_core.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
+| cordic_core | libraries/cordic/cordic_core.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 | sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-clock-domain-crossing'></a>
@@ -162,21 +162,36 @@ Generated on: 2025-05-17 01:54:31
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| gray_counter | libraries/counters/gray_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| johnson_counter | libraries/counters/johnson_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| leading_zero_counter | libraries/counters/leading_zero_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | 24/24 | 4.79 | 24 of 24 |
+| gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | 0.15 | 3 of 3 |
+| johnson_counter | libraries/counters/johnson_counter.v | ✗ FAIL | 3/4 | 0.15 | 3 of 4
+
+Error output sample:
+make: *** [Makefile:106: verify_johnson_counter] Error 1 |
+| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | 0.16 | 20 of 20 |
+| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | 6/6 | 0.14 | 6 of 6 |
+| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✓ PASS | 2/2 | 0.15 | 2 of 2 |
+| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | 3/3 | 0.15 | 3 of 3 |
+| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | 0.14 | Sequence repeats after 8 steps, expected 12
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_johnson_counter] Error 1
+Error: Sequence repeats after 8 steps, expected 12 |
+| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✓ PASS | 1/1 | 0.14 | 1 of 1 |
+| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | 0.14 | Count failed at 0, got 1
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_loadable_counter] Error 1
+Error: Count failed at 0, got 1 |
+| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | 0.14 | Initial state is not correct (LSB should be 1)
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_onehot_counter] Error 1
+Error: Initial state is not correct (LSB should be 1) |
+| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | 0.14 | Execution completed successfully |
+| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✓ PASS | 0/1 | 0.15 | Execution completed successfully |
+| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | 0.14 | Execution completed successfully |
+| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | 0.14 | 1 of 1 |
 
 <a name='category-debugging'></a>
 ### Debugging
@@ -280,20 +295,9 @@ Generated on: 2025-05-17 01:54:31
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✓ PASS | 10/10 | 0.07 | 10 of 10 |
-| floating_point_adder | libraries/math/floating_point_adder.v | ✓ PASS | N/A | 5.13 | Execution completed successfully |
-| non_restoring_divider | libraries/math/non_restoring_divider.v | ✗ FAIL | N/A | 0.54 | Build failed: MODULE="non_restoring_divider"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
-
-Error output sample:
-../libraries/math/tb_non_restoring_divider.cpp: In function ‘bool test_division(Vnon_restoring_divider*, VerilatedVcdC*, uint8_t, uint8_t)’:
-../libraries/math/tb_non_restoring_divider.cpp:64:33: error: ‘correct’ was not declared in this scope
-   64 |     std::cout << "Result: " << (correct ? "Pass" : "Fail") << std::endl;
-      |                                 ^~~~~~~
-make[1]: *** [Vnon_restoring_divider.mk:61: tb_non_restoring_divider.o] Error 1
-%Error: make -C build -f Vnon_restoring_divider.mk exited with 2
-%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/bin/verilator_bin -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe libraries/math/non_restoring_divider.v libraries/math/tb_non_restoring_divider.cpp
-make: *** [Makefile:106: verify_non_restoring_divider] Error 1
-Error: Module non_restoring_divider not built or missing executable |
+| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| floating_point_adder | libraries/math/floating_point_adder.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| non_restoring_divider | libraries/math/non_restoring_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-memory'></a>
 ### Memory

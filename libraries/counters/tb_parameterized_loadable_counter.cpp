@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
     dut->enable = 1;    // Enable the counter
     dut->load = 0;      // No load initially
     dut->data_in = 0;   // Initialize data input
+    dut->eval();
     
     // Run simulation
     while (sim_time < MAX_SIM_TIME) {
@@ -85,24 +86,34 @@ int main(int argc, char** argv) {
     dut->load = 0;
     dut->data_in = 0;
     dut->eval();
-    dut->clk = 1;
-    dut->eval();
-    dut->clk = 0;
+    
+    // Hold in reset for a few cycles
+    for (int i = 0; i < 3; i++) {
+        dut->clk = 1;
+        dut->eval();
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    // Release reset
     dut->rst_n = 1;
     dut->eval();
     
     // Verify normal counting
     bool counting_correct = true;
     for (int i = 0; i < 10; i++) {
+        // Rising edge
         dut->clk = 1;
         dut->eval();
         
+        // Check count on rising edge
         if ((int)dut->count != i) {
             std::cout << "ERROR: Count failed at " << i << ", got " << (int)dut->count << std::endl;
             counting_correct = false;
             break;
         }
         
+        // Falling edge
         dut->clk = 0;
         dut->eval();
     }
@@ -110,6 +121,8 @@ int main(int argc, char** argv) {
     // Verify load functionality
     dut->load = 1;
     dut->data_in = 0x42; // Load 0x42
+    
+    // Rising edge to load value
     dut->clk = 1;
     dut->eval();
     
@@ -118,12 +131,14 @@ int main(int argc, char** argv) {
         counting_correct = false;
     }
     
+    // Falling edge
     dut->clk = 0;
     dut->load = 0;
     dut->eval();
     
     // Verify counting continues from loaded value
     for (int i = 0; i < 5; i++) {
+        // Rising edge
         dut->clk = 1;
         dut->eval();
         
@@ -136,6 +151,7 @@ int main(int argc, char** argv) {
             break;
         }
         
+        // Falling edge
         dut->clk = 0;
         dut->eval();
     }

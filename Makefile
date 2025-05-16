@@ -178,10 +178,10 @@ verify_alu: init
 	@echo "\nALU verification completed."
 
 verify_cordic: init
-	@for module in cordic sine_cosine_generator; do \
+	@for module in cordic_core sine_cosine_generator; do \
 		if [ -n "$$(find $(LIB_DIR) -name "$$module.v")" ] && [ -n "$$(find $(LIB_DIR) -name "tb_$$module.cpp")" ]; then \
 			echo "\n=== Verifying CORDIC: $$module ==="; \
-			$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+			$(call build_module,$$module) && $(call run_module,$$module) || echo "Verification of $$module failed"; \
 		fi; \
 	done
 	@echo "\nAll CORDIC verifications completed."
