@@ -182,16 +182,16 @@ int main(int argc, char** argv) {
     int total = 0;
     
     for (const auto& test : testCases) {
-        // Apply inputs (mask to appropriate width)
-        if (test.is_signed) {
-            // For signed mode, use 16 bits and preserve sign
-            comparator->a = static_cast<uint16_t>(test.a & 0xFFFF);
-            comparator->b = static_cast<uint16_t>(test.b & 0xFFFF);
-        } else {
-            // For unsigned mode, use 8 bits
-            comparator->a = static_cast<uint8_t>(test.a & 0xFF);
-            comparator->b = static_cast<uint8_t>(test.b & 0xFF);
-        }
+        // Set signed mode
+        comparator->signed_mode = test.is_signed;
+        
+        // Apply inputs
+        comparator->a = test.is_signed ? 
+            static_cast<uint16_t>(test.a & 0xFFFF) :
+            static_cast<uint8_t>(test.a & 0xFF);
+        comparator->b = test.is_signed ? 
+            static_cast<uint16_t>(test.b & 0xFFFF) :
+            static_cast<uint8_t>(test.b & 0xFF);
         
         comparator->op_sel = test.op_sel;
         

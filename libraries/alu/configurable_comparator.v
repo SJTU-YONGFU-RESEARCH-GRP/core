@@ -1,10 +1,10 @@
 module configurable_comparator #(
-    parameter WIDTH = 16,           // Bit width of inputs
-    parameter SIGNED_COMPARE = 0   // 0 for unsigned, 1 for signed comparison
+    parameter WIDTH = 16           // Bit width of inputs
 )(
     input wire [WIDTH-1:0] a,
     input wire [WIDTH-1:0] b,
     input wire [2:0] op_sel,       // Operation selector
+    input wire signed_mode,        // 0 for unsigned, 1 for signed comparison
     output reg result              // Single bit result
 );
 
@@ -20,24 +20,22 @@ module configurable_comparator #(
     wire signed [WIDTH-1:0] a_signed;
     wire signed [WIDTH-1:0] b_signed;
     
-    // Convert inputs to signed
+    // Convert inputs to signed when in signed mode
     assign a_signed = $signed(a);
     assign b_signed = $signed(b);
 
-    // Comparison results
-    wire lt_result = (SIGNED_COMPARE != 0) ? (a_signed < b_signed) : (a < b);
-    wire le_result = (SIGNED_COMPARE != 0) ? (a_signed <= b_signed) : (a <= b);
-    wire gt_result = (SIGNED_COMPARE != 0) ? (a_signed > b_signed) : (a > b);
-    wire ge_result = (SIGNED_COMPARE != 0) ? (a_signed >= b_signed) : (a >= b);
+    // Comparison results based on mode
+    wire lt_result = signed_mode ? (a_signed < b_signed) : (a < b);
+    wire gt_result = signed_mode ? (a_signed > b_signed) : (a > b);
 
     always @(*) begin
         case (op_sel)
             EQUAL:          result = (a == b);
             NOT_EQUAL:      result = (a != b);
             LESS_THAN:      result = lt_result;
-            LESS_EQUAL:     result = le_result;
+            LESS_EQUAL:     result = lt_result || (a == b);
             GREATER_THAN:   result = gt_result;
-            GREATER_EQUAL:  result = ge_result;
+            GREATER_EQUAL:  result = gt_result || (a == b);
             default:        result = 1'b0;
         endcase
     end
