@@ -12,20 +12,19 @@ Tests: X of X
 - CORDIC Done
 - Clock Domain Crossing Done
 - Communication
-  - Counters
+- Counters Done
   - Debugging
-  - Digital Signal Processing
   - Encoding/Decoding
   - Encryption
   - FIFOs
 - Filters Done
   - Input/Output
   - Interfaces
-  - Mathematics
+- Mathematics Done
 - Memory Done
 - Multiplication Done
   - Network on Chip
-  - Power Management
+- Power Management Done
   - Registers
   - Signal Processing
 - State Machines Done

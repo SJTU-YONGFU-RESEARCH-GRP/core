@@ -83,13 +83,19 @@ int main(int argc, char** argv) {
     dut->rst_n = 1;
     dut->eval();
     
+    // Capture initial counter state after reset
+    uint32_t initial_val = (uint32_t)dut->count;
+
     // Test 2: Verify ring counting sequence
     bool sequence_correct = true;
-    uint32_t expected = 1;
+    uint32_t expected = initial_val;
     for (int i = 0; i < WIDTH; i++) {
+        // Rising edge to rotate
         dut->clk = 1;
         dut->eval();
         
+        // Calculate expected next state with WIDTH-bit wrap
+        expected = ((expected << 1) | (expected >> (WIDTH-1))) & ((1u << WIDTH) - 1);
         if ((int)dut->count != expected) {
             std::cout << "ERROR: Sequence incorrect at step " << i 
                       << ", got " << (int)dut->count << ", expected " << expected << std::endl;
@@ -97,7 +103,7 @@ int main(int argc, char** argv) {
             break;
         }
         
-        expected = (expected << 1) | (expected >> (WIDTH-1));
+        // Falling edge
         dut->clk = 0;
         dut->eval();
     }
@@ -127,13 +133,26 @@ int main(int argc, char** argv) {
         passed_tests++;
     }
     
-    // Test 4: Verify wrapping behavior
-    dut->clk = 1;
+    // Test 4: Verify wrapping behavior by resetting counter to initial state
+    dut->rst_n = 0;       // Assert reset
     dut->eval();
-    if ((int)dut->count == 1) {
+    dut->rst_n = 1;       // Release reset
+    dut->eval();
+    
+    // Perform a full cycle of WIDTH rotations
+    for (int i = 0; i < WIDTH; i++) {
+        // Rising edge to rotate
+        dut->clk = 1;
+        dut->eval();
+        // Falling edge
+        dut->clk = 0;
+        dut->eval();
+    }
+    if ((int)dut->count == initial_val) {
         passed_tests++;
     } else {
-        std::cout << "ERROR: Counter did not wrap correctly, got " << (int)dut->count << ", expected 1" << std::endl;
+        std::cout << "ERROR: Counter did not wrap correctly, got " << (int)dut->count 
+                  << ", expected " << initial_val << std::endl;
     }
     
     std::cout << "\n==== Test Summary ====" << std::endl;

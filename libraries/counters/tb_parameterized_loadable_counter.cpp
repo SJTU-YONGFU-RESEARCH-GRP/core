@@ -106,8 +106,8 @@ int main(int argc, char** argv) {
         dut->clk = 1;
         dut->eval();
         
-        // Check count on rising edge
-        if ((int)dut->count != i) {
+        // Check count on rising edge (should increment to i+1)
+        if ((int)dut->count != i + 1) {
             std::cout << "ERROR: Count failed at " << i << ", got " << (int)dut->count << std::endl;
             counting_correct = false;
             break;

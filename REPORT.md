@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-17 03:13:21
+Generated on: 2025-05-17 05:03:17
 
 ## Table of Contents
 
@@ -35,15 +35,15 @@ Generated on: 2025-05-17 03:13:21
 ## Summary
 
 - Total modules scanned: 137
-- Modules with missing testbenches: 10
-- Total modules tested: 15
-- Passed: 11 (73.3%)
-- Failed: 4 (26.7%)
+- Modules with missing testbenches: 9
+- Total modules tested: 5
+- Passed: 5 (100.0%)
+- Failed: 0 (0.0%)
 - Timeouts: 0
-- Total tests executed: 65
-- Total tests passed: 63 (96.9%)
-- Total runtime: 7.38 seconds
-- Average runtime per module: 0.49 seconds
+- Total tests executed: 26
+- Total tests passed: 26 (100.0%)
+- Total runtime: 6.76 seconds
+- Average runtime per module: 1.35 seconds
 
 ## Category Overview
 
@@ -55,7 +55,7 @@ Generated on: 2025-05-17 03:13:21
 | [CORDIC](#category-cordic) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Communication](#category-communication) | 12 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Counters](#category-counters) | 15 | 11 | 4 | 73.3% | 63/65 | 0.49 |
+| [Counters](#category-counters) | 15 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encoding/Decoding](#category-encoding/decoding) | 7 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -67,7 +67,7 @@ Generated on: 2025-05-17 03:13:21
 | [Memory](#category-memory) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Multiplication](#category-multiplication) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Network on Chip](#category-network-on-chip) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Power Management](#category-power-management) | 5 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Power Management](#category-power-management) | 5 | 5 | 0 | 100.0% | 26/26 | 1.35 |
 | [Registers](#category-registers) | 20 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Signal Processing](#category-signal-processing) | 9 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [State Machines](#category-state-machines) | 1 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -162,36 +162,21 @@ Generated on: 2025-05-17 03:13:21
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | 24/24 | 5.35 | 24 of 24 |
-| gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | 0.15 | 3 of 3 |
-| johnson_counter | libraries/counters/johnson_counter.v | ✗ FAIL | 3/4 | 0.14 | 3 of 4
-
-Error output sample:
-make: *** [Makefile:106: verify_johnson_counter] Error 1 |
-| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | 0.14 | 20 of 20 |
-| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | 6/6 | 0.14 | 6 of 6 |
-| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✓ PASS | 2/2 | 0.14 | 2 of 2 |
-| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | 3/3 | 0.15 | 3 of 3 |
-| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | 0.15 | Sequence repeats after 8 steps, expected 12
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_johnson_counter] Error 1
-Error: Sequence repeats after 8 steps, expected 12 |
-| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✓ PASS | 1/1 | 0.14 | 1 of 1 |
-| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | 0.15 | Count failed at 0, got 1
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_loadable_counter] Error 1
-Error: Count failed at 0, got 1 |
-| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | 0.15 | Initial state is not correct (LSB should be 1)
-
-Error output sample:
-make: *** [Makefile:106: verify_parameterized_onehot_counter] Error 1
-Error: Initial state is not correct (LSB should be 1) |
-| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | 0.14 | Execution completed successfully |
-| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✓ PASS | 0/1 | 0.14 | Execution completed successfully |
-| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | 0.15 | Execution completed successfully |
-| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | 0.15 | 1 of 1 |
+| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| gray_counter | libraries/counters/gray_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| johnson_counter | libraries/counters/johnson_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| leading_zero_counter | libraries/counters/leading_zero_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-debugging'></a>
 ### Debugging
@@ -341,11 +326,11 @@ Error: Initial state is not correct (LSB should be 1) |
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| clock_divider | libraries/power/clock_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| clock_gating | libraries/power/clock_gating.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| power_domain_controller | libraries/power/power_domain_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| clock_divider | libraries/power/clock_divider.v | ✓ PASS | 5/5 | 0.34 | 5 of 5 |
+| clock_gating | libraries/power/clock_gating.v | ✓ PASS | 4/4 | 1.83 | 4 of 4 |
+| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✓ PASS | 4/4 | 1.93 | 4 of 4 |
+| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✓ PASS | 10/10 | 0.67 | 10 of 10 |
+| power_domain_controller | libraries/power/power_domain_controller.v | ✓ PASS | 3/3 | 1.99 | 3 of 3 |
 
 <a name='category-registers'></a>
 ### Registers

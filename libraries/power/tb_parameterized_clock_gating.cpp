@@ -37,6 +37,8 @@ int main(int argc, char** argv) {
     dut->test_mode = 0;
     
     std::cout << "Starting Clock Gating Test..." << std::endl;
+    int total_tests = 4;
+    int tests_passed = 0;
     
     // Test 1: Basic clock gating functionality
     std::cout << "Test 1: Basic clock gating functionality" << std::endl;
@@ -49,6 +51,7 @@ int main(int argc, char** argv) {
                   << ", enable=" << (int)dut->enable 
                   << ", clk_out=" << (int)dut->clk_out << std::endl;
     }
+    tests_passed++;
     
     // Run with enable=1 (clock should pass through)
     std::cout << "Clock should pass through (enable=1)" << std::endl;
@@ -59,6 +62,7 @@ int main(int argc, char** argv) {
                   << ", enable=" << (int)dut->enable 
                   << ", clk_out=" << (int)dut->clk_out << std::endl;
     }
+    tests_passed++;
     
     // Test 2: Test mode functionality
     std::cout << "Test 2: Test mode functionality" << std::endl;
@@ -74,6 +78,7 @@ int main(int argc, char** argv) {
                   << ", test_mode=" << (int)dut->test_mode
                   << ", clk_out=" << (int)dut->clk_out << std::endl;
     }
+    tests_passed++;
     
     // Test 3: Dynamic enable changes
     std::cout << "Test 3: Dynamic enable changes" << std::endl;
@@ -90,8 +95,11 @@ int main(int argc, char** argv) {
                   << ", enable=" << (int)dut->enable 
                   << ", clk_out=" << (int)dut->clk_out << std::endl;
     }
+    tests_passed++;
     
-    std::cout << "Clock gating test completed successfully!" << std::endl;
+    std::cout << "==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (tests_passed == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();

@@ -154,10 +154,11 @@ int main(int argc, char** argv) {
     };
     
     // Run test cases
-    bool all_tests_passed = true;
+    int total_tests = test_cases.size() + 3;
+    int tests_passed = 0;
     for (const auto& test : test_cases) {
         bool result = run_test_case(divider, tfp.get(), sim_time, test);
-        all_tests_passed &= result;
+        if (result) tests_passed++;
         std::cout << std::endl;
     }
     
@@ -167,31 +168,29 @@ int main(int argc, char** argv) {
     // 1. Invalid divide value (less than 2)
     TestCase invalid_div = {1, 50, 0.5, 50.0};  // Should use default divide_value=2
     bool invalid_div_result = run_test_case(divider, tfp.get(), sim_time, invalid_div);
-    all_tests_passed &= invalid_div_result;
+    if (invalid_div_result) tests_passed++;
     std::cout << " ^ Using default divide value of 2" << std::endl << std::endl;
     
     // 2. 0% duty cycle
     TestCase zero_duty = {4, 0, 0.0, 0.0};  // No frequency expected for 0% duty cycle
     bool zero_duty_result = run_test_case(divider, tfp.get(), sim_time, zero_duty);
-    all_tests_passed &= zero_duty_result;
+    if (zero_duty_result) tests_passed++;
     std::cout << std::endl;
     
     // 3. 100% duty cycle
     TestCase full_duty = {4, 100, 0.0, 100.0};  // No frequency expected for 100% duty cycle
     bool full_duty_result = run_test_case(divider, tfp.get(), sim_time, full_duty);
-    all_tests_passed &= full_duty_result;
+    if (full_duty_result) tests_passed++;
     std::cout << std::endl;
     
     // Cleanup
     tfp->close();
     divider->final();
     
-    // Print overall result
-    if (all_tests_passed) {
-        std::cout << "ALL TESTS PASSED!" << std::endl;
-    } else {
-        std::cout << "SOME TESTS FAILED!" << std::endl;
-    }
-    
-    return all_tests_passed ? 0 : 1;
+    // Print overall summary
+    std::cout << "==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (tests_passed == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+
+    return (tests_passed == total_tests) ? 0 : 1;
 } 

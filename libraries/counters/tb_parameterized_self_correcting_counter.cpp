@@ -69,13 +69,15 @@ int main(int argc, char** argv) {
     dut->rst_n = 1;
     dut->eval();
     
-    // Verify normal counting sequence
+    // Verify normal counting sequence (counter increments on each rising edge)
     bool count_correct = true;
     for (int i = 0; i < MODULO * 2; i++) {
+        // Rising edge to update counter
         dut->clk = 1;
         dut->eval();
         
-        int expected = i % MODULO;
+        // Expect the counter to be (i+1) mod MODULO
+        int expected = (i + 1) % MODULO;
         if ((int)dut->count != expected) {
             std::cout << "ERROR: Count failed at " << i << ", got " << (int)dut->count 
                       << " expected " << expected << std::endl;
@@ -83,6 +85,7 @@ int main(int argc, char** argv) {
             break;
         }
         
+        // Falling edge (no state change)
         dut->clk = 0;
         dut->eval();
     }

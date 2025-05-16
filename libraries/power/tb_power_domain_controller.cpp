@@ -169,10 +169,14 @@ void test_power_transitions(std::unique_ptr<Vpower_domain_controller>& dut, Veri
     }
     
     // Final results
-    bool all_tests_pass = pass && pass2 && pass3;
+    int total_tests = 3;
+    int tests_passed = 0;
+    if (pass) tests_passed++;
+    if (pass2) tests_passed++;
+    if (pass3) tests_passed++;
     std::cout << "\n==== Test Summary ====" << std::endl;
-    std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
-    std::cout << "Tests: " << (all_tests_pass ? "3" : "0") << " of 3" << std::endl;
+    std::cout << "Result: " << (tests_passed == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

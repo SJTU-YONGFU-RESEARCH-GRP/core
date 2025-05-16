@@ -14,7 +14,7 @@ struct TestCase {
 };
 
 // Function to test the clock divider with different configurations
-void test_clock_divider(std::unique_ptr<Vclock_divider>& dut, VerilatedVcdC* tfp, vluint64_t& sim_time, const TestCase& test) {
+bool test_clock_divider(std::unique_ptr<Vclock_divider>& dut, VerilatedVcdC* tfp, vluint64_t& sim_time, const TestCase& test) {
     int high_count = 0;
     int total_count = 0;
     
@@ -69,6 +69,7 @@ void test_clock_divider(std::unique_ptr<Vclock_divider>& dut, VerilatedVcdC* tfp
               << actual_duty << "% (" << high_count << "/" << total_count << " cycles)" << std::endl;
     
     // Check if output toggles as expected
+    bool pass = (high_count != 0) && (high_count != total_count);
     if (high_count == 0) {
         std::cout << "  ERROR: Output clock never went high!" << std::endl;
     } else if (high_count == total_count) {
@@ -76,6 +77,7 @@ void test_clock_divider(std::unique_ptr<Vclock_divider>& dut, VerilatedVcdC* tfp
     } else {
         std::cout << "  Output clock toggles correctly." << std::endl;
     }
+    return pass;
 }
 
 int main(int argc, char** argv) {
@@ -103,15 +105,21 @@ int main(int argc, char** argv) {
         {16, 128, 400}   // Div by 16, 50% duty cycle
     };
     
+    int total_tests = test_cases.size();
+    int tests_passed = 0;
     // Run tests
     for (const auto& test : test_cases) {
-        test_clock_divider(dut, tfp.get(), sim_time, test);
+        if (test_clock_divider(dut, tfp.get(), sim_time, test)) {
+            tests_passed++;
+        }
     }
     
     // Cleanup
     tfp->close();
     dut->final();
     
-    std::cout << "Simulation completed successfully!" << std::endl;
-    return 0;
+    std::cout << "==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (tests_passed == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    return (tests_passed == total_tests) ? 0 : 1;
 } 
