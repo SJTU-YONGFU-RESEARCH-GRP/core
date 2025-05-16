@@ -31,6 +31,11 @@ void print_test_case(uint64_t a, uint64_t b, bool cin, uint64_t sum, bool cout, 
 void check_operation(std::unique_ptr<Vconfigurable_carry_select_adder>& adder, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     const int DATA_WIDTH = 64;  // Must match the DATA_WIDTH parameter in the Verilog module
     
+    // Test tracking variables
+    bool overall_pass = true;
+    int tests_passed = 0;
+    int total_tests = 0;
+    
     std::cout << "Testing Configurable Carry-Select Adder with DATA_WIDTH=" << DATA_WIDTH << std::endl;
     std::cout << "------------------------------------------------------" << std::endl;
     
@@ -54,7 +59,8 @@ void check_operation(std::unique_ptr<Vconfigurable_carry_select_adder>& adder, V
         {0x7FFFFFFFFFFFFFFFULL, 0x0000000000000001ULL, false}   // Max positive + 1
     };
     
-    bool overall_pass = true;
+    // Update total test count
+    total_tests += sizeof(test_cases) / sizeof(test_cases[0]);
     
     // Test each case
     for (const auto& test : test_cases) {
@@ -72,7 +78,11 @@ void check_operation(std::unique_ptr<Vconfigurable_carry_select_adder>& adder, V
         
         // Verify output
         bool test_pass = (adder->sum == expected) && (adder->cout == expected_cout);
-        overall_pass &= test_pass;
+        if (test_pass) {
+            tests_passed++;
+        } else {
+            overall_pass = false;
+        }
         
         print_test_case(test.a, test.b, test.cin, adder->sum, adder->cout, test_pass);
     }
@@ -85,7 +95,10 @@ void check_operation(std::unique_ptr<Vconfigurable_carry_select_adder>& adder, V
     std::mt19937_64 gen(rd());
     std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);
     
-    for (int i = 0; i < 20; i++) {
+    const int random_test_count = 20;
+    total_tests += random_test_count;
+    
+    for (int i = 0; i < random_test_count; i++) {
         uint64_t rand_a = dist(gen);
         uint64_t rand_b = dist(gen);
         bool rand_cin = (i % 2 == 0);  // Alternate carry-in for variety
@@ -104,13 +117,19 @@ void check_operation(std::unique_ptr<Vconfigurable_carry_select_adder>& adder, V
         
         // Verify output
         bool test_pass = (adder->sum == expected) && (adder->cout == expected_cout);
-        overall_pass &= test_pass;
+        if (test_pass) {
+            tests_passed++;
+        } else {
+            overall_pass = false;
+        }
         
         print_test_case(rand_a, rand_b, rand_cin, adder->sum, adder->cout, test_pass);
     }
     
-    // Summary
-    std::cout << "\nTest Summary: " << (overall_pass ? "ALL TESTS PASSED" : "SOME TESTS FAILED") << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (overall_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << std::dec << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

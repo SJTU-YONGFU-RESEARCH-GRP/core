@@ -21,18 +21,28 @@ def get_make_targets():
                            check=False)
     
     output = result.stdout
-    # Extract targets that start with run_
     targets = []
+    
+    # First, get explicitly defined targets
     for line in output.split('\n'):
-        if line.startswith('run_') and ':' in line and '#' not in line:
+        if line.startswith('verify_') and ':' in line and '#' not in line:
             target = line.split(':')[0].strip()
-            # Skip special targets and the template target run_$(1)
-            if target not in ["run_config_fir_low_pass", "run_config_fir_high_pass", "run_$(1)"]:
+            # Skip special targets and the template target verify_$(1)
+            if target not in ["verify_config_fir_low_pass", "verify_config_fir_high_pass", "verify_$(1)", "verify_all"]:
+                targets.append(target)
+    
+    # Get all Verilog files to create pattern-based targets
+    verilog_files = glob.glob(os.path.join(LIBRARIES_DIR, "**/*.v"), recursive=True)
+    for vfile in verilog_files:
+        module_name = os.path.splitext(os.path.basename(vfile))[0]
+        if not module_name.startswith('tb_'):
+            target = f"verify_{module_name}"
+            if target not in targets:
                 targets.append(target)
     
     # Add variable-based targets
     targets.extend([
-        "run_param_freq_div",  # From PARAM_FREQ_DIV_TARGET
+        "verify_param_freq_div",  # From PARAM_FREQ_DIV_TARGET
     ])
     
     return sorted(targets)
@@ -82,8 +92,8 @@ def map_targets_to_modules(rtl_files):
     # Create a mapping from module name to make target
     module_mappings = {}
     for module_name, info in rtl_files.items():
-        # Map to make target by prepending 'run_' to the module name
-        target_name = f"run_{module_name}"
+        # Map to make target by prepending 'verify_' to the module name
+        target_name = f"verify_{module_name}"
         
         module_mappings[target_name] = {
             "module_name": module_name,
@@ -101,13 +111,29 @@ def extract_test_results(stdout, stderr):
         "total_tests": 0,
         "passed_tests": 0,
         "result": "Unknown",
-        "details": ""
+        "details": "",
+        "error_message": "",
+        "coverage": None
     }
     
     # Get the last non-empty line of stdout for details
     last_lines = [line.strip() for line in stdout.splitlines() if line.strip()]
     if last_lines:
         test_summary["details"] = last_lines[-1]
+    
+    # Look for coverage information
+    coverage_patterns = [
+        r'Coverage:\s+(\d+(?:\.\d+)?)%',
+        r'Line coverage:\s+(\d+(?:\.\d+)?)%',
+        r'Branch coverage:\s+(\d+(?:\.\d+)?)%',
+        r'Total coverage:\s+(\d+(?:\.\d+)?)%'
+    ]
+    
+    for pattern in coverage_patterns:
+        match = re.search(pattern, stdout)
+        if match:
+            test_summary["coverage"] = float(match.group(1))
+            break
     
     # Look for the standardized test summary format
     try:
@@ -136,7 +162,8 @@ def extract_test_results(stdout, stderr):
             r'Running\s+(\d+)\s+tests',
             r'Total\s+tests:\s+(\d+)',
             r'(\d+)\s+tests\s+executed',
-            r'Executing\s+(\d+)\s+tests'
+            r'Executing\s+(\d+)\s+tests',
+            r'Ran\s+(\d+)\s+tests'
         ]
         
         for pattern in test_count_patterns:
@@ -149,7 +176,9 @@ def extract_test_results(stdout, stderr):
         pass_count_patterns = [
             r'(\d+)\s+tests\s+passed',
             r'Passed\s+(\d+)\s+of\s+\d+',
-            r'(\d+)\s+passing'
+            r'(\d+)\s+passing',
+            r'(\d+)\s+OK',
+            r'(\d+)\s+successful'
         ]
         
         for pattern in pass_count_patterns:
@@ -159,6 +188,20 @@ def extract_test_results(stdout, stderr):
                 break
     except Exception as e:
         print(f"Error extracting additional test counts: {e}")
+    
+    # Extract error messages if any
+    error_patterns = [
+        r'Error:\s*(.*)',
+        r'Failed:\s*(.*)',
+        r'Assertion failed:\s*(.*)',
+        r'Test failed:\s*(.*)'
+    ]
+    
+    for pattern in error_patterns:
+        match = re.search(pattern, stdout + "\n" + stderr, re.IGNORECASE)
+        if match:
+            test_summary["error_message"] = match.group(1).strip()
+            break
     
     # If we couldn't find the standardized format, try to make a best guess
     if "PASSED" in stdout or "Test PASSED" in stdout or "Tests passed" in stdout:
@@ -192,8 +235,12 @@ def run_make_target(target):
         # Extract test results
         test_results = extract_test_results(process.stdout, process.stderr)
         
-        # Check if the target succeeded
-        if process.returncode == 0:
+        # Check if the test summary format was found and indicates a pass
+        if "==== Test Summary ====" in process.stdout and test_results["result"] == "Pass":
+            result = "✅ PASSED"
+            details = test_results["details"] if test_results["details"] else "All tests passed"
+        # Otherwise check process return code
+        elif process.returncode == 0:
             result = "✅ PASSED"
             if test_results["result"] == "Pass":
                 details = test_results["details"] if test_results["details"] else "All tests passed"
@@ -204,6 +251,8 @@ def run_make_target(target):
             if test_results["result"] == "Fail":
                 details = test_results["details"] if test_results["details"] else "Tests failed"
             # Try to find error message
+            elif test_results.get("error_message"):
+                details = test_results["error_message"]
             elif "Error" in process.stderr:
                 error_lines = [line for line in process.stderr.splitlines() if "Error" in line]
                 details = error_lines[0] if error_lines else "Unknown error"
@@ -212,6 +261,11 @@ def run_make_target(target):
                 details = warning_lines[0] if warning_lines else "Warnings caused failure"
             else:
                 details = f"Process exited with code {process.returncode}"
+        
+        # Add coverage information to output if available
+        coverage_info = ""
+        if test_results.get("coverage") is not None:
+            coverage_info = f" (Coverage: {test_results['coverage']:.1f}%)"
         
         return {
             "target": target,
@@ -222,7 +276,9 @@ def run_make_target(target):
             "runtime": elapsed_time,
             "passed_tests": test_results["passed_tests"],
             "total_tests": test_results["total_tests"],
-            "result": test_results["result"]
+            "result": test_results["result"],
+            "coverage": test_results.get("coverage"),
+            "error_message": test_results.get("error_message")
         }
     except subprocess.TimeoutExpired:
         return {
@@ -234,7 +290,9 @@ def run_make_target(target):
             "runtime": 120.0,  # Timeout value
             "passed_tests": 0,
             "total_tests": 0,
-            "result": "Timeout"
+            "result": "Timeout",
+            "coverage": None,
+            "error_message": "Test execution timed out after 2 minutes"
         }
     except Exception as e:
         return {
@@ -246,7 +304,9 @@ def run_make_target(target):
             "runtime": 0.0,
             "passed_tests": 0,
             "total_tests": 0,
-            "result": "Error"
+            "result": "Error",
+            "coverage": None,
+            "error_message": str(e)
         }
 
 # Categorize modules based on their directory
@@ -356,6 +416,10 @@ def generate_report(results, module_mappings):
         # Calculate pass percentage safely
         pass_percentage = total_tests_passed/total_tests_run*100 if total_tests_run > 0 else 0
         
+        # Calculate average coverage
+        coverage_values = [r.get("coverage", 0) for r in results if r.get("coverage") is not None]
+        avg_coverage = sum(coverage_values) / len(coverage_values) if coverage_values else 0
+        
         f.write("## Summary\n\n")
         f.write(f"- Total modules scanned: {len(module_mappings)}\n")
         f.write(f"- Modules with missing testbenches: {missing_tb}\n")
@@ -365,13 +429,14 @@ def generate_report(results, module_mappings):
         f.write(f"- Timeouts: {timeouts}\n")
         f.write(f"- Total tests executed: {total_tests_run}\n")
         f.write(f"- Total tests passed: {total_tests_passed} ({pass_percentage:.1f}%)\n")
+        f.write(f"- Average coverage: {avg_coverage:.1f}%\n")
         f.write(f"- Total runtime: {total_runtime:.2f} seconds\n")
         f.write(f"- Average runtime per module: {avg_runtime:.2f} seconds\n\n")
         
         # Create a summary table
         f.write("## Category Overview\n\n")
-        f.write("| Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Avg Runtime (s) |\n")
-        f.write("|----------|--------:|-------:|-------:|----------:|-------------:|----------------:|\n")
+        f.write("| Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Coverage | Avg Runtime (s) |\n")
+        f.write("|----------|--------:|-------:|-------:|----------:|-------------:|---------:|----------------:|\n")
         
         for category, targets in sorted(categories.items()):
             cat_total = len(targets)
@@ -383,13 +448,17 @@ def generate_report(results, module_mappings):
             cat_tests_run = sum(results_dict[t].get("total_tests", 0) for t in targets if t in results_dict)
             cat_tests_passed = sum(results_dict[t].get("passed_tests", 0) for t in targets if t in results_dict)
             
+            # Calculate category coverage
+            cat_coverage_values = [results_dict[t].get("coverage", 0) for t in targets if t in results_dict and results_dict[t].get("coverage") is not None]
+            cat_avg_coverage = sum(cat_coverage_values) / len(cat_coverage_values) if cat_coverage_values else 0
+            
             # Calculate category runtime stats
             cat_runtime = sum(results_dict[t].get("runtime", 0.0) for t in targets if t in results_dict)
             cat_avg_runtime = cat_runtime / cat_total if cat_total > 0 else 0
             
             # Add link to category section
             category_id = category.lower().replace(' ', '-')
-            f.write(f"| [{category}](#category-{category_id}) | {cat_total} | {cat_passed} | {cat_failed} | {pass_rate:.1f}% | {cat_tests_passed}/{cat_tests_run} | {cat_avg_runtime:.2f} |\n")
+            f.write(f"| [{category}](#category-{category_id}) | {cat_total} | {cat_passed} | {cat_failed} | {pass_rate:.1f}% | {cat_tests_passed}/{cat_tests_run} | {cat_avg_coverage:.1f}% | {cat_avg_runtime:.2f} |\n")
         
         # Detailed results by category
         f.write("\n## Detailed Results\n\n")
@@ -403,8 +472,8 @@ def generate_report(results, module_mappings):
             # Add a link back to top
             f.write("[Back to top](#table-of-contents)\n\n")
             
-            f.write("| Module | File Path | Status | Tests | Runtime (s) | Details |\n")
-            f.write("|--------|-----------|:------:|------:|------------:|----------:|\n")
+            f.write("| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |\n")
+            f.write("|--------|-----------|:------:|------:|---------:|------------:|----------:|\n")
             
             for target in sorted(targets):
                 if target in module_mappings:
@@ -417,28 +486,35 @@ def generate_report(results, module_mappings):
                         details = "No testbench available"
                         runtime = 0.0
                         tests = "0/0"
+                        coverage = "N/A"
                     elif target in results_dict:
                         result = results_dict[target]
                         status_key = "PASSED" if "PASS" in result["status"] else "FAILED" if "FAIL" in result["status"] else "TIMEOUT" if "TIMEOUT" in result["status"] else "ERROR"
                         status = status_symbols[status_key]
                         details = result["details"]
+                        if result.get("error_message"):
+                            details = f"{details}\nError: {result['error_message']}"
                         runtime = result.get("runtime", 0.0)
                         
                         # Format test results
                         passed_tests = result.get("passed_tests", 0)
                         total_tests = result.get("total_tests", 0)
                         tests = f"{passed_tests}/{total_tests}" if total_tests > 0 else "N/A"
+                        
+                        # Format coverage
+                        coverage = f"{result.get('coverage', 0):.1f}%" if result.get('coverage') is not None else "N/A"
                     else:
                         status = status_symbols["Not Tested"]
                         details = "Module was not tested"
                         runtime = 0.0
                         tests = "0/0"
+                        coverage = "N/A"
                     
-                    f.write(f"| {module_name} | {file_path} | {status} | {tests} | {runtime:.2f} | {details} |\n")
+                    f.write(f"| {module_name} | {file_path} | {status} | {tests} | {coverage} | {runtime:.2f} | {details} |\n")
                 else:
                     # This should not happen, but just in case
-                    module_name = target.replace("run_", "")
-                    f.write(f"| {module_name} | Unknown | {status_symbols['Not Tested']} | 0/0 | 0.00 | Unknown module |\n")
+                    module_name = target.replace("verify_", "")
+                    f.write(f"| {module_name} | Unknown | {status_symbols['Not Tested']} | 0/0 | N/A | 0.00 | Unknown module |\n")
             
             f.write("\n")
         
@@ -450,6 +526,8 @@ def generate_report(results, module_mappings):
         f.write("- Some tests may fail due to issues with the implementation, not the build system\n")
         f.write("- Timeouts indicate tests that took longer than 2 minutes to complete\n")
         f.write("- Runtime measurements include compilation and execution time\n")
+        f.write("- Coverage information is reported when available from the test output\n")
+        f.write("- Error messages are extracted from test output when available\n")
 
 def main():
     print("🔍 Scanning for RTL files and their testbenches...")

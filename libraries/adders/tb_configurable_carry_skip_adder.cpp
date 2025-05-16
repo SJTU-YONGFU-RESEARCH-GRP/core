@@ -126,7 +126,7 @@ void check_operation(std::unique_ptr<Vconfigurable_carry_skip_adder>& adder, Ver
     // Print standardized test summary
     std::cout << "\n==== Test Summary ====" << std::endl;
     std::cout << "Result: " << (overall_pass ? "Pass" : "Fail") << std::endl;
-    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    std::cout << "Tests: " << std::dec << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

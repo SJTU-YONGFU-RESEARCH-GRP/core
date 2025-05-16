@@ -65,20 +65,32 @@ int main(int argc, char** argv) {
     // Reset for verification
     dut->clk = 0;
     dut->rst_n = 0;
+    dut->enable = 0;  // Disable counter during reset
+    dut->eval();
+    
+    // Apply reset for 2 clock cycles
+    for (int i = 0; i < 2; i++) {
+        dut->clk = 1;
+        dut->eval();
+        dut->clk = 0;
+        dut->eval();
+    }
+    
+    // Release reset and enable counter
+    dut->rst_n = 1;
     dut->enable = 1;
     dut->eval();
+    
+    // Wait for one clock cycle after reset
     dut->clk = 1;
     dut->eval();
     dut->clk = 0;
-    dut->rst_n = 1;
     dut->eval();
     
     // Verify counting sequence
     bool count_correct = true;
     for (int i = 0; i < MODULO * 2; i++) {
-        dut->clk = 1;
-        dut->eval();
-        
+        // Check value before clock edge
         int expected = i % MODULO;
         if ((int)dut->count != expected) {
             std::cout << "ERROR: Count failed at " << i << ", got " << (int)dut->count 
@@ -96,6 +108,9 @@ int main(int argc, char** argv) {
             break;
         }
         
+        // Apply clock edge
+        dut->clk = 1;
+        dut->eval();
         dut->clk = 0;
         dut->eval();
     }

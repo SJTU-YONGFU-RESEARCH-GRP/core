@@ -1,5 +1,5 @@
-# Enhanced Makefile for LLM RTL Generation Project
-# Compiles all Verilog files in the libraries directory
+# Simplified Makefile for LLM RTL Generation Project
+# Compiles Verilog files and handles verification through C++
 
 VERILATOR = verilator
 VERILATOR_FLAGS = -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR)
@@ -28,7 +28,6 @@ TESTABLE_MODULES := $(sort $(patsubst tb_%,%,$(TESTBENCH_MODULES)))
 # Create build targets for each testable module
 BUILD_TARGETS := $(addprefix build_,$(TESTABLE_MODULES))
 RUN_TARGETS := $(addprefix run_,$(TESTABLE_MODULES))
-REBUILD_TARGETS := $(addprefix rebuild_,$(TESTABLE_MODULES))
 CLEAN_MOD_TARGETS := $(addprefix clean_,$(TESTABLE_MODULES))
 
 # Associate each module with its source files
@@ -40,10 +39,23 @@ define get_module_tb
 $(shell find $(LIB_DIR) -name "tb_$(1).cpp")
 endef
 
-# Default target to build all modules with testbenches
-all: compile_all
+# Default target to list available commands
+help:
+	@echo "LLM RTL Generation Project Makefile"
+	@echo "Available targets:"
+	@echo "  list_modules    - List all available modules and testable modules"
+	@echo "  verify <module> - Verify a specific module (e.g., make verify shift_register)"
+	@echo "  verify_all      - Verify all modules with testbenches"
+	@echo "  clean           - Clean all build products"
+	@echo "  clean_<module>  - Clean specific module"
+	@echo ""
+	@echo "Group verification targets:"
+	@echo "  verify_adders, verify_fifos, verify_registers, verify_alu, verify_cordic,"
+	@echo "  verify_counters, verify_dividers, verify_arbiters, verify_codings,"
+	@echo "  verify_noc, verify_dsp, verify_mems, verify_filters, verify_fsm,"
+	@echo "  verify_comms, verify_signals, verify_voters, verify_interfaces"
 
-# Create directories and init
+# Create directories
 init:
 	@mkdir -p $(OBJDIR)
 
@@ -59,370 +71,215 @@ list_modules:
 		echo "  $$module"; \
 	done
 
-# Target to compile all modules (without running testbenches)
-compile_all: init $(BUILD_TARGETS)
-
-# Target to run all testbenches
-test_all: compile_all $(RUN_TARGETS)
-
-# Create build_module.sh script
-$(OBJDIR)/build_module.sh: init
-	@echo '#!/bin/bash' > $@
-	@echo 'MODULE=$$1' >> $@
-	@echo 'VERILOG_FILE=$$(find $(LIB_DIR) -name "$${MODULE}.v")' >> $@
-	@echo 'TESTBENCH_FILE=$$(find $(LIB_DIR) -name "tb_$${MODULE}.cpp")' >> $@
-	@echo 'if [ -n "$$VERILOG_FILE" ] && [ -n "$$TESTBENCH_FILE" ]; then' >> $@
-	@echo '    echo "Building $$MODULE from $$(dirname $$VERILOG_FILE)..."' >> $@
-	@echo '    $(VERILATOR) $(VERILATOR_FLAGS) $(COMMON_WARNINGS) $(VERILATOR_CPP_FLAGS) "$$VERILOG_FILE" "$$TESTBENCH_FILE"' >> $@
-	@echo 'else' >> $@
-	@echo '    echo "Module $$MODULE not found or missing testbench"' >> $@
-	@echo '    echo "  Verilog file: $$VERILOG_FILE"' >> $@
-	@echo '    echo "  Testbench file: $$TESTBENCH_FILE"' >> $@
-	@echo '    exit 1' >> $@
-	@echo 'fi' >> $@
-	@chmod +x $@
-
-# Generic rule for building modules - create explicit dependencies for each module
-define build_module_rule
-build_$(1): $(OBJDIR)/build_module.sh $(call get_module_src,$(1)) $(call get_module_tb,$(1))
-	@$(OBJDIR)/build_module.sh $(1)
-	@touch $(OBJDIR)/.$1.built
+# Generic module build function
+define build_module
+	MODULE="$(1)"; \
+	VERILOG_FILE=$$(find $(LIB_DIR) -name "$$MODULE.v"); \
+	TESTBENCH_FILE=$$(find $(LIB_DIR) -name "tb_$$MODULE.cpp"); \
+	if [ -n "$$VERILOG_FILE" ] && [ -n "$$TESTBENCH_FILE" ]; then \
+		echo "Building $$MODULE from $$(dirname $$VERILOG_FILE)..."; \
+		$(VERILATOR) $(VERILATOR_FLAGS) $(COMMON_WARNINGS) $(VERILATOR_CPP_FLAGS) "$$VERILOG_FILE" "$$TESTBENCH_FILE"; \
+		touch $(OBJDIR)/.$$MODULE.built; \
+	else \
+		echo "Module $$MODULE not found or missing testbench"; \
+		echo "  Verilog file: $$VERILOG_FILE"; \
+		echo "  Testbench file: $$TESTBENCH_FILE"; \
+		exit 1; \
+	fi
 endef
 
-# Exclude special case modules that have their own build rules
-STANDARD_MODULES := $(filter-out sine_cosine_generator jtag_controller,$(TESTABLE_MODULES))
-
-# Generate build rules for each standard module
-$(foreach module,$(STANDARD_MODULES),$(eval $(call build_module_rule,$(module))))
-
-# Generic rule for running testbenches with proper dependencies
-define run_module_rule
-run_$(1): build_$(1) $(OBJDIR)/V$(1)
-	@echo "Running testbench for $(1)..."
-	@$(OBJDIR)/V$(1)
+# Generic module run function
+define run_module
+	@MODULE=$(1); \
+	if [ -f "$(OBJDIR)/V$$MODULE" ]; then \
+		echo "Running verification for $$MODULE..."; \
+		$(OBJDIR)/V$$MODULE; \
+	else \
+		echo "Error: Module $$MODULE not built or missing executable"; \
+		exit 1; \
+	fi
 endef
 
-# Generate run rules for each module
-$(foreach module,$(TESTABLE_MODULES),$(eval $(call run_module_rule,$(module))))
+# Verify a specific module (build and run)
+verify_%: init
+	$(call build_module,$*)
+	$(call run_module,$*)
 
-# Clean a specific module
-define clean_module_rule
-clean_$(1):
-	@echo "Cleaning module $(1)..."
-	@rm -f $(OBJDIR)/V$(1)
-	@rm -f $(OBJDIR)/.$1.built
-	@rm -f $(OBJDIR)/$(1)*.o
-	@rm -f $(OBJDIR)/V$(1)*.cpp
-	@rm -f $(OBJDIR)/V$(1)*.h
-endef
-
-# Generate clean rules for each module
-$(foreach module,$(TESTABLE_MODULES),$(eval $(call clean_module_rule,$(module))))
-
-# Rebuild a specific module
-define rebuild_module_rule
-rebuild_$(1): clean_$(1) build_$(1)
-endef
-
-# Generate rebuild rules for each module
-$(foreach module,$(TESTABLE_MODULES),$(eval $(call rebuild_module_rule,$(module))))
-
-# Mark executables as precious to prevent automatic deletion
-.PRECIOUS: $(OBJDIR)/V%
-
-# Special case for modules with dependencies on other modules
-# CORDIC sine/cosine generator
-build_sine_cosine_generator: init $(call get_module_src,sine_cosine_generator) $(call get_module_src,cordic_core) $(call get_module_tb,sine_cosine_generator)
+# Special case for modules with dependencies
+verify_sine_cosine_generator: init
 	@VERILOG_FILE=`find $(LIB_DIR) -name "sine_cosine_generator.v"`; \
 	CORDIC_FILE=`find $(LIB_DIR) -name "cordic_core.v"`; \
 	TESTBENCH_FILE=`find $(LIB_DIR) -name "tb_sine_cosine_generator.cpp"`; \
 	if [ -n "$$VERILOG_FILE" ] && [ -n "$$CORDIC_FILE" ] && [ -n "$$TESTBENCH_FILE" ]; then \
 		echo "Building sine_cosine_generator with dependencies..."; \
 		$(VERILATOR) $(VERILATOR_FLAGS) $(COMMON_WARNINGS) -I`dirname $$CORDIC_FILE` $(VERILATOR_CPP_FLAGS) $$VERILOG_FILE $$CORDIC_FILE $$TESTBENCH_FILE; \
+		echo "Running verification for sine_cosine_generator..."; \
+		$(OBJDIR)/Vsine_cosine_generator; \
 	else \
 		echo "Skipping sine_cosine_generator (missing source or testbench)"; \
 		echo "  Verilog file: $$VERILOG_FILE"; \
 		echo "  CORDIC file: $$CORDIC_FILE"; \
 		echo "  Testbench file: $$TESTBENCH_FILE"; \
 	fi
-	@touch $(OBJDIR)/.sine_cosine_generator.built
 
-# JTAG controller
-build_jtag_controller: init $(call get_module_src,jtag_controller) $(call get_module_tb,jtag_controller)
-	@VERILOG_FILE=`find $(LIB_DIR) -name "jtag_controller.v"`; \
-	TESTBENCH_FILE=`find $(LIB_DIR) -name "tb_jtag_controller.cpp"`; \
-	if [ -n "$$VERILOG_FILE" ] && [ -n "$$TESTBENCH_FILE" ]; then \
-		echo "Building jtag_controller..."; \
-		$(VERILATOR) $(VERILATOR_FLAGS) $(COMMON_WARNINGS) $(VERILATOR_CPP_FLAGS) $$VERILOG_FILE $$TESTBENCH_FILE; \
-	else \
-		echo "Skipping jtag_controller (missing source or testbench)"; \
-		echo "  Verilog file: $$VERILOG_FILE"; \
-		echo "  Testbench file: $$TESTBENCH_FILE"; \
-	fi
-	@touch $(OBJDIR)/.jtag_controller.built
-
-# Run the verilator command directly (useful for debugging)
-verilate_%: init
-	@MODULE=$*; \
-	VERILOG_FILE=`find $(LIB_DIR) -name "$$MODULE.v"`; \
-	TESTBENCH_FILE=`find $(LIB_DIR) -name "tb_$$MODULE.cpp"`; \
-	if [ -n "$$VERILOG_FILE" ] && [ -n "$$TESTBENCH_FILE" ]; then \
-		echo "Direct verilating $$MODULE..."; \
-		$(VERILATOR) $(VERILATOR_FLAGS) $(COMMON_WARNINGS) $(VERILATOR_CPP_FLAGS) "$$VERILOG_FILE" "$$TESTBENCH_FILE"; \
-	else \
-		echo "Module $$MODULE not found or missing testbench"; \
-	fi
-
-# Create standalone run targets for each module
-%: build_%
-	@MODULE=$@; \
-	if [ -f "$(OBJDIR)/V$$MODULE" ]; then \
-		echo "Running $$MODULE..."; \
-		$(OBJDIR)/V$$MODULE; \
-	else \
-		echo "Error: Module $$MODULE not built or missing executable"; \
-		exit 1; \
-	fi
-
-# Group targets for specific categories - build targets
-adders: $(filter build_configurable_% build_dadda_%,$(BUILD_TARGETS))
-	@echo "Built adder modules"
-
-fifos: $(filter build_%fifo build_%buffer,$(BUILD_TARGETS))
-	@echo "Built FIFO modules"
-
-registers: $(filter build_%register build_%counter build_barrel_% build_lfsr,$(BUILD_TARGETS))
-	@echo "Built register modules"
-
-alu: $(filter build_alu build_%adder build_%subtractor build_%comparator build_%multiplier,$(BUILD_TARGETS))
-	@echo "Built ALU modules"
-
-cordic: build_cordic build_sine_cosine_generator
-	@echo "Built CORDIC modules"
-
-counters: $(filter build_%counter build_%synchronizer,$(BUILD_TARGETS))
-	@echo "Built counter modules"
-
-dividers: $(filter build_%divider,$(BUILD_TARGETS))
-	@echo "Built divider modules"
-
-arbiters: $(filter build_%arbiter,$(BUILD_TARGETS))
-	@echo "Built arbiter modules"
-
-codings: $(filter build_%encoder build_%decoder build_%crc% build_%scrambler build_%binary build_%gray,$(BUILD_TARGETS))
-	@echo "Built coding modules"
-
-noc: $(filter build_%router build_%switch build_%network,$(BUILD_TARGETS))
-	@echo "Built NoC modules"
-
-dsp: $(filter build_%fft build_%dds build_%filter,$(BUILD_TARGETS))
-	@echo "Built DSP modules"
-
-mems: $(filter build_%ram build_%cam build_%memory,$(BUILD_TARGETS))
-	@echo "Built memory modules"
-
-filters: $(filter build_%filter,$(BUILD_TARGETS))
-	@echo "Built filter modules"
-
-fsm: $(filter build_%fsm build_%detector build_%machine,$(BUILD_TARGETS))
-	@echo "Built FSM modules"
-
-comms: $(filter build_%uart% build_%spi% build_%i2c% build_%serdes% build_%serializer build_%deserializer build_%master build_%slave build_jtag_controller,$(BUILD_TARGETS))
-	@echo "Built communication modules"
-
-signals: $(filter build_%pwm% build_%detector build_%gating build_%generator build_%controller build_%prng,$(BUILD_TARGETS))
-	@echo "Built signal modules"
-
-voters: $(filter build_%voter,$(BUILD_TARGETS))
-	@echo "Built voter modules"
-
-interfaces: $(filter build_%interface build_%protocol build_%bus,$(BUILD_TARGETS))
-	@echo "Built interface modules"
-
-# Group run targets - run all modules in a category
-run_adders_group: $(filter run_configurable_% run_dadda_%,$(RUN_TARGETS))
-	@echo "Ran all adder module tests"
-
-run_fifos_group: $(filter run_%fifo run_%buffer,$(RUN_TARGETS))
-	@echo "Ran all FIFO module tests"
-
-run_registers_group: $(filter run_%register run_%counter run_barrel_% run_lfsr,$(RUN_TARGETS))
-	@echo "Ran all register module tests"
-
-run_alu_group: $(filter run_alu run_%adder run_%subtractor run_%comparator run_%multiplier,$(RUN_TARGETS))
-	@echo "Ran all ALU module tests"
-
-run_cordic_group: run_cordic run_sine_cosine_generator
-	@echo "Ran all CORDIC module tests"
-
-run_counters_group: $(filter run_%counter run_%synchronizer,$(RUN_TARGETS))
-	@echo "Ran all counter module tests"
-
-run_dividers_group: $(filter run_%divider,$(RUN_TARGETS))
-	@echo "Ran all divider module tests"
-
-run_arbiters_group: $(filter run_%arbiter,$(RUN_TARGETS))
-	@echo "Ran all arbiter module tests"
-
-run_codings_group: $(filter run_%encoder run_%decoder run_%crc% run_%scrambler run_%binary run_%gray,$(RUN_TARGETS))
-	@echo "Ran all coding module tests"
-
-run_noc_group: $(filter run_%router run_%switch run_%network,$(RUN_TARGETS))
-	@echo "Ran all NoC module tests"
-
-run_dsp_group: $(filter run_%fft run_%dds run_%filter,$(RUN_TARGETS))
-	@echo "Ran all DSP module tests"
-
-run_mems_group: $(filter run_%ram run_%cam run_%memory,$(RUN_TARGETS))
-	@echo "Ran all memory module tests"
-
-run_filters_group: $(filter run_%filter,$(RUN_TARGETS))
-	@echo "Ran all filter module tests"
-
-run_fsm_group: $(filter run_%fsm run_%detector run_%machine,$(RUN_TARGETS))
-	@echo "Ran all FSM module tests"
-
-run_comms_group: $(filter run_%uart% run_%spi% run_%i2c% run_%serdes% run_%serializer run_%deserializer run_%master run_%slave run_jtag_controller,$(RUN_TARGETS))
-	@echo "Ran all communication module tests"
-
-run_signals_group: $(filter run_%pwm% run_%detector run_%gating run_%generator run_%controller run_%prng,$(RUN_TARGETS))
-	@echo "Ran all signal module tests"
-
-run_voters_group: $(filter run_%voter,$(RUN_TARGETS))
-	@echo "Ran all voter module tests"
-
-run_interfaces_group: $(filter run_%interface run_%protocol run_%bus,$(RUN_TARGETS))
-	@echo "Ran all interface module tests"
-
-# Target to run all register tests
-test_registers:
-	@echo "===== Testing Register Modules ====="
-	
-	@echo "\n----- Standard Register Tests -----"
-	@for module in $$(find libraries/registers -name "tb_*.cpp" | sed 's/.*\/tb_\(.*\)\.cpp/\1/'); do \
-		echo "\nTesting module: $$module"; \
-		verilog_file=$$(find libraries/registers -name "$$module.v"); \
-		if [ -z "$$verilog_file" ]; then \
-			echo "  Warning: No Verilog file found for $$module, skipping..."; \
-			continue; \
-		fi; \
-		echo "  Building..."; \
-		verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) \
-			--exe "$$verilog_file" "libraries/registers/tb_$${module}.cpp" > $(OBJDIR)/build_$${module}.log 2>&1; \
-		if [ $$? -ne 0 ]; then \
-			echo "  Build failed!"; \
-			continue; \
-		fi; \
-		echo "  Running..."; \
-		$(OBJDIR)/V$${module} > $(OBJDIR)/run_$${module}.log 2>&1; \
-		if [ $$? -eq 0 ]; then \
-			echo "  Test PASSED"; \
-			summary=$$(grep -A 3 "==== Test Summary ====" $(OBJDIR)/run_$${module}.log); \
-			if [ ! -z "$$summary" ]; then \
-				echo "  Summary:"; \
-				echo "$$summary" | sed 's/^/    /'; \
-			fi; \
-		else \
-			echo "  Test FAILED"; \
-			summary=$$(grep -A 3 "==== Test Summary ====" $(OBJDIR)/run_$${module}.log); \
-			if [ ! -z "$$summary" ]; then \
-				echo "  Summary:"; \
-				echo "$$summary" | sed 's/^/    /'; \
-			fi; \
-		fi; \
-	done
-	
-	@echo "\n----- Special Tests for Problematic Modules -----"
-	
-	@echo "\nTesting scan_register with fix:"
-	@mkdir -p $(OBJDIR)/temp
-	@cp libraries/registers/scan_register.v $(OBJDIR)/temp/scan_register_fixed.v
-	@sed -i 's/scan_reg <= {scan_reg\[WIDTH-2:0\], scan_in};/scan_reg <= {scan_reg\[WIDTH-2:0\], scan_in};\n                \/\/ Also update data_out to reflect current scan register\n                data_out <= {scan_reg\[WIDTH-2:0\], scan_in};/' $(OBJDIR)/temp/scan_register_fixed.v
-	@echo "  Building with fix..."
-	@verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) \
-		--exe "$(OBJDIR)/temp/scan_register_fixed.v" "libraries/registers/tb_scan_register.cpp" > $(OBJDIR)/build_scan_register_fixed.log 2>&1
-	@if [ $$? -ne 0 ]; then \
-		echo "  Build failed!"; \
-	else \
-		echo "  Running..."; \
-		$(OBJDIR)/Vscan_register > $(OBJDIR)/run_scan_register_fixed.log 2>&1; \
-		if [ $$? -eq 0 ]; then \
-			echo "  Test PASSED"; \
-		else \
-			echo "  Test FAILED"; \
-		fi; \
-	fi
-	
-	@echo "\nTesting universal_shift_register with modified testbench:"
-	@cp libraries/registers/universal_shift_register.v $(OBJDIR)/temp/universal_shift_register_fixed.v
-	@cp libraries/registers/tb_universal_shift_register.cpp $(OBJDIR)/temp/tb_universal_shift_register_modified.cpp
-	@sed -i 's/if (i < 8 && dut->parallel_out != expected_right\[i\])/if (false)/' $(OBJDIR)/temp/tb_universal_shift_register_modified.cpp
-	@sed -i 's/if (i < 8 && dut->parallel_out != expected_left\[i\])/if (false)/' $(OBJDIR)/temp/tb_universal_shift_register_modified.cpp
-	@sed -i '/else if (enable) {/a\\            if (load) {\n                \/\/ Parallel load takes priority\n                parallel_out <= parallel_in;\n            }\n            else {' $(OBJDIR)/temp/universal_shift_register_fixed.v
-	@sed -i '/endcase/a\\            }' $(OBJDIR)/temp/universal_shift_register_fixed.v
-	@sed -i '/2.b11: begin/a\\                        \/\/ Parallel load mode but load is not asserted\n                        \/\/ Hold the current value' $(OBJDIR)/temp/universal_shift_register_fixed.v
-	@sed -i 's/if (load) begin/\/\/ Load handled above/' $(OBJDIR)/temp/universal_shift_register_fixed.v
-	@sed -i 's/parallel_out <= parallel_in;/parallel_out <= parallel_out; \/\/ Just hold value/' $(OBJDIR)/temp/universal_shift_register_fixed.v
-	@echo "  Building with modified files..."
-	@verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) \
-		--exe "$(OBJDIR)/temp/universal_shift_register_fixed.v" "$(OBJDIR)/temp/tb_universal_shift_register_modified.cpp" > $(OBJDIR)/build_universal_shift_register_fixed.log 2>&1
-	@if [ $$? -ne 0 ]; then \
-		echo "  Build failed!"; \
-	else \
-		echo "  Running..."; \
-		$(OBJDIR)/Vuniversal_shift_register > $(OBJDIR)/run_universal_shift_register_fixed.log 2>&1; \
-		if [ $$? -eq 0 ]; then \
-			echo "  Test PASSED with modified checks"; \
-			echo "  Note: The implementation is correct but the testbench expected specific shift patterns"; \
-		else \
-			echo "  Test FAILED even with modified checks"; \
-		fi; \
-	fi
-	
-	@echo "\nTesting shift_register with modified testbench:"
-	@cp libraries/registers/tb_shift_register.cpp $(OBJDIR)/temp/tb_shift_register_modified.cpp
-	@sed -i 's/if (sr->parallel_out != expected_value)/if (false)/' $(OBJDIR)/temp/tb_shift_register_modified.cpp
-	@echo "  Building with modified testbench..."
-	@verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir $(OBJDIR) \
-		--exe "libraries/registers/shift_register.v" "$(OBJDIR)/temp/tb_shift_register_modified.cpp" > $(OBJDIR)/build_shift_register_fixed.log 2>&1
-	@if [ $$? -ne 0 ]; then \
-		echo "  Build failed!"; \
-	else \
-		echo "  Running..."; \
-		$(OBJDIR)/Vshift_register > $(OBJDIR)/run_shift_register_fixed.log 2>&1; \
-		if [ $$? -eq 0 ]; then \
-			echo "  Test PASSED with modified checks"; \
-			echo "  Note: The implementation is correct but Verilator doesn't handle parameter changes properly"; \
-		else \
-			echo "  Test FAILED even with modified checks"; \
-		fi; \
-	fi
-	
-	@echo "\n===== Register Module Tests Summary ====="
-	@echo "- scan_register: Fixed to update data_out in scan mode"
-	@echo "- universal_shift_register: Fixed load priority and skip pattern checks in testbench"
-	@echo "- shift_register: Skip parameter-dependent checks in testbench"
-	@echo "\nAll register implementations are functionally correct."
-	@echo "Some test failures are due to testbench issues, not RTL bugs."
-	
-	@# Clean up temporary files
-	@rm -rf $(OBJDIR)/temp
-
-# Force rebuild target
-.PHONY: force
-force:
+# Clean a specific module
+clean_%:
+	@echo "Cleaning module $*..."
+	@rm -f $(OBJDIR)/V$*
+	@rm -f $(OBJDIR)/.$*.built
+	@rm -f $(OBJDIR)/$**.o
+	@rm -f $(OBJDIR)/V$**.cpp
+	@rm -f $(OBJDIR)/V$**.h
 
 # Clean all build products
 clean:
-	rm -rf $(OBJDIR)
-	rm -f *.vcd
+	@echo "Cleaning all build products..."
+	@rm -rf $(OBJDIR)
+	@rm -f *.vcd
 
-# PHONY targets
-.PHONY: all init list_modules compile_all test_all clean force \
-adders fifos registers alu cordic counters dividers arbiters codings \
-noc dsp mems filters fsm comms signals voters interfaces \
-run_adders_group run_fifos_group run_registers_group run_alu_group run_cordic_group \
-run_counters_group run_dividers_group run_arbiters_group run_codings_group \
-run_noc_group run_dsp_group run_mems_group run_filters_group run_fsm_group \
-run_comms_group run_signals_group run_voters_group run_interfaces_group \
-$(BUILD_TARGETS) $(RUN_TARGETS) $(REBUILD_TARGETS) $(CLEAN_MOD_TARGETS)
+# Verify all modules
+verify_all: init
+	@for module in $(TESTABLE_MODULES); do \
+		echo "\n=== Verifying $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll verifications completed."
+
+# Group verification targets
+verify_adders: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_configurable_% build_dadda_%,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying adder: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll adder verifications completed."
+
+verify_fifos: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%fifo build_%buffer,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying FIFO: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll FIFO verifications completed."
+
+verify_registers: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%register build_%counter build_barrel_% build_lfsr,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying register: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll register verifications completed."
+
+verify_alu: init
+	@if [ -f "$(LIB_DIR)/alu/alu.v" ] && [ -f "$(LIB_DIR)/alu/tb_alu.cpp" ]; then \
+		echo "\n=== Verifying ALU ==="; \
+		$(call build_module,alu) && $(call run_module,alu) || echo "Verification of alu failed"; \
+	else \
+		echo "Error: ALU module or testbench not found in $(LIB_DIR)/alu/"; \
+		exit 1; \
+	fi
+	@echo "\nALU verification completed."
+
+verify_cordic: init
+	@for module in cordic sine_cosine_generator; do \
+		if [ -n "$$(find $(LIB_DIR) -name "$$module.v")" ] && [ -n "$$(find $(LIB_DIR) -name "tb_$$module.cpp")" ]; then \
+			echo "\n=== Verifying CORDIC: $$module ==="; \
+			$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+		fi; \
+	done
+	@echo "\nAll CORDIC verifications completed."
+
+verify_counters: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%counter build_%synchronizer,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying counter: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll counter verifications completed."
+
+verify_dividers: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%divider,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying divider: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll divider verifications completed."
+
+verify_arbiters: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%arbiter,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying arbiter: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll arbiter verifications completed."
+
+verify_codings: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%encoder build_%decoder build_%crc% build_%scrambler build_%binary build_%gray,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying coding: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll coding verifications completed."
+
+verify_noc: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%router build_%switch build_%network,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying NoC: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll NoC verifications completed."
+
+verify_dsp: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%fft build_%dds build_%filter,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying DSP: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll DSP verifications completed."
+
+verify_mems: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%ram build_%cam build_%memory,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying memory: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll memory verifications completed."
+
+verify_filters: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%filter,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying filter: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll filter verifications completed."
+
+verify_fsm: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%fsm build_%detector build_%machine,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying FSM: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll FSM verifications completed."
+
+verify_comms: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%uart% build_%spi% build_%i2c% build_%serdes% build_%serializer build_%deserializer build_%master build_%slave build_jtag_controller,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying communication: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll communication verifications completed."
+
+verify_signals: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%pwm% build_%detector build_%gating build_%generator build_%controller build_%prng,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying signal: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll signal verifications completed."
+
+verify_voters: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%voter,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying voter: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll voter verifications completed."
+
+verify_interfaces: init
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%interface build_%protocol build_%bus,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+		echo "\n=== Verifying interface: $$module ==="; \
+		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
+	done
+	@echo "\nAll interface verifications completed."
+
+# Define phony targets
+.PHONY: help init list_modules verify_all clean $(CLEAN_MOD_TARGETS) \
+verify_adders verify_fifos verify_registers verify_alu verify_cordic \
+verify_counters verify_dividers verify_arbiters verify_codings \
+verify_noc verify_dsp verify_mems verify_filters verify_fsm \
+verify_comms verify_signals verify_voters verify_interfaces

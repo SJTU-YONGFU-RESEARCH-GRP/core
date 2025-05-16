@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-16 14:06:20
+Generated on: 2025-05-16 16:59:48
 
 ## Table of Contents
 
@@ -39,44 +39,45 @@ Generated on: 2025-05-16 14:06:20
 - Total modules scanned: 138
 - Modules with missing testbenches: 12
 - Total modules tested: 126
-- Passed: 105 (83.3%)
-- Failed: 18 (14.3%)
-- Timeouts: 3
-- Total tests executed: 1152
-- Total tests passed: 1122 (97.4%)
-- Total runtime: 1025.73 seconds
-- Average runtime per module: 8.14 seconds
+- Passed: 11 (8.7%)
+- Failed: 115 (91.3%)
+- Timeouts: 0
+- Total tests executed: 417
+- Total tests passed: 416 (99.8%)
+- Average coverage: 0.0%
+- Total runtime: 59.45 seconds
+- Average runtime per module: 0.47 seconds
 
 ## Category Overview
 
-| Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Avg Runtime (s) |
-|----------|--------:|-------:|-------:|----------:|-------------:|----------------:|
-| [Adders](#category-adders) | 6 | 6 | 0 | 100.0% | 30/30 | 6.38 |
-| [Arbitration](#category-arbitration) | 4 | 3 | 1 | 75.0% | 6/7 | 4.81 |
-| [Arithmetic](#category-arithmetic) | 2 | 2 | 0 | 100.0% | 48/48 | 3.87 |
-| [CORDIC](#category-cordic) | 3 | 2 | 0 | 66.7% | 16/25 | 4.27 |
-| [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 4 | 0 | 100.0% | 11/20 | 5.93 |
-| [Communication](#category-communication) | 13 | 9 | 3 | 69.2% | 2/2 | 5.38 |
-| [Counters](#category-counters) | 15 | 10 | 5 | 66.7% | 24/24 | 4.50 |
-| [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Digital Signal Processing](#category-digital-signal-processing) | 2 | 1 | 1 | 50.0% | 100/100 | 3.67 |
-| [Division](#category-division) | 1 | 1 | 0 | 100.0% | 0/0 | 6.45 |
-| [Encoding/Decoding](#category-encoding/decoding) | 7 | 7 | 0 | 100.0% | 322/322 | 6.19 |
-| [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [FIFOs](#category-fifos) | 20 | 17 | 1 | 85.0% | 3/3 | 17.13 |
-| [Filters](#category-filters) | 2 | 2 | 0 | 100.0% | 0/0 | 6.18 |
-| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 2/5 | 3.21 |
-| [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Mathematics](#category-mathematics) | 2 | 1 | 1 | 50.0% | 0/0 | 3.61 |
-| [Memory](#category-memory) | 4 | 3 | 1 | 75.0% | 5/5 | 4.84 |
-| [Multiplication](#category-multiplication) | 3 | 3 | 0 | 100.0% | 16/20 | 6.34 |
-| [Network on Chip](#category-network-on-chip) | 4 | 2 | 1 | 50.0% | 23/23 | 33.46 |
-| [Power Management](#category-power-management) | 5 | 4 | 0 | 80.0% | 3/3 | 5.04 |
-| [Registers](#category-registers) | 20 | 17 | 3 | 85.0% | 446/449 | 4.90 |
-| [Signal Processing](#category-signal-processing) | 7 | 7 | 0 | 100.0% | 19/20 | 6.45 |
-| [State Machines](#category-state-machines) | 1 | 1 | 0 | 100.0% | 26/26 | 7.03 |
-| [Testing](#category-testing) | 2 | 2 | 0 | 100.0% | 16/16 | 3.52 |
-| [Voting](#category-voting) | 1 | 1 | 0 | 100.0% | 4/4 | 5.96 |
+| Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Coverage | Avg Runtime (s) |
+|----------|--------:|-------:|-------:|----------:|-------------:|---------:|----------------:|
+| [Adders](#category-adders) | 6 | 0 | 6 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Arbitration](#category-arbitration) | 4 | 2 | 2 | 50.0% | 2/3 | 0.0% | 2.39 |
+| [Arithmetic](#category-arithmetic) | 2 | 1 | 1 | 50.0% | 12/12 | 0.0% | 2.12 |
+| [CORDIC](#category-cordic) | 3 | 0 | 2 | 0.0% | 0/0 | 0.0% | 0.04 |
+| [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 0 | 4 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Communication](#category-communication) | 13 | 1 | 11 | 7.7% | 0/0 | 0.0% | 0.43 |
+| [Counters](#category-counters) | 15 | 0 | 15 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.0% | 0.00 |
+| [Digital Signal Processing](#category-digital-signal-processing) | 2 | 0 | 2 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Division](#category-division) | 1 | 0 | 1 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Encoding/Decoding](#category-encoding/decoding) | 7 | 1 | 6 | 14.3% | 16/16 | 0.0% | 0.76 |
+| [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.0% | 0.00 |
+| [FIFOs](#category-fifos) | 20 | 3 | 17 | 15.0% | 0/0 | 0.0% | 0.78 |
+| [Filters](#category-filters) | 2 | 0 | 2 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 0/0 | 0.0% | 0.03 |
+| [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.0% | 0.00 |
+| [Mathematics](#category-mathematics) | 2 | 0 | 2 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Memory](#category-memory) | 4 | 0 | 4 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Multiplication](#category-multiplication) | 3 | 0 | 3 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Network on Chip](#category-network-on-chip) | 4 | 0 | 4 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Power Management](#category-power-management) | 5 | 0 | 4 | 0.0% | 0/0 | 0.0% | 0.05 |
+| [Registers](#category-registers) | 20 | 3 | 17 | 15.0% | 386/386 | 0.0% | 0.78 |
+| [Signal Processing](#category-signal-processing) | 7 | 0 | 7 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [State Machines](#category-state-machines) | 1 | 0 | 1 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Testing](#category-testing) | 2 | 0 | 2 | 0.0% | 0/0 | 0.0% | 0.06 |
+| [Voting](#category-voting) | 1 | 0 | 1 | 0.0% | 0/0 | 0.0% | 0.06 |
 
 ## Detailed Results
 
@@ -85,346 +86,461 @@ Generated on: 2025-05-16 14:06:20
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| configurable_brent_kung_adder | libraries/adders/configurable_brent_kung_adder.v | ✓ PASS | N/A | 5.95 | Tests: 1e of 1e |
-| configurable_carry_lookahead_adder | libraries/adders/configurable_carry_lookahead_adder.v | ✓ PASS | 30/30 | 6.22 | 30 of 30 |
-| configurable_carry_select_adder | libraries/adders/configurable_carry_select_adder.v | ✓ PASS | N/A | 7.19 | Test Summary: ALL TESTS PASSED |
-| configurable_carry_skip_adder | libraries/adders/configurable_carry_skip_adder.v | ✓ PASS | N/A | 6.15 | Tests: 1e of 1e |
-| configurable_conditional_sum_adder | libraries/adders/configurable_conditional_sum_adder.v | ✓ PASS | N/A | 6.44 | Tests: 1e of 1e |
-| configurable_kogge_stone_adder | libraries/adders/configurable_kogge_stone_adder.v | ✓ PASS | N/A | 6.33 | Test Summary: ALL TESTS PASSED |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| configurable_brent_kung_adder | libraries/adders/configurable_brent_kung_adder.v | ✗ FAIL | N/A | N/A | 0.08 | Module configurable_brent_kung_adder not built or missing executable
+Error: Module configurable_brent_kung_adder not built or missing executable |
+| configurable_carry_lookahead_adder | libraries/adders/configurable_carry_lookahead_adder.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_carry_lookahead_adder not built or missing executable
+Error: Module configurable_carry_lookahead_adder not built or missing executable |
+| configurable_carry_select_adder | libraries/adders/configurable_carry_select_adder.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_carry_select_adder not built or missing executable
+Error: Module configurable_carry_select_adder not built or missing executable |
+| configurable_carry_skip_adder | libraries/adders/configurable_carry_skip_adder.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_carry_skip_adder not built or missing executable
+Error: Module configurable_carry_skip_adder not built or missing executable |
+| configurable_conditional_sum_adder | libraries/adders/configurable_conditional_sum_adder.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_conditional_sum_adder not built or missing executable
+Error: Module configurable_conditional_sum_adder not built or missing executable |
+| configurable_kogge_stone_adder | libraries/adders/configurable_kogge_stone_adder.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_kogge_stone_adder not built or missing executable
+Error: Module configurable_kogge_stone_adder not built or missing executable |
 
 <a name='category-arbitration'></a>
 ### Arbitration
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| arbiter | libraries/arbiters/arbiter.v | ✓ PASS | 2/2 | 5.92 | 2 of 2 |
-| arbiter_rr | libraries/arbiters/arbiter_rr.v | ✓ PASS | 0/1 | 5.91 | Execution completed successfully |
-| fair_priority_arbiter | libraries/arbiters/fair_priority_arbiter.v | ✓ PASS | 4/4 | 6.22 | 4 of 4 |
-| matrix_arbiter | libraries/arbiters/matrix_arbiter.v | ✗ FAIL | N/A | 1.21 | %Error: Exiting due to 2 warning(s) |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| arbiter | libraries/arbiters/arbiter.v | ✓ PASS | 2/2 | N/A | 4.72 | 2 of 2 |
+| arbiter_rr | libraries/arbiters/arbiter_rr.v | ✓ PASS | 0/1 | N/A | 4.70 | Execution completed successfully |
+| fair_priority_arbiter | libraries/arbiters/fair_priority_arbiter.v | ✗ FAIL | N/A | N/A | 0.06 | Module fair_priority_arbiter not built or missing executable
+Error: Module fair_priority_arbiter not built or missing executable |
+| matrix_arbiter | libraries/arbiters/matrix_arbiter.v | ✗ FAIL | N/A | N/A | 0.06 | Module matrix_arbiter not built or missing executable
+Error: Module matrix_arbiter not built or missing executable |
 
 <a name='category-arithmetic'></a>
 ### Arithmetic
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| alu | libraries/alu/alu.v | ✓ PASS | 12/12 | 1.63 | 12 of 12 |
-| configurable_comparator | libraries/alu/configurable_comparator.v | ✓ PASS | 36/36 | 6.10 | 36 of 36 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| alu | libraries/alu/alu.v | ✓ PASS | 12/12 | N/A | 4.17 | 12 of 12 |
+| configurable_comparator | libraries/alu/configurable_comparator.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_comparator not built or missing executable
+Error: Module configurable_comparator not built or missing executable |
 
 <a name='category-cordic'></a>
 ### CORDIC
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| cordic | libraries/cordic/cordic.v | ✓ PASS | 0/9 | 5.93 | Execution completed successfully |
-| cordic_core | libraries/cordic/cordic_core.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | ✓ PASS | 16/16 | 6.88 | 16 of 16 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| cordic | libraries/cordic/cordic.v | ✗ FAIL | N/A | N/A | 0.06 | Module cordic not built or missing executable
+Error: Module cordic not built or missing executable |
+| cordic_core | libraries/cordic/cordic_core.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | ✗ FAIL | N/A | N/A | 0.06 | Invalid option: --no-warn-fatal
+Error: Invalid option: --no-warn-fatal |
 
 <a name='category-clock-domain-crossing'></a>
 ### Clock Domain Crossing
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | ✓ PASS | 1/10 | 5.76 | Execution completed successfully |
-| clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | ✓ PASS | N/A | 5.89 | Execution completed successfully |
-| handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | ✓ PASS | 10/10 | 6.14 | 10 of 10 |
-| multi_flop_synchronizer | libraries/cdc/multi_flop_synchronizer.v | ✓ PASS | N/A | 5.93 | Execution completed successfully |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | ✗ FAIL | N/A | N/A | 0.06 | Module clock_domain_crossing not built or missing executable
+Error: Module clock_domain_crossing not built or missing executable |
+| clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module clock_domain_crossing_fifo not built or missing executable
+Error: Module clock_domain_crossing_fifo not built or missing executable |
+| handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | ✗ FAIL | N/A | N/A | 0.06 | Module handshake_synchronizer not built or missing executable
+Error: Module handshake_synchronizer not built or missing executable |
+| multi_flop_synchronizer | libraries/cdc/multi_flop_synchronizer.v | ✗ FAIL | N/A | N/A | 0.06 | Module multi_flop_synchronizer not built or missing executable
+Error: Module multi_flop_synchronizer not built or missing executable |
 
 <a name='category-communication'></a>
 ### Communication
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| ahb_lite_master | libraries/comms/ahb_lite_master.v | ✗ FAIL | N/A | 0.98 | %Error: Exiting due to 3 warning(s) |
-| basic_spi_master | libraries/comms/basic_spi_master.v | ✓ PASS | N/A | 5.80 | TEST PASSED |
-| final_spi_master | libraries/comms/final_spi_master.v | ✗ FAIL | N/A | 6.04 | TEST FAILED |
-| fixed_spi_master | libraries/comms/fixed_spi_master.v | ✓ PASS | N/A | 5.99 | TEST PASSED |
-| parameterized_deserializer | libraries/comms/parameterized_deserializer.v | ✓ PASS | N/A | 6.19 | Execution completed successfully |
-| parameterized_i2c_master | libraries/comms/parameterized_i2c_master.v | ✓ PASS | 2/2 | 6.54 | 2 of 2 |
-| parameterized_serdes | libraries/comms/parameterized_serdes.v | ✓ PASS | N/A | 5.81 | Simulation completed! |
-| parameterized_spi_master | libraries/comms/parameterized_spi_master.v | ✓ PASS | N/A | 6.26 | TEST PASSED |
-| parameterized_uart_rx | libraries/comms/parameterized_uart_rx.v | ✗ FAIL | N/A | 6.34 | UART RX Test FAILED! |
-| parameterized_uart_tx | libraries/comms/parameterized_uart_tx.v | ✓ PASS | N/A | 5.58 | Test PASSED! All data transmitted and received correctly. |
-| parameterized_uart_tx_fixed | libraries/comms/parameterized_uart_tx_fixed.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| simple_spi_master | libraries/comms/simple_spi_master.v | ✓ PASS | N/A | 6.74 | TEST PASSED |
-| spi_master | libraries/comms/spi_master.v | ✓ PASS | N/A | 7.70 | TEST PASSED |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| ahb_lite_master | libraries/comms/ahb_lite_master.v | ✗ FAIL | N/A | N/A | 0.06 | Module ahb_lite_master not built or missing executable
+Error: Module ahb_lite_master not built or missing executable |
+| basic_spi_master | libraries/comms/basic_spi_master.v | ✓ PASS | N/A | N/A | 4.97 | TEST PASSED |
+| final_spi_master | libraries/comms/final_spi_master.v | ✗ FAIL | N/A | N/A | 0.06 | Module final_spi_master not built or missing executable
+Error: Module final_spi_master not built or missing executable |
+| fixed_spi_master | libraries/comms/fixed_spi_master.v | ✗ FAIL | N/A | N/A | 0.06 | Module fixed_spi_master not built or missing executable
+Error: Module fixed_spi_master not built or missing executable |
+| parameterized_deserializer | libraries/comms/parameterized_deserializer.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_deserializer not built or missing executable
+Error: Module parameterized_deserializer not built or missing executable |
+| parameterized_i2c_master | libraries/comms/parameterized_i2c_master.v | ✗ FAIL | N/A | N/A | 0.05 | Module parameterized_i2c_master not built or missing executable
+Error: Module parameterized_i2c_master not built or missing executable |
+| parameterized_serdes | libraries/comms/parameterized_serdes.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_serdes not built or missing executable
+Error: Module parameterized_serdes not built or missing executable |
+| parameterized_spi_master | libraries/comms/parameterized_spi_master.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_spi_master not built or missing executable
+Error: Module parameterized_spi_master not built or missing executable |
+| parameterized_uart_rx | libraries/comms/parameterized_uart_rx.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_uart_rx not built or missing executable
+Error: Module parameterized_uart_rx not built or missing executable |
+| parameterized_uart_tx | libraries/comms/parameterized_uart_tx.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_uart_tx not built or missing executable
+Error: Module parameterized_uart_tx not built or missing executable |
+| parameterized_uart_tx_fixed | libraries/comms/parameterized_uart_tx_fixed.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| simple_spi_master | libraries/comms/simple_spi_master.v | ✗ FAIL | N/A | N/A | 0.06 | Module simple_spi_master not built or missing executable
+Error: Module simple_spi_master not built or missing executable |
+| spi_master | libraries/comms/spi_master.v | ✗ FAIL | N/A | N/A | 0.06 | Module spi_master not built or missing executable
+Error: Module spi_master not built or missing executable |
 
 <a name='category-counters'></a>
 ### Counters
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | N/A | 6.09 | Execution completed successfully |
-| gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | 1.11 | 3 of 3 |
-| johnson_counter | libraries/counters/johnson_counter.v | ✓ PASS | N/A | 1.10 | Execution completed successfully |
-| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | 1.09 | 20 of 20 |
-| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | N/A | 1.10 | Execution completed successfully |
-| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✗ FAIL | N/A | 1.17 | make: *** [Makefile:107: run_parameterized_decade_counter] Error 1 |
-| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | N/A | 6.46 | Execution completed successfully |
-| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | 6.38 | make: *** [Makefile:107: run_parameterized_johnson_counter] Error 1 |
-| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✓ PASS | N/A | 6.29 | Execution completed successfully |
-| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | 6.49 | make: *** [Makefile:107: run_parameterized_loadable_counter] Error 1 |
-| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | 7.00 | make: *** [Makefile:107: run_parameterized_onehot_counter] Error 1 |
-| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | 5.45 | Execution completed successfully |
-| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✗ FAIL | N/A | 6.18 | make: *** [Makefile:107: run_parameterized_self_correcting_counter] Error 1 |
-| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | 5.45 | Execution completed successfully |
-| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | 6.20 | 1 of 1 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_clz_clo not built or missing executable
+Error: Module configurable_clz_clo not built or missing executable |
+| gray_counter | libraries/counters/gray_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module gray_counter not built or missing executable
+Error: Module gray_counter not built or missing executable |
+| johnson_counter | libraries/counters/johnson_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module johnson_counter not built or missing executable
+Error: Module johnson_counter not built or missing executable |
+| leading_zero_counter | libraries/counters/leading_zero_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module leading_zero_counter not built or missing executable
+Error: Module leading_zero_counter not built or missing executable |
+| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module loadable_updown_counter not built or missing executable
+Error: Module loadable_updown_counter not built or missing executable |
+| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_decade_counter not built or missing executable
+Error: Module parameterized_decade_counter not built or missing executable |
+| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_gray_counter not built or missing executable
+Error: Module parameterized_gray_counter not built or missing executable |
+| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_johnson_counter not built or missing executable
+Error: Module parameterized_johnson_counter not built or missing executable |
+| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_johnson_updown_counter not built or missing executable
+Error: Module parameterized_johnson_updown_counter not built or missing executable |
+| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_loadable_counter not built or missing executable
+Error: Module parameterized_loadable_counter not built or missing executable |
+| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_onehot_counter not built or missing executable
+Error: Module parameterized_onehot_counter not built or missing executable |
+| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_ring_counter not built or missing executable
+Error: Module parameterized_ring_counter not built or missing executable |
+| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_self_correcting_counter not built or missing executable
+Error: Module parameterized_self_correcting_counter not built or missing executable |
+| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_sync_reset_counter not built or missing executable
+Error: Module parameterized_sync_reset_counter not built or missing executable |
+| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_updown_counter not built or missing executable
+Error: Module parameterized_updown_counter not built or missing executable |
 
 <a name='category-debugging'></a>
 ### Debugging
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| logic_analyzer | libraries/debug/logic_analyzer.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| performance_counter | libraries/debug/performance_counter.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| logic_analyzer | libraries/debug/logic_analyzer.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| performance_counter | libraries/debug/performance_counter.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
 
 <a name='category-digital-signal-processing'></a>
 ### Digital Signal Processing
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| parameterized_dds | libraries/dsp/parameterized_dds.v | ✓ PASS | 100/100 | 6.33 | 100 of 100 |
-| parameterized_fft | libraries/dsp/parameterized_fft.v | ✗ FAIL | N/A | 1.00 | %Error: Exiting due to 1 warning(s) |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| parameterized_dds | libraries/dsp/parameterized_dds.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_dds not built or missing executable
+Error: Module parameterized_dds not built or missing executable |
+| parameterized_fft | libraries/dsp/parameterized_fft.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_fft not built or missing executable
+Error: Module parameterized_fft not built or missing executable |
 
 <a name='category-division'></a>
 ### Division
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| non_restoring_divider | libraries/dividers/non_restoring_divider.v | ✓ PASS | N/A | 6.45 | All division tests PASSED! |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| non_restoring_divider | libraries/dividers/non_restoring_divider.v | ✗ FAIL | N/A | N/A | 0.06 | Module non_restoring_divider not built or missing executable
+Error: Module non_restoring_divider not built or missing executable |
 
 <a name='category-encoding/decoding'></a>
 ### Encoding/Decoding
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| binary_to_gray | libraries/codings/binary_to_gray.v | ✓ PASS | 16/16 | 6.04 | 16 of 16 |
-| configurable_priority_encoder | libraries/codings/configurable_priority_encoder.v | ✓ PASS | N/A | 6.14 | ALL TESTS PASSED! |
-| gray_to_binary | libraries/codings/gray_to_binary.v | ✓ PASS | 16/16 | 6.15 | 16 of 16 |
-| hamming_code | libraries/codings/hamming_code.v | ✓ PASS | 31/31 | 6.32 | 31 of 31 |
-| parameterized_crc_generator | libraries/codings/parameterized_crc_generator.v | ✓ PASS | 1/1 | 6.45 | 1 of 1 |
-| parameterized_scrambler | libraries/codings/parameterized_scrambler.v | ✓ PASS | 2/2 | 5.51 | 2 of 2 |
-| priority_encoder | libraries/codings/priority_encoder.v | ✓ PASS | 256/256 | 6.71 | 256 of 256 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| binary_to_gray | libraries/codings/binary_to_gray.v | ✓ PASS | 16/16 | N/A | 4.93 | 16 of 16 |
+| configurable_priority_encoder | libraries/codings/configurable_priority_encoder.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_priority_encoder not built or missing executable
+Error: Module configurable_priority_encoder not built or missing executable |
+| gray_to_binary | libraries/codings/gray_to_binary.v | ✗ FAIL | N/A | N/A | 0.06 | Module gray_to_binary not built or missing executable
+Error: Module gray_to_binary not built or missing executable |
+| hamming_code | libraries/codings/hamming_code.v | ✗ FAIL | N/A | N/A | 0.06 | Module hamming_code not built or missing executable
+Error: Module hamming_code not built or missing executable |
+| parameterized_crc_generator | libraries/codings/parameterized_crc_generator.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_crc_generator not built or missing executable
+Error: Module parameterized_crc_generator not built or missing executable |
+| parameterized_scrambler | libraries/codings/parameterized_scrambler.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_scrambler not built or missing executable
+Error: Module parameterized_scrambler not built or missing executable |
+| priority_encoder | libraries/codings/priority_encoder.v | ✗ FAIL | N/A | N/A | 0.06 | Module priority_encoder not built or missing executable
+Error: Module priority_encoder not built or missing executable |
 
 <a name='category-encryption'></a>
 ### Encryption
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| aes_core | libraries/encryption/aes_core.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| true_random_generator | libraries/encryption/true_random_generator.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| aes_core | libraries/encryption/aes_core.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| true_random_generator | libraries/encryption/true_random_generator.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
 
 <a name='category-fifos'></a>
 ### FIFOs
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| async_fifo | libraries/fifo/async_fifo.v | ✓ PASS | N/A | 5.77 | Execution completed successfully |
-| barrel_shifter_fifo | libraries/fifo/barrel_shifter_fifo.v | ✓ PASS | N/A | 1.06 | Execution completed successfully |
-| bidirectional_fifo | libraries/fifo/bidirectional_fifo.v | ✓ PASS | N/A | 5.98 | Execution completed successfully |
-| cache_fifo | libraries/fifo/cache_fifo.v | ✓ PASS | N/A | 6.00 | Execution completed successfully |
-| circular_buffer_fifo | libraries/fifo/circular_buffer_fifo.v | ✓ PASS | N/A | 5.86 | Execution completed successfully |
-| configurable_param_fifo | libraries/fifo/configurable_param_fifo.v | ✓ PASS | N/A | 6.15 | All tests PASSED! |
-| configurable_sync_fifo | libraries/fifo/configurable_sync_fifo.v | ✓ PASS | N/A | 5.98 | ALL TESTS PASSED! |
-| credit_based_fifo | libraries/fifo/credit_based_fifo.v | ✓ PASS | N/A | 6.07 | Final FIFO status - Full: No, Empty: Yes |
-| dual_clock_fifo | libraries/fifo/dual_clock_fifo.v | ✓ PASS | N/A | 6.25 | Execution completed successfully |
-| elastic_buffer | libraries/fifo/elastic_buffer.v | ✓ PASS | N/A | 6.15 | Execution completed successfully |
-| fifo | libraries/fifo/fifo.v | ✓ PASS | 3/3 | 6.12 | 3 of 3 |
-| fwft_fifo | libraries/fifo/fwft_fifo.v | ✓ PASS | N/A | 6.18 | Execution completed successfully |
-| memory_mapped_fifo | libraries/fifo/memory_mapped_fifo.v | ✓ PASS | N/A | 6.03 | Execution completed successfully |
-| multi_ported_fifo | libraries/fifo/multi_ported_fifo.v | ✗ FAIL | N/A | 0.98 | %Error: libraries/fifo/multi_ported_fifo.v:134:21: syntax error, unexpected IDENTIFIER, expecting "'{" |
-| parameterized_priority_queue | libraries/fifo/parameterized_priority_queue.v | ✓ PASS | N/A | 6.45 | Execution completed successfully |
-| pipelined_fifo | libraries/fifo/pipelined_fifo.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated |
-| showahead_fifo | libraries/fifo/showahead_fifo.v | ✓ PASS | N/A | 7.22 | Execution completed successfully |
-| skid_buffer | libraries/fifo/skid_buffer.v | ✓ PASS | N/A | 7.00 | Execution completed successfully |
-| smart_fifo | libraries/fifo/smart_fifo.v | ✓ PASS | N/A | 7.36 | Execution completed successfully |
-| sync_fifo | libraries/fifo/sync_fifo.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| async_fifo | libraries/fifo/async_fifo.v | ✓ PASS | N/A | N/A | 4.81 | Execution completed successfully |
+| barrel_shifter_fifo | libraries/fifo/barrel_shifter_fifo.v | ✓ PASS | N/A | N/A | 4.94 | Execution completed successfully |
+| bidirectional_fifo | libraries/fifo/bidirectional_fifo.v | ✓ PASS | N/A | N/A | 4.83 | Execution completed successfully |
+| cache_fifo | libraries/fifo/cache_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module cache_fifo not built or missing executable
+Error: Module cache_fifo not built or missing executable |
+| circular_buffer_fifo | libraries/fifo/circular_buffer_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module circular_buffer_fifo not built or missing executable
+Error: Module circular_buffer_fifo not built or missing executable |
+| configurable_param_fifo | libraries/fifo/configurable_param_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_param_fifo not built or missing executable
+Error: Module configurable_param_fifo not built or missing executable |
+| configurable_sync_fifo | libraries/fifo/configurable_sync_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_sync_fifo not built or missing executable
+Error: Module configurable_sync_fifo not built or missing executable |
+| credit_based_fifo | libraries/fifo/credit_based_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module credit_based_fifo not built or missing executable
+Error: Module credit_based_fifo not built or missing executable |
+| dual_clock_fifo | libraries/fifo/dual_clock_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module dual_clock_fifo not built or missing executable
+Error: Module dual_clock_fifo not built or missing executable |
+| elastic_buffer | libraries/fifo/elastic_buffer.v | ✗ FAIL | N/A | N/A | 0.06 | Module elastic_buffer not built or missing executable
+Error: Module elastic_buffer not built or missing executable |
+| fifo | libraries/fifo/fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module fifo not built or missing executable
+Error: Module fifo not built or missing executable |
+| fwft_fifo | libraries/fifo/fwft_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module fwft_fifo not built or missing executable
+Error: Module fwft_fifo not built or missing executable |
+| memory_mapped_fifo | libraries/fifo/memory_mapped_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module memory_mapped_fifo not built or missing executable
+Error: Module memory_mapped_fifo not built or missing executable |
+| multi_ported_fifo | libraries/fifo/multi_ported_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module multi_ported_fifo not built or missing executable
+Error: Module multi_ported_fifo not built or missing executable |
+| parameterized_priority_queue | libraries/fifo/parameterized_priority_queue.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_priority_queue not built or missing executable
+Error: Module parameterized_priority_queue not built or missing executable |
+| pipelined_fifo | libraries/fifo/pipelined_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module pipelined_fifo not built or missing executable
+Error: Module pipelined_fifo not built or missing executable |
+| showahead_fifo | libraries/fifo/showahead_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module showahead_fifo not built or missing executable
+Error: Module showahead_fifo not built or missing executable |
+| skid_buffer | libraries/fifo/skid_buffer.v | ✗ FAIL | N/A | N/A | 0.06 | Module skid_buffer not built or missing executable
+Error: Module skid_buffer not built or missing executable |
+| smart_fifo | libraries/fifo/smart_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module smart_fifo not built or missing executable
+Error: Module smart_fifo not built or missing executable |
+| sync_fifo | libraries/fifo/sync_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module sync_fifo not built or missing executable
+Error: Module sync_fifo not built or missing executable |
 
 <a name='category-filters'></a>
 ### Filters
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| configurable_fir_filter | libraries/filters/configurable_fir_filter.v | ✓ PASS | N/A | 6.21 | TEST PASSED! |
-| fir_filter | libraries/filters/fir_filter.v | ✓ PASS | N/A | 6.16 | Execution completed successfully |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| configurable_fir_filter | libraries/filters/configurable_fir_filter.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_fir_filter not built or missing executable
+Error: Module configurable_fir_filter not built or missing executable |
+| fir_filter | libraries/filters/fir_filter.v | ✗ FAIL | N/A | N/A | 0.06 | Module fir_filter not built or missing executable
+Error: Module fir_filter not built or missing executable |
 
 <a name='category-input/output'></a>
 ### Input/Output
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| dma_controller | libraries/io/dma_controller.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | 2/5 | 6.42 | 2 of 5 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| dma_controller | libraries/io/dma_controller.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module gpio_controller not built or missing executable
+Error: Module gpio_controller not built or missing executable |
 
 <a name='category-interfaces'></a>
 ### Interfaces
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| axi_lite_master | libraries/interfaces/axi_lite_master.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| axi_stream_interface | libraries/interfaces/axi_stream_interface.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| pcie_endpoint | libraries/interfaces/pcie_endpoint.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| wishbone_master | libraries/interfaces/wishbone_master.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| axi_lite_master | libraries/interfaces/axi_lite_master.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| axi_stream_interface | libraries/interfaces/axi_stream_interface.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| pcie_endpoint | libraries/interfaces/pcie_endpoint.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| wishbone_master | libraries/interfaces/wishbone_master.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
 
 <a name='category-mathematics'></a>
 ### Mathematics
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✗ FAIL | N/A | 1.01 | %Error: Exiting due to 3 warning(s) |
-| floating_point_adder | libraries/math/floating_point_adder.v | ✓ PASS | N/A | 6.21 | Execution completed successfully |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✗ FAIL | N/A | N/A | 0.06 | Module fixed_point_sqrt not built or missing executable
+Error: Module fixed_point_sqrt not built or missing executable |
+| floating_point_adder | libraries/math/floating_point_adder.v | ✗ FAIL | N/A | N/A | 0.06 | Module floating_point_adder not built or missing executable
+Error: Module floating_point_adder not built or missing executable |
 
 <a name='category-memory'></a>
 ### Memory
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| ddr_controller | libraries/mems/ddr_controller.v | ✗ FAIL | N/A | 0.99 | %Error: Exiting due to 3 warning(s) |
-| dual_port_ram | libraries/mems/dual_port_ram.v | ✓ PASS | N/A | 6.08 | Execution completed successfully |
-| memory_controller | libraries/mems/memory_controller.v | ✓ PASS | N/A | 5.97 | Execution completed successfully |
-| parameterized_cam | libraries/mems/parameterized_cam.v | ✓ PASS | 5/5 | 6.34 | 5 of 5 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| ddr_controller | libraries/mems/ddr_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module ddr_controller not built or missing executable
+Error: Module ddr_controller not built or missing executable |
+| dual_port_ram | libraries/mems/dual_port_ram.v | ✗ FAIL | N/A | N/A | 0.06 | Module dual_port_ram not built or missing executable
+Error: Module dual_port_ram not built or missing executable |
+| memory_controller | libraries/mems/memory_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module memory_controller not built or missing executable
+Error: Module memory_controller not built or missing executable |
+| parameterized_cam | libraries/mems/parameterized_cam.v | ✗ FAIL | N/A | N/A | 0.05 | Module parameterized_cam not built or missing executable
+Error: Module parameterized_cam not built or missing executable |
 
 <a name='category-multiplication'></a>
 ### Multiplication
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| booth_multiplier | libraries/multipliers/booth_multiplier.v | ✓ PASS | 4/8 | 6.14 | Execution completed successfully |
-| configurable_mult | libraries/multipliers/configurable_mult.v | ✓ PASS | 6/6 | 6.17 | 6 of 6 |
-| radix4_booth_multiplier | libraries/multipliers/radix4_booth_multiplier.v | ✓ PASS | 6/6 | 6.71 | 6 of 6 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| booth_multiplier | libraries/multipliers/booth_multiplier.v | ✗ FAIL | N/A | N/A | 0.06 | Module booth_multiplier not built or missing executable
+Error: Module booth_multiplier not built or missing executable |
+| configurable_mult | libraries/multipliers/configurable_mult.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_mult not built or missing executable
+Error: Module configurable_mult not built or missing executable |
+| radix4_booth_multiplier | libraries/multipliers/radix4_booth_multiplier.v | ✗ FAIL | N/A | N/A | 0.06 | Module radix4_booth_multiplier not built or missing executable
+Error: Module radix4_booth_multiplier not built or missing executable |
 
 <a name='category-network-on-chip'></a>
 ### Network on Chip
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| configurable_mesh_router | libraries/noc/configurable_mesh_router.v | ✓ PASS | 11/11 | 6.71 | 11 of 11 |
-| crossbar_switch | libraries/noc/crossbar_switch.v | ✓ PASS | 12/12 | 6.12 | 12 of 12 |
-| mesh_router | libraries/noc/mesh_router.v | ✗ FAIL | N/A | 1.01 | %Error: Exiting due to 2 warning(s) |
-| network_interface | libraries/noc/network_interface.v | ⏱ TIMEOUT | N/A | 120.00 | Execution exceeded 2 minutes and was terminated |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| configurable_mesh_router | libraries/noc/configurable_mesh_router.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_mesh_router not built or missing executable
+Error: Module configurable_mesh_router not built or missing executable |
+| crossbar_switch | libraries/noc/crossbar_switch.v | ✗ FAIL | N/A | N/A | 0.06 | Module crossbar_switch not built or missing executable
+Error: Module crossbar_switch not built or missing executable |
+| mesh_router | libraries/noc/mesh_router.v | ✗ FAIL | N/A | N/A | 0.06 | Module mesh_router not built or missing executable
+Error: Module mesh_router not built or missing executable |
+| network_interface | libraries/noc/network_interface.v | ✗ FAIL | N/A | N/A | 0.06 | Module network_interface not built or missing executable
+Error: Module network_interface not built or missing executable |
 
 <a name='category-power-management'></a>
 ### Power Management
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| clock_divider | libraries/power/clock_divider.v | ✓ PASS | N/A | 5.82 | Execution completed successfully |
-| clock_gating | libraries/power/clock_gating.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✓ PASS | N/A | 6.18 | Execution completed successfully |
-| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✓ PASS | N/A | 6.53 | ALL TESTS PASSED! |
-| power_domain_controller | libraries/power/power_domain_controller.v | ✓ PASS | 3/3 | 6.70 | 3 of 3 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| clock_divider | libraries/power/clock_divider.v | ✗ FAIL | N/A | N/A | 0.06 | Module clock_divider not built or missing executable
+Error: Module clock_divider not built or missing executable |
+| clock_gating | libraries/power/clock_gating.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
+| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_clock_gating not built or missing executable
+Error: Module parameterized_clock_gating not built or missing executable |
+| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_freq_divider not built or missing executable
+Error: Module parameterized_freq_divider not built or missing executable |
+| power_domain_controller | libraries/power/power_domain_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module power_domain_controller not built or missing executable
+Error: Module power_domain_controller not built or missing executable |
 
 <a name='category-registers'></a>
 ### Registers
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| barrel_rotator | libraries/registers/barrel_rotator.v | ✓ PASS | 80/80 | 1.07 | 80 of 80 |
-| barrel_shifter | libraries/registers/barrel_shifter.v | ✓ PASS | 300/300 | 1.10 | 300 of 300 |
-| bidirectional_shift_register | libraries/registers/bidirectional_shift_register.v | ✓ PASS | 6/6 | 1.16 | 6 of 6 |
-| dual_edge_register | libraries/registers/dual_edge_register.v | ✓ PASS | 6/6 | 1.12 | 6 of 6 |
-| lfsr | libraries/registers/lfsr.v | ✓ PASS | 2/2 | 1.10 | 2 of 2 |
-| onehot_decoder_register | libraries/registers/onehot_decoder_register.v | ✓ PASS | 5/5 | 1.19 | 5 of 5 |
-| parameterized_barrel_rotator | libraries/registers/parameterized_barrel_rotator.v | ✓ PASS | N/A | 6.33 | Tests: a0 of a0 |
-| parameterized_rotation_sipo | libraries/registers/parameterized_rotation_sipo.v | ✗ FAIL | N/A | 1.12 | %Error: Exiting due to 1 warning(s) |
-| piso_register | libraries/registers/piso_register.v | ✓ PASS | 1/1 | 6.69 | 1 of 1 |
-| register_file | libraries/registers/register_file.v | ✓ PASS | 5/5 | 6.74 | 5 of 5 |
-| scan_register | libraries/registers/scan_register.v | ✗ FAIL | 3/4 | 6.81 | 3 of 4 |
-| shadow_register | libraries/registers/shadow_register.v | ✓ PASS | 7/7 | 6.79 | 7 of 7 |
-| shift_register | libraries/registers/shift_register.v | ✓ PASS | 1/2 | 6.90 | Execution completed successfully |
-| shift_register_left | libraries/registers/shift_register_left.v | ✓ PASS | 1/1 | 6.84 | 1 of 1 |
-| shift_register_right | libraries/registers/shift_register_right.v | ✓ PASS | 1/1 | 6.98 | 1 of 1 |
-| sipo_register | libraries/registers/sipo_register.v | ✓ PASS | 4/4 | 7.08 | 4 of 4 |
-| siso_register | libraries/registers/siso_register.v | ✓ PASS | 4/4 | 6.85 | 4 of 4 |
-| sync_preset_register | libraries/registers/sync_preset_register.v | ✓ PASS | 8/8 | 7.37 | 8 of 8 |
-| toggle_register | libraries/registers/toggle_register.v | ✓ PASS | 8/8 | 7.48 | 8 of 8 |
-| universal_shift_register | libraries/registers/universal_shift_register.v | ✗ FAIL | 4/5 | 7.32 | 4 of 5 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| barrel_rotator | libraries/registers/barrel_rotator.v | ✓ PASS | 80/80 | N/A | 4.84 | 80 of 80 |
+| barrel_shifter | libraries/registers/barrel_shifter.v | ✓ PASS | 300/300 | N/A | 4.91 | 300 of 300 |
+| bidirectional_shift_register | libraries/registers/bidirectional_shift_register.v | ✓ PASS | 6/6 | N/A | 4.87 | 6 of 6 |
+| dual_edge_register | libraries/registers/dual_edge_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module dual_edge_register not built or missing executable
+Error: Module dual_edge_register not built or missing executable |
+| lfsr | libraries/registers/lfsr.v | ✗ FAIL | N/A | N/A | 0.05 | Module lfsr not built or missing executable
+Error: Module lfsr not built or missing executable |
+| onehot_decoder_register | libraries/registers/onehot_decoder_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module onehot_decoder_register not built or missing executable
+Error: Module onehot_decoder_register not built or missing executable |
+| parameterized_barrel_rotator | libraries/registers/parameterized_barrel_rotator.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_barrel_rotator not built or missing executable
+Error: Module parameterized_barrel_rotator not built or missing executable |
+| parameterized_rotation_sipo | libraries/registers/parameterized_rotation_sipo.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_rotation_sipo not built or missing executable
+Error: Module parameterized_rotation_sipo not built or missing executable |
+| piso_register | libraries/registers/piso_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module piso_register not built or missing executable
+Error: Module piso_register not built or missing executable |
+| register_file | libraries/registers/register_file.v | ✗ FAIL | N/A | N/A | 0.06 | Module register_file not built or missing executable
+Error: Module register_file not built or missing executable |
+| scan_register | libraries/registers/scan_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module scan_register not built or missing executable
+Error: Module scan_register not built or missing executable |
+| shadow_register | libraries/registers/shadow_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module shadow_register not built or missing executable
+Error: Module shadow_register not built or missing executable |
+| shift_register | libraries/registers/shift_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module shift_register not built or missing executable
+Error: Module shift_register not built or missing executable |
+| shift_register_left | libraries/registers/shift_register_left.v | ✗ FAIL | N/A | N/A | 0.06 | Module shift_register_left not built or missing executable
+Error: Module shift_register_left not built or missing executable |
+| shift_register_right | libraries/registers/shift_register_right.v | ✗ FAIL | N/A | N/A | 0.06 | Module shift_register_right not built or missing executable
+Error: Module shift_register_right not built or missing executable |
+| sipo_register | libraries/registers/sipo_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module sipo_register not built or missing executable
+Error: Module sipo_register not built or missing executable |
+| siso_register | libraries/registers/siso_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module siso_register not built or missing executable
+Error: Module siso_register not built or missing executable |
+| sync_preset_register | libraries/registers/sync_preset_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module sync_preset_register not built or missing executable
+Error: Module sync_preset_register not built or missing executable |
+| toggle_register | libraries/registers/toggle_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module toggle_register not built or missing executable
+Error: Module toggle_register not built or missing executable |
+| universal_shift_register | libraries/registers/universal_shift_register.v | ✗ FAIL | N/A | N/A | 0.06 | Module universal_shift_register not built or missing executable
+Error: Module universal_shift_register not built or missing executable |
 
 <a name='category-signal-processing'></a>
 ### Signal Processing
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| configurable_lfsr | libraries/signals/configurable_lfsr.v | ✓ PASS | N/A | 6.07 | Execution completed successfully |
-| configurable_prng | libraries/signals/configurable_prng.v | ✓ PASS | 3/3 | 6.92 | 3 of 3 |
-| digital_thermometer_controller | libraries/signals/digital_thermometer_controller.v | ✓ PASS | 5/5 | 6.01 | 5 of 5 |
-| multi_phase_pwm_controller | libraries/signals/multi_phase_pwm_controller.v | ✓ PASS | N/A | 5.94 | Execution completed successfully |
-| parameterized_pwm | libraries/signals/parameterized_pwm.v | ✓ PASS | 6/6 | 6.23 | 6 of 6 |
-| pulse_width_detector | libraries/signals/pulse_width_detector.v | ✓ PASS | 2/3 | 7.03 | Execution completed successfully |
-| pwm_generator | libraries/signals/pwm_generator.v | ✓ PASS | 3/3 | 6.98 | 3 of 3 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| configurable_lfsr | libraries/signals/configurable_lfsr.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_lfsr not built or missing executable
+Error: Module configurable_lfsr not built or missing executable |
+| configurable_prng | libraries/signals/configurable_prng.v | ✗ FAIL | N/A | N/A | 0.06 | Module configurable_prng not built or missing executable
+Error: Module configurable_prng not built or missing executable |
+| digital_thermometer_controller | libraries/signals/digital_thermometer_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module digital_thermometer_controller not built or missing executable
+Error: Module digital_thermometer_controller not built or missing executable |
+| multi_phase_pwm_controller | libraries/signals/multi_phase_pwm_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module multi_phase_pwm_controller not built or missing executable
+Error: Module multi_phase_pwm_controller not built or missing executable |
+| parameterized_pwm | libraries/signals/parameterized_pwm.v | ✗ FAIL | N/A | N/A | 0.06 | Module parameterized_pwm not built or missing executable
+Error: Module parameterized_pwm not built or missing executable |
+| pulse_width_detector | libraries/signals/pulse_width_detector.v | ✗ FAIL | N/A | N/A | 0.06 | Module pulse_width_detector not built or missing executable
+Error: Module pulse_width_detector not built or missing executable |
+| pwm_generator | libraries/signals/pwm_generator.v | ✗ FAIL | N/A | N/A | 0.06 | Module pwm_generator not built or missing executable
+Error: Module pwm_generator not built or missing executable |
 
 <a name='category-state-machines'></a>
 ### State Machines
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| sequence_detector_fsm | libraries/fsm/sequence_detector_fsm.v | ✓ PASS | 26/26 | 7.03 | 26 of 26 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| sequence_detector_fsm | libraries/fsm/sequence_detector_fsm.v | ✗ FAIL | N/A | N/A | 0.06 | Module sequence_detector_fsm not built or missing executable
+Error: Module sequence_detector_fsm not built or missing executable |
 
 <a name='category-testing'></a>
 ### Testing
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| bist_controller | libraries/test/bist_controller.v | ✓ PASS | 4/4 | 1.05 | 4 of 4 |
-| jtag_controller | libraries/test/jtag_controller.v | ✓ PASS | 12/12 | 6.00 | 12 of 12 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| bist_controller | libraries/test/bist_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module bist_controller not built or missing executable
+Error: Module bist_controller not built or missing executable |
+| jtag_controller | libraries/test/jtag_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Module jtag_controller not built or missing executable
+Error: Module jtag_controller not built or missing executable |
 
 <a name='category-voting'></a>
 ### Voting
 
 [Back to top](#table-of-contents)
 
-| Module | File Path | Status | Tests | Runtime (s) | Details |
-|--------|-----------|:------:|------:|------------:|----------:|
-| majority_voter | libraries/voters/majority_voter.v | ✓ PASS | 4/4 | 5.96 | 4 of 4 |
+| Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
+|--------|-----------|:------:|------:|---------:|------------:|----------:|
+| majority_voter | libraries/voters/majority_voter.v | ✗ FAIL | N/A | N/A | 0.06 | Module majority_voter not built or missing executable
+Error: Module majority_voter not built or missing executable |
 
 <a name='notes'></a>
 ## Notes
@@ -435,3 +551,5 @@ Generated on: 2025-05-16 14:06:20
 - Some tests may fail due to issues with the implementation, not the build system
 - Timeouts indicate tests that took longer than 2 minutes to complete
 - Runtime measurements include compilation and execution time
+- Coverage information is reported when available from the test output
+- Error messages are extracted from test output when available

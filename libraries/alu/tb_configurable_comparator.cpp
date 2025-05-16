@@ -5,14 +5,16 @@
 #include <vector>
 #include <random>
 #include <cstdint>
+#include <bitset>
 
 // Test case structure
 struct TestCase {
-    uint32_t a;
-    uint32_t b;
+    int32_t a;
+    int32_t b;
     uint8_t op_sel;
     bool expected_result;
     std::string op_name;
+    bool is_signed;
 };
 
 int main(int argc, char** argv) {
@@ -28,12 +30,13 @@ int main(int argc, char** argv) {
     comparator->trace(tfp, 99);
     tfp->open("configurable_comparator_trace.vcd");
     
-    // Initialize random number generator
+    // Initialize random number generators
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<uint32_t> dist8bit(0, 255);
+    std::uniform_int_distribution<uint32_t> dist8bit(0, 255);     // For unsigned 8-bit
+    std::uniform_int_distribution<int32_t> dist16bit(-32768, 32767); // For signed 16-bit
     
-    // Define test cases for 8-bit unsigned comparison
+    // Define operation codes
     const uint8_t EQUAL = 0;
     const uint8_t NOT_EQUAL = 1;
     const uint8_t LESS_THAN = 2;
@@ -41,76 +44,137 @@ int main(int argc, char** argv) {
     const uint8_t GREATER_THAN = 4;
     const uint8_t GREATER_EQUAL = 5;
     
-    std::vector<TestCase> testCases = {
+    std::vector<TestCase> testCases;
+    
+    // Add unsigned test cases (8-bit)
+    testCases.insert(testCases.end(), {
         // Test EQ operation
-        {100, 100, EQUAL, true, "EQ"},
-        {100, 101, EQUAL, false, "EQ"},
+        {100, 100, EQUAL, true, "EQ", false},
+        {100, 101, EQUAL, false, "EQ", false},
         
         // Test NE operation
-        {100, 101, NOT_EQUAL, true, "NE"},
-        {100, 100, NOT_EQUAL, false, "NE"},
+        {100, 101, NOT_EQUAL, true, "NE", false},
+        {100, 100, NOT_EQUAL, false, "NE", false},
         
         // Test LT operation
-        {100, 101, LESS_THAN, true, "LT"},
-        {101, 100, LESS_THAN, false, "LT"},
-        {100, 100, LESS_THAN, false, "LT"},
+        {100, 101, LESS_THAN, true, "LT", false},
+        {101, 100, LESS_THAN, false, "LT", false},
+        {100, 100, LESS_THAN, false, "LT", false},
         
         // Test LE operation
-        {100, 101, LESS_EQUAL, true, "LE"},
-        {100, 100, LESS_EQUAL, true, "LE"},
-        {101, 100, LESS_EQUAL, false, "LE"},
+        {100, 101, LESS_EQUAL, true, "LE", false},
+        {100, 100, LESS_EQUAL, true, "LE", false},
+        {101, 100, LESS_EQUAL, false, "LE", false},
         
         // Test GT operation
-        {101, 100, GREATER_THAN, true, "GT"},
-        {100, 100, GREATER_THAN, false, "GT"},
-        {100, 101, GREATER_THAN, false, "GT"},
+        {101, 100, GREATER_THAN, true, "GT", false},
+        {100, 100, GREATER_THAN, false, "GT", false},
+        {100, 101, GREATER_THAN, false, "GT", false},
         
         // Test GE operation
-        {101, 100, GREATER_EQUAL, true, "GE"},
-        {100, 100, GREATER_EQUAL, true, "GE"},
-        {100, 101, GREATER_EQUAL, false, "GE"}
-    };
+        {101, 100, GREATER_EQUAL, true, "GE", false},
+        {100, 100, GREATER_EQUAL, true, "GE", false},
+        {100, 101, GREATER_EQUAL, false, "GE", false}
+    });
     
-    // Add some random test cases
-    for (int i = 0; i < 20; i++) {
-        uint32_t a = dist8bit(gen);
-        uint32_t b = dist8bit(gen);
-        uint8_t op = i % 6; // Cycle through operations
+    // Add signed test cases (16-bit)
+    testCases.insert(testCases.end(), {
+        // Test signed cases specifically
+        {100, 100, EQUAL, true, "EQ", true},
+        {100, -100, EQUAL, false, "EQ", true},
         
-        bool expected;
+        {100, -100, NOT_EQUAL, true, "NE", true},
+        {-100, -100, NOT_EQUAL, false, "NE", true},
+        
+        {-100, 100, LESS_THAN, true, "LT", true},
+        {100, -100, LESS_THAN, false, "LT", true},
+        {-100, -50, LESS_THAN, true, "LT", true},
+        
+        {-100, 100, LESS_EQUAL, true, "LE", true},
+        {-100, -100, LESS_EQUAL, true, "LE", true},
+        {100, -100, LESS_EQUAL, false, "LE", true},
+        
+        {100, -100, GREATER_THAN, true, "GT", true},
+        {-100, -100, GREATER_THAN, false, "GT", true},
+        {-100, 100, GREATER_THAN, false, "GT", true},
+        
+        {100, -100, GREATER_EQUAL, true, "GE", true},
+        {-100, -100, GREATER_EQUAL, true, "GE", true},
+        {-100, 100, GREATER_EQUAL, false, "GE", true}
+    });
+    
+    // Add random test cases for both modes
+    for (int i = 0; i < 20; i++) {
+        // Add unsigned random test
+        uint32_t a_unsigned = dist8bit(gen);
+        uint32_t b_unsigned = dist8bit(gen);
+        uint8_t op = i % 6;
+        
+        bool expected_unsigned;
         std::string op_str;
         
         switch(op) {
             case EQUAL: 
-                expected = (a == b);
+                expected_unsigned = (a_unsigned == b_unsigned);
                 op_str = "EQ";
                 break;
             case NOT_EQUAL: 
-                expected = (a != b);
+                expected_unsigned = (a_unsigned != b_unsigned);
                 op_str = "NE";
                 break;
             case LESS_THAN: 
-                expected = (a < b);
+                expected_unsigned = (a_unsigned < b_unsigned);
                 op_str = "LT";
                 break;
             case LESS_EQUAL: 
-                expected = (a <= b);
+                expected_unsigned = (a_unsigned <= b_unsigned);
                 op_str = "LE";
                 break;
             case GREATER_THAN: 
-                expected = (a > b);
+                expected_unsigned = (a_unsigned > b_unsigned);
                 op_str = "GT";
                 break;
             case GREATER_EQUAL: 
-                expected = (a >= b);
+                expected_unsigned = (a_unsigned >= b_unsigned);
                 op_str = "GE";
                 break;
             default:
-                expected = false;
+                expected_unsigned = false;
                 op_str = "??";
         }
         
-        testCases.push_back({a, b, op, expected, op_str});
+        testCases.push_back({static_cast<int32_t>(a_unsigned), static_cast<int32_t>(b_unsigned), 
+                            op, expected_unsigned, op_str, false});
+        
+        // Add signed random test
+        int32_t a_signed = dist16bit(gen);
+        int32_t b_signed = dist16bit(gen);
+        
+        bool expected_signed;
+        switch(op) {
+            case EQUAL: 
+                expected_signed = (a_signed == b_signed);
+                break;
+            case NOT_EQUAL: 
+                expected_signed = (a_signed != b_signed);
+                break;
+            case LESS_THAN: 
+                expected_signed = (a_signed < b_signed);
+                break;
+            case LESS_EQUAL: 
+                expected_signed = (a_signed <= b_signed);
+                break;
+            case GREATER_THAN: 
+                expected_signed = (a_signed > b_signed);
+                break;
+            case GREATER_EQUAL: 
+                expected_signed = (a_signed >= b_signed);
+                break;
+            default:
+                expected_signed = false;
+        }
+        
+        testCases.push_back({a_signed, b_signed, op, expected_signed, op_str, true});
     }
     
     // Run the tests
@@ -118,9 +182,17 @@ int main(int argc, char** argv) {
     int total = 0;
     
     for (const auto& test : testCases) {
-        // Apply inputs
-        comparator->a = test.a;
-        comparator->b = test.b;
+        // Apply inputs (mask to appropriate width)
+        if (test.is_signed) {
+            // For signed mode, use 16 bits and preserve sign
+            comparator->a = static_cast<uint16_t>(test.a & 0xFFFF);
+            comparator->b = static_cast<uint16_t>(test.b & 0xFFFF);
+        } else {
+            // For unsigned mode, use 8 bits
+            comparator->a = static_cast<uint8_t>(test.a & 0xFF);
+            comparator->b = static_cast<uint8_t>(test.b & 0xFF);
+        }
+        
         comparator->op_sel = test.op_sel;
         
         // Evaluate model
@@ -133,7 +205,9 @@ int main(int argc, char** argv) {
         
         if (!matched) {
             std::cout << "ERROR: Test case failed!" << std::endl;
-            std::cout << "  a = " << test.a << ", b = " << test.b;
+            std::cout << "  Mode: " << (test.is_signed ? "Signed" : "Unsigned") << std::endl;
+            std::cout << "  a = " << test.a << " (0x" << std::hex << (test.is_signed ? (test.a & 0xFFFF) : (test.a & 0xFF)) << std::dec << ")";
+            std::cout << ", b = " << test.b << " (0x" << std::hex << (test.is_signed ? (test.b & 0xFFFF) : (test.b & 0xFF)) << std::dec << ")";
             std::cout << ", op = " << (int)test.op_sel << " (" << test.op_name << ")";
             std::cout << ", expected = " << test.expected_result;
             std::cout << ", got = " << result << std::endl;
