@@ -132,11 +132,14 @@ int main(int argc, char** argv) {
     
     bool test_passed = (rx_data == expected);
     
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (test_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: 1 of 1" << std::endl;
+    
     if (test_passed) {
-        std::cout << "TEST PASSED" << std::endl;
         return 0;
     } else {
-        std::cout << "TEST FAILED" << std::endl;
         return 1;
     }
-} 
+}

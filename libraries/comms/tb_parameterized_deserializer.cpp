@@ -122,10 +122,11 @@ int main(int argc, char** argv) {
     
     // Summary
     std::cout << "\n===== Test Summary =====" << std::endl;
-    std::cout << "Passed " << passed << " of " << test_cases.size() << " tests." << std::endl;
+    std::cout << "Result: " << ((passed == test_cases.size()) ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed << " of " << test_cases.size() << std::endl;
     
     // Close trace file
     tfp->close();
     
     return (passed == test_cases.size()) ? 0 : 1;
-} 
+}

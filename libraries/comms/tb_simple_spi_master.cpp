@@ -111,10 +111,14 @@ int main(int argc, char** argv) {
     std::cout << "Actually received:   0x" << std::hex << (int)received_data << std::endl;
     
     if (received_data == expected) {
-        std::cout << "TEST PASSED" << std::endl;
+        std::cout << "\n==== Test Summary ====" << std::endl;
+        std::cout << "Result: Pass" << std::endl;
+        std::cout << "Tests: 1 of 1" << std::endl;
         return 0;
     } else {
-        std::cout << "TEST FAILED" << std::endl;
+        std::cout << "\n==== Test Summary ====" << std::endl;
+        std::cout << "Result: Fail" << std::endl;
+        std::cout << "Tests: 0 of 1" << std::endl;
         return 1;
     }
-} 
+}

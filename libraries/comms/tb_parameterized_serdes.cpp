@@ -139,6 +139,11 @@ void test_serializer(std::unique_ptr<Vparameterized_serdes>& serdes, VerilatedVc
         std::cout << "Serializer test FAILED for " << test.name << std::endl;
     }
     
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (!error ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << (!error ? "1" : "0") << " of 1" << std::endl;
+    
     // Check tx_done is asserted at the end
     serdes->clk = !serdes->clk;
     serdes->eval();
@@ -284,4 +289,4 @@ int main(int argc, char** argv) {
     
     std::cout << "\nSimulation completed!" << std::endl;
     return 0;
-} 
+}
