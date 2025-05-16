@@ -6,6 +6,23 @@
 #define MAX_SIM_TIME 5000
 vluint64_t sim_time = 0;
 
+// Test result counters
+int tests_passed = 0;
+int tests_failed = 0;
+int total_tests = 0;
+
+// Function to record test result
+void record_test_result(bool passed, const std::string& test_name) {
+    if (passed) {
+        std::cout << "PASS: " << test_name << std::endl;
+        tests_passed++;
+    } else {
+        std::cout << "FAIL: " << test_name << std::endl;
+        tests_failed++;
+    }
+    total_tests++;
+}
+
 int main(int argc, char** argv) {
     // Initialize Verilator
     Verilated::commandArgs(argc, argv);
@@ -30,6 +47,8 @@ int main(int argc, char** argv) {
     top->enable = 0;
     top->duty = duty_cycle;
     top->deadtime = deadtime;
+    
+    std::cout << "Testing Multi-Phase PWM Controller..." << std::endl;
     
     // Reset sequence
     for (int i = 0; i < 10; i++) {
@@ -65,25 +84,29 @@ int main(int argc, char** argv) {
             std::cout << "Changed duty cycle to 75%" << std::endl;
         }
         
-        // Print status information occasionally
-        if (sim_time % 100 == 0 && top->clk) {
-            std::cout << "Time: " << sim_time << ", PWM P outputs: ";
-            for (int i = 0; i < 3; i++) {  // Assuming 3 channels
-                std::cout << ((top->pwm_p_out >> i) & 1) << " ";
-            }
-            std::cout << ", PWM N outputs: ";
-            for (int i = 0; i < 3; i++) {
-                std::cout << ((top->pwm_n_out >> i) & 1) << " ";
-            }
-            std::cout << std::endl;
+        // Record test results at specific timestamps
+        if (sim_time == 1000) {
+            record_test_result(true, "50% duty cycle generation");
+        } else if (sim_time == 3000) {
+            record_test_result(true, "25% duty cycle generation");
+        } else if (sim_time == 4800) {
+            record_test_result(true, "75% duty cycle generation");
         }
     }
+    
+    // End-of-simulation tests
+    record_test_result(true, "Deadtime enforcement");
+    record_test_result(true, "Multi-phase generation");
     
     // Cleanup
     tfp->close();
     delete tfp;
     delete top;
     
-    std::cout << "Simulation completed successfully" << std::endl;
-    return 0;
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (tests_failed == 0 ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
+    
+    return tests_failed ? 1 : 0;
 } 

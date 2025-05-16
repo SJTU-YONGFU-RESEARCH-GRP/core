@@ -8,6 +8,11 @@
 #include <cstdint>
 #include <set>
 
+// Test tracking variables
+int total_tests = 2; // 2 main test cases
+int passed_tests = 0;
+bool pass = true;
+
 // Function to simulate one clock cycle
 void tick(std::unique_ptr<Vlfsr>& lfsr, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     // Clock low
@@ -59,8 +64,11 @@ void check_lfsr_operation(std::unique_ptr<Vlfsr>& lfsr, VerilatedVcdC* tfp, vlui
     std::cout << "Loaded seed: 0x" << std::hex << static_cast<int>(lfsr->lfsr_out) 
               << " (Expected: 0x" << static_cast<int>(seed_value) << ")" << std::endl;
     
+    bool test1_pass = true;
+    
     if (lfsr->lfsr_out != seed_value) {
         std::cout << "ERROR: Seed value not loaded correctly!" << std::endl;
+        test1_pass = false;
     }
     
     // Generate and check a sequence of values
@@ -93,6 +101,7 @@ void check_lfsr_operation(std::unique_ptr<Vlfsr>& lfsr, VerilatedVcdC* tfp, vlui
         
         if (!match) {
             std::cout << "ERROR: LFSR output mismatch at step " << std::dec << (i+1) << std::endl;
+            test1_pass = false;
         }
         
         // Check if we've seen this value before (cycle detection)
@@ -101,6 +110,12 @@ void check_lfsr_operation(std::unique_ptr<Vlfsr>& lfsr, VerilatedVcdC* tfp, vlui
             break;
         }
         seen_values.insert(actual);
+    }
+    
+    if (test1_pass) {
+        passed_tests++;
+    } else {
+        pass = false;
     }
     
     // Test 2: Test bit_out output
@@ -120,6 +135,7 @@ void check_lfsr_operation(std::unique_ptr<Vlfsr>& lfsr, VerilatedVcdC* tfp, vlui
     
     std::cout << "Step\tLFSR Value\tbit_out\tExpected bit_out\tResult" << std::endl;
     
+    bool test2_pass = true;
     expected = 0x55;
     for (int i = 0; i < 8; i++) {
         // Calculate next expected value
@@ -143,7 +159,14 @@ void check_lfsr_operation(std::unique_ptr<Vlfsr>& lfsr, VerilatedVcdC* tfp, vlui
         
         if (!match) {
             std::cout << "ERROR: bit_out mismatch at step " << std::dec << (i+1) << std::endl;
+            test2_pass = false;
         }
+    }
+    
+    if (test2_pass) {
+        passed_tests++;
+    } else {
+        pass = false;
     }
 }
 
@@ -170,6 +193,10 @@ int main(int argc, char** argv) {
     tfp->close();
     lfsr->final();
     
-    std::cout << "\nSimulation completed successfully!" << std::endl;
-    return 0;
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return pass ? 0 : 1;
 } 

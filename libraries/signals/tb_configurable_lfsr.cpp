@@ -93,8 +93,6 @@ void test_configurable_lfsr(std::unique_ptr<Vconfigurable_lfsr>& lfsr, Verilated
     
     // Run the LFSR and check outputs
     bool all_passed = true;
-    std::cout << "\nLFSR Sequence:" << std::endl;
-    std::cout << "Cycle\tExpected (hex)\tActual (hex)\tResult" << std::endl;
     
     for (int i = 0; i < MAX_CYCLES; i++) {
         // Enable LFSR operation
@@ -104,11 +102,10 @@ void test_configurable_lfsr(std::unique_ptr<Vconfigurable_lfsr>& lfsr, Verilated
         uint32_t expected = expected_sequence[i];
         uint32_t actual = lfsr->parallel_out;
         
-        std::cout << std::dec << i << "\t0x" << std::hex << expected << "\t\t0x" << actual << "\t\t";
         if (expected == actual) {
-            std::cout << "PASS" << std::endl;
+            printf("%-7d0x%-13x0x%-13xPASS\n", i, expected, actual);
         } else {
-            std::cout << "FAIL" << std::endl;
+            printf("%-7d0x%-13x0x%-13xFAIL\n", i, expected, actual);
             all_passed = false;
         }
         

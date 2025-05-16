@@ -17,6 +17,65 @@ module clock_domain_crossing #(
     input  wire                   dst_ready
 );
 
-    // CDC logic to be implemented
+    // Toggle-based CDC implementation
+    
+    // Source domain signals
+    reg src_toggle_bit;
+    reg [DATA_WIDTH-1:0] src_data_reg;
+    reg src_busy;
+    
+    // Destination domain signals
+    reg [SYNC_STAGES-1:0] dst_sync_toggle;
+    reg dst_toggle_bit_prev;
+    
+    // Synchronize toggle bit from source to destination
+    always @(posedge dst_clk or negedge dst_rst_n) begin
+        if (!dst_rst_n) begin
+            dst_sync_toggle <= {SYNC_STAGES{1'b0}};
+            dst_toggle_bit_prev <= 1'b0;
+        end else begin
+            dst_sync_toggle <= {dst_sync_toggle[SYNC_STAGES-2:0], src_toggle_bit};
+            dst_toggle_bit_prev <= dst_sync_toggle[SYNC_STAGES-1];
+        end
+    end
+    
+    // Source domain control
+    always @(posedge src_clk or negedge src_rst_n) begin
+        if (!src_rst_n) begin
+            src_toggle_bit <= 1'b0;
+            src_data_reg <= {DATA_WIDTH{1'b0}};
+            src_busy <= 1'b0;
+        end else begin
+            if (src_valid && !src_busy) begin
+                // Capture new data and toggle the bit
+                src_data_reg <= src_data;
+                src_toggle_bit <= ~src_toggle_bit;
+                src_busy <= 1'b1;
+            end else if (src_busy && src_ready) begin
+                // Clear busy when data has been acknowledged
+                src_busy <= 1'b0;
+            end
+        end
+    end
+    
+    // Destination domain control
+    always @(posedge dst_clk or negedge dst_rst_n) begin
+        if (!dst_rst_n) begin
+            dst_data <= {DATA_WIDTH{1'b0}};
+            dst_valid <= 1'b0;
+        end else begin
+            // Detect toggle bit change (new data available)
+            if (dst_sync_toggle[SYNC_STAGES-1] != dst_toggle_bit_prev && !dst_valid) begin
+                dst_data <= src_data_reg;
+                dst_valid <= 1'b1;
+            end else if (dst_valid && dst_ready) begin
+                // Clear valid when data is consumed
+                dst_valid <= 1'b0;
+            end
+        end
+    end
+    
+    // Source is ready when not busy
+    assign src_ready = !src_busy;
 
 endmodule 

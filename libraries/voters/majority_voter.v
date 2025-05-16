@@ -9,6 +9,7 @@ module majority_voter #(
 );
 
     // Helper variables for calculation
+    // This is a test comment to see if the Makefile detects changes
     integer i, j;
     integer count;
     reg [INPUT_WIDTH-1:0] current_value;

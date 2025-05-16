@@ -25,7 +25,7 @@ uint32_t rotate_data(uint32_t data, uint32_t amount, bool direction, int data_wi
     }
 }
 
-void check_operation(std::unique_ptr<Vbarrel_rotator>& rotator, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+void check_operation(std::unique_ptr<Vbarrel_rotator>& rotator, VerilatedVcdC* tfp, vluint64_t& sim_time, int& total_tests, int& passed_tests) {
     const int DATA_WIDTH = 8;  // Must match the DATA_WIDTH parameter in the Verilog module
     const int SHIFT_WIDTH = std::log2(DATA_WIDTH);
     
@@ -48,6 +48,7 @@ void check_operation(std::unique_ptr<Vbarrel_rotator>& rotator, VerilatedVcdC* t
         for (uint32_t amount = 0; amount < DATA_WIDTH; amount++) {
             for (int dir = 0; dir <= 1; dir++) {
                 bool direction = (dir == 1);
+                total_tests++;
                 
                 // Apply inputs
                 rotator->data_in = pattern;
@@ -70,11 +71,12 @@ void check_operation(std::unique_ptr<Vbarrel_rotator>& rotator, VerilatedVcdC* t
                           << " (" << std::bitset<8>(rotator->data_out) << ")";
                 
                 bool pass = (rotator->data_out == expected);
-                if (!pass) {
+                if (pass) {
+                    passed_tests++;
+                    std::cout << " - PASS";
+                } else {
                     std::cout << " - ERROR: Expected 0x" << std::hex << std::setw(2) << std::setfill('0') 
                               << expected << " (" << std::bitset<8>(expected) << ")";
-                } else {
-                    std::cout << " - PASS";
                 }
                 std::cout << std::endl;
             }
@@ -98,13 +100,22 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Initialize test counters
+    int total_tests = 0;
+    int passed_tests = 0;
+    
     // Run tests
-    check_operation(rotator, tfp.get(), sim_time);
+    check_operation(rotator, tfp.get(), sim_time, total_tests, passed_tests);
     
     // Cleanup
     tfp->close();
     rotator->final();
     
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
     std::cout << "Simulation completed!" << std::endl;
-    return 0;
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

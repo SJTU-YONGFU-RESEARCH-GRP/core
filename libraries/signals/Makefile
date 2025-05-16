@@ -61,4 +61,11 @@ list:
 		fi; \
 	done
 
+# Custom target for configurable_lfsr
+configurable_lfsr: $(SRC_DIR)/configurable_lfsr.v $(SRC_DIR)/tb_configurable_lfsr.cpp
+	@echo "Building configurable_lfsr..."
+	@$(VERILATOR) $(VERILATOR_FLAGS) --exe $^
+	@echo "Running configurable_lfsr..."
+	@$(OBJDIR)/Vconfigurable_lfsr
+
 .PHONY: all test clean list 

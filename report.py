@@ -66,6 +66,14 @@ def scan_rtl_files():
                     "tb_file": os.path.join(rel_dir, tb_file),
                     "directory": subdir
                 }
+            else:
+                # Report modules with missing testbenches
+                rtl_files[module_name] = {
+                    "file": os.path.join(rel_dir, vfile),
+                    "tb_file": "MISSING",
+                    "directory": subdir,
+                    "status": "Missing Testbench"
+                }
     
     return rtl_files
 
@@ -81,10 +89,92 @@ def map_targets_to_modules(rtl_files):
             "module_name": module_name,
             "file": info["file"],
             "tb_file": info["tb_file"],
-            "directory": info["directory"]
+            "directory": info["directory"],
+            "status": info.get("status", "")
         }
     
     return module_mappings
+
+# Extract test results from command output
+def extract_test_results(stdout, stderr):
+    test_summary = {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "result": "Unknown",
+        "details": ""
+    }
+    
+    # Get the last non-empty line of stdout for details
+    last_lines = [line.strip() for line in stdout.splitlines() if line.strip()]
+    if last_lines:
+        test_summary["details"] = last_lines[-1]
+    
+    # Look for the standardized test summary format
+    try:
+        if "==== Test Summary ====" in stdout:
+            # Extract result
+            result_match = re.search(r'Result:\s+(Pass|Fail)', stdout)
+            if result_match:
+                test_summary["result"] = result_match.group(1)
+            
+            # Extract test counts
+            tests_match = re.search(r'Tests:\s+(\d+)\s+of\s+(\d+)', stdout)
+            if tests_match:
+                test_summary["passed_tests"] = int(tests_match.group(1))
+                test_summary["total_tests"] = int(tests_match.group(2))
+                test_summary["details"] = f"{test_summary['passed_tests']} of {test_summary['total_tests']}"
+            
+            return test_summary
+    except Exception as e:
+        print(f"Error extracting test results: {e}")
+    
+    # Try to extract test counts from other patterns in the output
+    try:
+        # Look for patterns like "Testing X test cases" or "Running X tests"
+        test_count_patterns = [
+            r'Testing\s+(\d+)\s+test\s+cases',
+            r'Running\s+(\d+)\s+tests',
+            r'Total\s+tests:\s+(\d+)',
+            r'(\d+)\s+tests\s+executed',
+            r'Executing\s+(\d+)\s+tests'
+        ]
+        
+        for pattern in test_count_patterns:
+            match = re.search(pattern, stdout, re.IGNORECASE)
+            if match:
+                test_summary["total_tests"] = int(match.group(1))
+                break
+        
+        # Look for patterns indicating passed tests
+        pass_count_patterns = [
+            r'(\d+)\s+tests\s+passed',
+            r'Passed\s+(\d+)\s+of\s+\d+',
+            r'(\d+)\s+passing'
+        ]
+        
+        for pattern in pass_count_patterns:
+            match = re.search(pattern, stdout, re.IGNORECASE)
+            if match:
+                test_summary["passed_tests"] = int(match.group(1))
+                break
+    except Exception as e:
+        print(f"Error extracting additional test counts: {e}")
+    
+    # If we couldn't find the standardized format, try to make a best guess
+    if "PASSED" in stdout or "Test PASSED" in stdout or "Tests passed" in stdout:
+        test_summary["result"] = "Pass"
+        if not test_summary["details"]:
+            test_summary["details"] = "All tests passed"
+    elif "FAILED" in stdout or "Test FAILED" in stdout:
+        test_summary["result"] = "Fail"
+        if not test_summary["details"]:
+            test_summary["details"] = "Tests failed"
+    
+    # If we have detected test counts but no details, add them to details
+    if test_summary["total_tests"] > 0 and not test_summary["details"].startswith(str(test_summary["passed_tests"])):
+        test_summary["details"] = f"{test_summary['passed_tests']} of {test_summary['total_tests']} tests passed - {test_summary['details']}"
+    
+    return test_summary
 
 # Run a make target and capture the result with timing information
 def run_make_target(target):
@@ -99,22 +189,22 @@ def run_make_target(target):
         end_time = time.time()
         elapsed_time = end_time - start_time
         
+        # Extract test results
+        test_results = extract_test_results(process.stdout, process.stderr)
+        
         # Check if the target succeeded
         if process.returncode == 0:
             result = "✅ PASSED"
-            # Try to find more specific pass information
-            if "ALL TESTS PASSED" in process.stdout:
-                details = "All tests passed"
-            elif "Test PASSED" in process.stdout:
-                details = "Test passed"
-            elif "PASS" in process.stdout:
-                details = "Tests passed"
+            if test_results["result"] == "Pass":
+                details = test_results["details"] if test_results["details"] else "All tests passed"
             else:
                 details = "Execution completed successfully"
         else:
             result = "❌ FAILED"
+            if test_results["result"] == "Fail":
+                details = test_results["details"] if test_results["details"] else "Tests failed"
             # Try to find error message
-            if "Error" in process.stderr:
+            elif "Error" in process.stderr:
                 error_lines = [line for line in process.stderr.splitlines() if "Error" in line]
                 details = error_lines[0] if error_lines else "Unknown error"
             elif "Warning" in process.stderr and "Exiting due to" in process.stderr:
@@ -129,7 +219,10 @@ def run_make_target(target):
             "details": details,
             "stdout": process.stdout,
             "stderr": process.stderr,
-            "runtime": elapsed_time
+            "runtime": elapsed_time,
+            "passed_tests": test_results["passed_tests"],
+            "total_tests": test_results["total_tests"],
+            "result": test_results["result"]
         }
     except subprocess.TimeoutExpired:
         return {
@@ -138,7 +231,10 @@ def run_make_target(target):
             "details": "Execution exceeded 2 minutes and was terminated",
             "stdout": "",
             "stderr": "",
-            "runtime": 120.0  # Timeout value
+            "runtime": 120.0,  # Timeout value
+            "passed_tests": 0,
+            "total_tests": 0,
+            "result": "Timeout"
         }
     except Exception as e:
         return {
@@ -147,7 +243,10 @@ def run_make_target(target):
             "details": str(e),
             "stdout": "",
             "stderr": "",
-            "runtime": 0.0
+            "runtime": 0.0,
+            "passed_tests": 0,
+            "total_tests": 0,
+            "result": "Error"
         }
 
 # Categorize modules based on their directory
@@ -169,7 +268,19 @@ def categorize_modules(module_mappings):
         "mems": "Memory",
         "multipliers": "Multiplication",
         "registers": "Registers",
-        "signals": "Signal Processing"
+        "signals": "Signal Processing",
+        "cdc": "Clock Domain Crossing",
+        "debug": "Debugging",
+        "dsp": "Digital Signal Processing",
+        "encryption": "Encryption",
+        "interfaces": "Interfaces",
+        "io": "Input/Output",
+        "math": "Mathematics",
+        "noc": "Network on Chip",
+        "power": "Power Management",
+        "test": "Testing",
+        "voters": "Voting",
+        "cordic": "CORDIC"
     }
     
     # Map each target to its category
@@ -205,7 +316,8 @@ def generate_report(results, module_mappings):
         "FAILED": "✗ FAIL",
         "TIMEOUT": "⏱ TIMEOUT",
         "ERROR": "⚠ ERROR",
-        "Not Tested": "- NOT TESTED"
+        "Not Tested": "- NOT TESTED",
+        "Missing Testbench": "⚠ NO TESTBENCH"
     }
     
     with open(REPORT_FILE, "w") as f:
@@ -230,22 +342,36 @@ def generate_report(results, module_mappings):
         failed = sum(1 for r in results if "FAIL" in r["status"])
         timeouts = sum(1 for r in results if "TIMEOUT" in r["status"])
         
+        # Count modules with missing testbenches
+        missing_tb = sum(1 for _, info in module_mappings.items() if info.get("status") == "Missing Testbench")
+        
+        # Calculate total tests executed and passed
+        total_tests_run = sum(r.get("total_tests", 0) for r in results)
+        total_tests_passed = sum(r.get("passed_tests", 0) for r in results)
+        
         # Calculate total and average runtime
         total_runtime = sum(r.get("runtime", 0.0) for r in results)
         avg_runtime = total_runtime / total if total > 0 else 0
         
+        # Calculate pass percentage safely
+        pass_percentage = total_tests_passed/total_tests_run*100 if total_tests_run > 0 else 0
+        
         f.write("## Summary\n\n")
+        f.write(f"- Total modules scanned: {len(module_mappings)}\n")
+        f.write(f"- Modules with missing testbenches: {missing_tb}\n")
         f.write(f"- Total modules tested: {total}\n")
         f.write(f"- Passed: {passed} ({passed/total*100:.1f}%)\n")
         f.write(f"- Failed: {failed} ({failed/total*100:.1f}%)\n")
         f.write(f"- Timeouts: {timeouts}\n")
+        f.write(f"- Total tests executed: {total_tests_run}\n")
+        f.write(f"- Total tests passed: {total_tests_passed} ({pass_percentage:.1f}%)\n")
         f.write(f"- Total runtime: {total_runtime:.2f} seconds\n")
         f.write(f"- Average runtime per module: {avg_runtime:.2f} seconds\n\n")
         
         # Create a summary table
         f.write("## Category Overview\n\n")
-        f.write("| Category | Passed | Failed | Pass Rate | Avg Runtime (s) |\n")
-        f.write("|----------|-------:|-------:|----------:|----------------:|\n")
+        f.write("| Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Avg Runtime (s) |\n")
+        f.write("|----------|--------:|-------:|-------:|----------:|-------------:|----------------:|\n")
         
         for category, targets in sorted(categories.items()):
             cat_total = len(targets)
@@ -253,13 +379,17 @@ def generate_report(results, module_mappings):
             cat_failed = sum(1 for t in targets if t in results_dict and "FAIL" in results_dict[t]["status"])
             pass_rate = cat_passed / cat_total * 100 if cat_total > 0 else 0
             
+            # Calculate category test stats
+            cat_tests_run = sum(results_dict[t].get("total_tests", 0) for t in targets if t in results_dict)
+            cat_tests_passed = sum(results_dict[t].get("passed_tests", 0) for t in targets if t in results_dict)
+            
             # Calculate category runtime stats
             cat_runtime = sum(results_dict[t].get("runtime", 0.0) for t in targets if t in results_dict)
             cat_avg_runtime = cat_runtime / cat_total if cat_total > 0 else 0
             
             # Add link to category section
             category_id = category.lower().replace(' ', '-')
-            f.write(f"| [{category}](#category-{category_id}) | {cat_passed} | {cat_failed} | {pass_rate:.1f}% | {cat_avg_runtime:.2f} |\n")
+            f.write(f"| [{category}](#category-{category_id}) | {cat_total} | {cat_passed} | {cat_failed} | {pass_rate:.1f}% | {cat_tests_passed}/{cat_tests_run} | {cat_avg_runtime:.2f} |\n")
         
         # Detailed results by category
         f.write("\n## Detailed Results\n\n")
@@ -273,35 +403,50 @@ def generate_report(results, module_mappings):
             # Add a link back to top
             f.write("[Back to top](#table-of-contents)\n\n")
             
-            f.write("| Module | File Path | Status | Runtime (s) | Details |\n")
-            f.write("|--------|-----------|:------:|------------:|----------|\n")
+            f.write("| Module | File Path | Status | Tests | Runtime (s) | Details |\n")
+            f.write("|--------|-----------|:------:|------:|------------:|----------:|\n")
             
             for target in sorted(targets):
                 if target in module_mappings:
                     module_name = module_mappings[target]["module_name"]
                     file_path = module_mappings[target]["file"]
+                    
+                    # Check if module has a missing testbench
+                    if module_mappings[target].get("status") == "Missing Testbench":
+                        status = status_symbols["Missing Testbench"]
+                        details = "No testbench available"
+                        runtime = 0.0
+                        tests = "0/0"
+                    elif target in results_dict:
+                        result = results_dict[target]
+                        status_key = "PASSED" if "PASS" in result["status"] else "FAILED" if "FAIL" in result["status"] else "TIMEOUT" if "TIMEOUT" in result["status"] else "ERROR"
+                        status = status_symbols[status_key]
+                        details = result["details"]
+                        runtime = result.get("runtime", 0.0)
+                        
+                        # Format test results
+                        passed_tests = result.get("passed_tests", 0)
+                        total_tests = result.get("total_tests", 0)
+                        tests = f"{passed_tests}/{total_tests}" if total_tests > 0 else "N/A"
+                    else:
+                        status = status_symbols["Not Tested"]
+                        details = "Module was not tested"
+                        runtime = 0.0
+                        tests = "0/0"
+                    
+                    f.write(f"| {module_name} | {file_path} | {status} | {tests} | {runtime:.2f} | {details} |\n")
                 else:
+                    # This should not happen, but just in case
                     module_name = target.replace("run_", "")
-                    file_path = "Unknown"
-                
-                if target in results_dict:
-                    result = results_dict[target]
-                    status_key = "PASSED" if "PASS" in result["status"] else "FAILED" if "FAIL" in result["status"] else "TIMEOUT" if "TIMEOUT" in result["status"] else "ERROR"
-                    status = status_symbols[status_key]
-                    details = result["details"]
-                    runtime = result.get("runtime", 0.0)
-                else:
-                    status = status_symbols["Not Tested"]
-                    details = "Module was not tested"
-                    runtime = 0.0
-                
-                f.write(f"| {module_name} | {file_path} | {status} | {runtime:.2f} | {details} |\n")
+                    f.write(f"| {module_name} | Unknown | {status_symbols['Not Tested']} | 0/0 | 0.00 | Unknown module |\n")
             
             f.write("\n")
         
         f.write("<a name='notes'></a>\n")
         f.write("## Notes\n\n")
         f.write("- Tests were run using Verilator with the build directory set to 'build'\n")
+        f.write("- The standardized test summary format '==== Test Summary ====' was used to capture detailed test results\n")
+        f.write("- Modules marked with 'NO TESTBENCH' need testbenches to be implemented\n")
         f.write("- Some tests may fail due to issues with the implementation, not the build system\n")
         f.write("- Timeouts indicate tests that took longer than 2 minutes to complete\n")
         f.write("- Runtime measurements include compilation and execution time\n")
@@ -309,18 +454,25 @@ def generate_report(results, module_mappings):
 def main():
     print("🔍 Scanning for RTL files and their testbenches...")
     rtl_files = scan_rtl_files()
-    print(f"Found {len(rtl_files)} RTL modules with testbenches.")
+    print(f"Found {len(rtl_files)} RTL modules, including those without testbenches.")
     
     print("🔍 Mapping RTL files to make targets...")
     module_mappings = map_targets_to_modules(rtl_files)
+    
+    # Count modules with missing testbenches
+    missing_tb = sum(1 for _, info in module_mappings.items() if info.get("status") == "Missing Testbench")
+    print(f"Found {missing_tb} modules without testbenches.")
+    
+    # Filter to only include modules with testbenches for testing
+    valid_module_mappings = {k: v for k, v in module_mappings.items() if v.get("status") != "Missing Testbench"}
     
     print("🔍 Getting available make targets...")
     targets = get_make_targets()
     print(f"Found {len(targets)} make targets.")
     
     # Filter targets that have a matching RTL file and testbench
-    valid_targets = [t for t in targets if t in module_mappings]
-    print(f"Found {len(valid_targets)} valid targets with matching RTL files.")
+    valid_targets = [t for t in targets if t in valid_module_mappings]
+    print(f"Found {len(valid_targets)} valid targets with matching RTL files and testbenches.")
     
     print("🧪 Running tests for each target...")
     results = []
@@ -330,7 +482,15 @@ def main():
         print(f"\nRunning {i}/{len(valid_targets)}: {target}")
         result = run_make_target(target)
         results.append(result)
-        print(f"Result: {result['status']} (Runtime: {result.get('runtime', 0.0):.2f}s)")
+        
+        # Get test result details
+        test_details = ""
+        if result.get("total_tests", 0) > 0:
+            passed = result.get("passed_tests", 0)
+            total = result.get("total_tests", 0)
+            test_details = f" (Tests: {passed}/{total})"
+            
+        print(f"Result: {result['status']}{test_details} (Runtime: {result.get('runtime', 0.0):.2f}s)")
     end_total = time.time()
     
     # Run clean target after all tests

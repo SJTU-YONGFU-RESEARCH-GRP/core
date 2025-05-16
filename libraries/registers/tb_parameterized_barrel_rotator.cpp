@@ -31,11 +31,14 @@ uint32_t rotate_data(uint32_t data, uint32_t amount, bool direction, int data_wi
     }
 }
 
-void check_operation(std::unique_ptr<Vparameterized_barrel_rotator>& rotator, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+int check_operation(std::unique_ptr<Vparameterized_barrel_rotator>& rotator, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     const int DATA_WIDTH = 32;  // Must match the DATA_WIDTH parameter in the Verilog module
     const int SHIFT_WIDTH = std::log2(DATA_WIDTH);
     
     std::cout << "Testing Parameterized Barrel Rotator with DATA_WIDTH=" << DATA_WIDTH << std::endl;
+    
+    int total_tests = 0;
+    int passed_tests = 0;
     
     // Test data patterns
     uint32_t test_patterns[] = {
@@ -57,6 +60,7 @@ void check_operation(std::unique_ptr<Vparameterized_barrel_rotator>& rotator, Ve
         for (uint32_t amount : test_amounts) {
             for (int dir = 0; dir <= 1; dir++) {
                 bool direction = (dir == 1);
+                total_tests++;
                 
                 // Apply inputs
                 rotator->data_in = pattern;
@@ -77,16 +81,19 @@ void check_operation(std::unique_ptr<Vparameterized_barrel_rotator>& rotator, Ve
                           << rotator->data_out;
                 
                 bool pass = (rotator->data_out == expected);
-                if (!pass) {
+                if (pass) {
+                    passed_tests++;
+                    std::cout << " - PASS";
+                } else {
                     std::cout << " - ERROR: Expected 0x" << std::hex << std::setw(8) << std::setfill('0') 
                               << expected;
-                } else {
-                    std::cout << " - PASS";
                 }
                 std::cout << std::endl;
             }
         }
     }
+    
+    return passed_tests;
 }
 
 int main(int argc, char** argv) {
@@ -105,13 +112,20 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Calculate total tests (8 patterns * 10 amounts * 2 directions)
+    int total_tests = 8 * 10 * 2;
+    
     // Run tests
-    check_operation(rotator, tfp.get(), sim_time);
+    int passed_tests = check_operation(rotator, tfp.get(), sim_time);
     
     // Cleanup
     tfp->close();
     rotator->final();
     
-    std::cout << "Simulation completed!" << std::endl;
-    return 0;
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

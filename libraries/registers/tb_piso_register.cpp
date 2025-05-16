@@ -18,7 +18,7 @@ void clock_tick(std::unique_ptr<Vpiso_register>& piso, VerilatedVcdC* tfp, vluin
     sim_time++;
 }
 
-void test_piso_register(std::unique_ptr<Vpiso_register>& piso, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+bool test_piso_register(std::unique_ptr<Vpiso_register>& piso, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     // Get the WIDTH parameter from the design (must match the parameter in the Verilog module)
     const int WIDTH = 8;
     
@@ -77,6 +77,8 @@ void test_piso_register(std::unique_ptr<Vpiso_register>& piso, VerilatedVcdC* tf
     } else {
         std::cout << "\nSome tests failed!" << std::endl;
     }
+    
+    return all_passed;
 }
 
 int main(int argc, char** argv) {
@@ -95,12 +97,24 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Test tracking variables
+    int total_tests = 1;
+    int passed_tests = 0;
+    
     // Run tests
-    test_piso_register(piso, tfp.get(), sim_time);
+    bool test_passed = test_piso_register(piso, tfp.get(), sim_time);
+    if (test_passed) {
+        passed_tests++;
+    }
     
     // Cleanup
     tfp->close();
     piso->final();
     
-    return 0;
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

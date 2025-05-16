@@ -6,6 +6,10 @@
 #include <vector>
 #include <bitset>
 
+// Test tracking variables
+int total_tests = 0;
+int passed_tests = 0;
+
 // Test case structure
 struct TestCase {
     std::vector<bool> input_bits;
@@ -45,9 +49,10 @@ bool calculate_parity(unsigned int value, bool parity_type) {
 }
 
 // Function to test the SIPO register with a specific test case
-void test_sipo_register(std::unique_ptr<Vsipo_register>& dut, VerilatedVcdC* tfp, 
+bool test_sipo_register(std::unique_ptr<Vsipo_register>& dut, VerilatedVcdC* tfp, 
                         vluint64_t& sim_time, const TestCase& test, int width) {
     
+    bool test_passed = true;
     std::cout << "Running test: " << test.description << std::endl;
     
     // Reset the module
@@ -111,6 +116,7 @@ void test_sipo_register(std::unique_ptr<Vsipo_register>& dut, VerilatedVcdC* tfp
     // Check if the parallel output matches expected
     if ((dut->parallel_out & ((1 << width) - 1)) != expected_out) {
         std::cout << "  ERROR: Output mismatch!" << std::endl;
+        test_passed = false;
     } else {
         std::cout << "  SUCCESS: Output matches expected value." << std::endl;
     }
@@ -123,12 +129,14 @@ void test_sipo_register(std::unique_ptr<Vsipo_register>& dut, VerilatedVcdC* tfp
         if (dut->parity_out != expected_parity) {
             std::cout << "  ERROR: Final parity mismatch! Expected: " << expected_parity 
                       << ", Got: " << static_cast<unsigned int>(dut->parity_out) << std::endl;
+            test_passed = false;
         } else {
             std::cout << "  SUCCESS: Parity matches expected value." << std::endl;
         }
     }
     
     std::cout << std::endl;
+    return test_passed;
 }
 
 int main(int argc, char** argv) {
@@ -182,15 +190,25 @@ int main(int argc, char** argv) {
         }
     };
     
+    // Set total tests count
+    total_tests = test_cases.size();
+    
     // Run tests
     for (const auto& test : test_cases) {
-        test_sipo_register(dut, tfp.get(), sim_time, test, width);
+        bool test_result = test_sipo_register(dut, tfp.get(), sim_time, test, width);
+        if (test_result) {
+            passed_tests++;
+        }
     }
     
     // Cleanup
     tfp->close();
     dut->final();
     
-    std::cout << "Simulation completed successfully!" << std::endl;
-    return 0;
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

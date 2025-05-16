@@ -29,6 +29,8 @@ module scan_register #(
             if (scan_en) begin
                 // Scan mode: shift scan chain
                 scan_reg <= {scan_reg[WIDTH-2:0], scan_in};
+                // Also update data_out to reflect current scan register
+                data_out <= {scan_reg[WIDTH-2:0], scan_in};
             end
             else begin
                 // Normal mode: load data

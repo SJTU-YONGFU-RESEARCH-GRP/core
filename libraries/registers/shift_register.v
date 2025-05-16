@@ -24,11 +24,11 @@ module shift_register #(
         end
         else if (en) begin
             if (SHIFT_DIR == 0) begin
-                // Right shift
+                // Right shift - bits move right, LSB shifted out, new bit at MSB
                 parallel_out <= {serial_in, parallel_out[WIDTH-1:1]};
             end
             else begin
-                // Left shift
+                // Left shift - bits move left, MSB shifted out, new bit at LSB
                 parallel_out <= {parallel_out[WIDTH-2:0], serial_in};
             end
         end

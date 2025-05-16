@@ -7,6 +7,11 @@
 #define MAX_SIM_TIME 300
 vluint64_t sim_time = 0;
 
+// Test tracking variables
+int total_tests = 5; // 5 test cases
+int passed_tests = 0;
+bool pass = true;
+
 void clock_tick(Vonehot_decoder_register *dut, VerilatedVcdC *m_trace) {
     dut->clk = 0;
     dut->eval();
@@ -39,13 +44,26 @@ int main(int argc, char** argv) {
     }
     dut->rst_n = 1;
     
+    // Verify reset state (onehot_out should be 0)
+    if (dut->onehot_out == 0) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Reset failed, onehot_out = 0x" << std::hex << dut->onehot_out << std::dec << std::endl;
+    }
+    
     // Test case 2: Test all binary inputs
     std::cout << "Test Case 2: Test All Binary Inputs" << std::endl;
     dut->enable = 1;
     
+    bool test2_pass = true;
+    
     for (int i = 0; i < 16; i++) {
         dut->binary_in = i;
         clock_tick(dut, m_trace);
+        
+        // Expected one-hot value: 1 << i
+        uint16_t expected = 1 << i;
         
         // Print in binary format for better visibility of one-hot encoding
         std::cout << "Binary input: " << i << " (";
@@ -60,6 +78,17 @@ int main(int argc, char** argv) {
             if (b % 4 == 0 && b > 0) std::cout << " ";
         }
         std::cout << ")" << std::endl;
+        
+        if (dut->onehot_out != expected) {
+            test2_pass = false;
+            std::cout << "ERROR: Expected 0x" << std::hex << expected << std::dec << std::endl;
+        }
+    }
+    
+    if (test2_pass) {
+        passed_tests++;
+    } else {
+        pass = false;
     }
     
     // Test case 3: Disable decoder
@@ -67,13 +96,27 @@ int main(int argc, char** argv) {
     dut->enable = 0;
     dut->binary_in = 10;  // Should not affect output
     
+    uint16_t last_output = dut->onehot_out;
+    bool test3_pass = true;
+    
     for (int i = 0; i < 3; i++) {
         clock_tick(dut, m_trace);
         std::cout << "After disabled cycle " << i+1 << ", binary_in = " << (int)dut->binary_in 
                   << ", onehot_out = 0x" << std::hex << dut->onehot_out << std::dec << std::endl;
         
+        if (dut->onehot_out != last_output) {
+            test3_pass = false;
+            std::cout << "ERROR: Output changed while disabled" << std::endl;
+        }
+        
         // Change input during disabled state
         dut->binary_in = (dut->binary_in + 1) % 16;
+    }
+    
+    if (test3_pass) {
+        passed_tests++;
+    } else {
+        pass = false;
     }
     
     // Test case 4: Re-enable decoder
@@ -85,15 +128,36 @@ int main(int argc, char** argv) {
     std::cout << "After re-enable, binary_in = " << (int)dut->binary_in 
               << ", onehot_out = 0x" << std::hex << dut->onehot_out << std::dec << std::endl;
     
+    // Expected one-hot value: 1 << 7
+    uint16_t expected = 1 << 7;
+    if (dut->onehot_out == expected) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Expected 0x" << std::hex << expected << std::dec << std::endl;
+    }
+    
     // Test case 5: Reset during operation
     std::cout << "Test Case 5: Reset During Operation" << std::endl;
     dut->rst_n = 0;
     clock_tick(dut, m_trace);
     std::cout << "After reset, onehot_out = 0x" << std::hex << dut->onehot_out << std::dec << std::endl;
     
+    if (dut->onehot_out == 0) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Reset failed, expected 0x0" << std::endl;
+    }
+    
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
     m_trace->close();
     delete dut;
     delete m_trace;
     
-    return EXIT_SUCCESS;
+    return pass ? EXIT_SUCCESS : EXIT_FAILURE;
 } 

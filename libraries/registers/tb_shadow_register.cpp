@@ -16,6 +16,11 @@ int main(int argc, char** argv) {
     dut->trace(m_trace, 5);
     m_trace->open("waveform.vcd");
     
+    // Test tracking variables
+    int total_tests = 7; // 7 test cases
+    int passed_tests = 0;
+    bool pass = true;
+    
     // Initialize inputs
     dut->clk = 0;
     dut->rst_n = 0;
@@ -53,6 +58,13 @@ int main(int argc, char** argv) {
     std::cout << "After loading main register, main_data_out = 0x" << std::hex << dut->main_data_out << std::dec << std::endl;
     std::cout << "Shadow register output = 0x" << std::hex << dut->shadow_data_out << std::dec << std::endl;
     
+    if (dut->main_data_out == 0xAAAAAAAA) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Expected main_data_out = 0xAAAAAAAA" << std::endl;
+    }
+    
     // Test case 2: Capture main register to shadow
     std::cout << "Test Case 2: Capture Main Register to Shadow" << std::endl;
     dut->shadow_capture_en = 1;
@@ -69,6 +81,13 @@ int main(int argc, char** argv) {
     
     // Check output
     std::cout << "After capture, shadow_data_out = 0x" << std::hex << dut->shadow_data_out << std::dec << std::endl;
+    
+    if (dut->shadow_data_out == 0xAAAAAAAA) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Expected shadow_data_out = 0xAAAAAAAA" << std::endl;
+    }
     
     // Test case 3: Load shadow register directly
     std::cout << "Test Case 3: Load Shadow Register Directly" << std::endl;
@@ -89,6 +108,16 @@ int main(int argc, char** argv) {
     std::cout << "After loading shadow register, shadow_data_out = 0x" << std::hex << dut->shadow_data_out << std::dec << std::endl;
     std::cout << "Main register output = 0x" << std::hex << dut->main_data_out << std::dec << std::endl;
     
+    if (dut->shadow_data_out == 0xBBBBBBBB && dut->main_data_out == 0xAAAAAAAA) {
+        passed_tests++;
+    } else {
+        pass = false;
+        if (dut->shadow_data_out != 0xBBBBBBBB)
+            std::cout << "ERROR: Expected shadow_data_out = 0xBBBBBBBB" << std::endl;
+        if (dut->main_data_out != 0xAAAAAAAA)
+            std::cout << "ERROR: Expected main_data_out = 0xAAAAAAAA" << std::endl;
+    }
+    
     // Test case 4: Use shadow register as output
     std::cout << "Test Case 4: Use Shadow Register as Output" << std::endl;
     dut->use_shadow_out = 1;
@@ -98,6 +127,13 @@ int main(int argc, char** argv) {
     m_trace->dump(sim_time++);
     
     std::cout << "With shadow as output, main_data_out = 0x" << std::hex << dut->main_data_out << std::dec << std::endl;
+    
+    if (dut->main_data_out == 0xBBBBBBBB) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Expected main_data_out = 0xBBBBBBBB (shadow value)" << std::endl;
+    }
     
     // Test case 5: Continue updating main register
     std::cout << "Test Case 5: Continue Updating Main Register" << std::endl;
@@ -119,6 +155,16 @@ int main(int argc, char** argv) {
     std::cout << "After updating main register, main_data_out = 0x" << std::hex << dut->main_data_out << std::dec << std::endl;
     std::cout << "Shadow register output = 0x" << std::hex << dut->shadow_data_out << std::dec << std::endl;
     
+    if (dut->main_data_out == 0xCCCCCCCC && dut->shadow_data_out == 0xBBBBBBBB) {
+        passed_tests++;
+    } else {
+        pass = false;
+        if (dut->main_data_out != 0xCCCCCCCC)
+            std::cout << "ERROR: Expected main_data_out = 0xCCCCCCCC" << std::endl;
+        if (dut->shadow_data_out != 0xBBBBBBBB)
+            std::cout << "ERROR: Expected shadow_data_out = 0xBBBBBBBB" << std::endl;
+    }
+    
     // Test case 6: Reload shadow from main
     std::cout << "Test Case 6: Reload Shadow from Main" << std::endl;
     dut->shadow_capture_en = 1;
@@ -136,6 +182,13 @@ int main(int argc, char** argv) {
     // Check output
     std::cout << "After recapture, shadow_data_out = 0x" << std::hex << dut->shadow_data_out << std::dec << std::endl;
     
+    if (dut->shadow_data_out == 0xCCCCCCCC) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Expected shadow_data_out = 0xCCCCCCCC" << std::endl;
+    }
+    
     // Test case 7: Shadow overrides main output
     std::cout << "Test Case 7: Shadow Overrides Main Output" << std::endl;
     dut->use_shadow_out = 1;
@@ -146,9 +199,21 @@ int main(int argc, char** argv) {
     
     std::cout << "With shadow overriding, main_data_out = 0x" << std::hex << dut->main_data_out << std::dec << std::endl;
     
+    if (dut->main_data_out == 0xCCCCCCCC) {
+        passed_tests++;
+    } else {
+        pass = false;
+        std::cout << "ERROR: Expected main_data_out = 0xCCCCCCCC (shadow value)" << std::endl;
+    }
+    
+    // Print test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
     m_trace->close();
     delete dut;
     delete m_trace;
     
-    return EXIT_SUCCESS;
+    return pass ? EXIT_SUCCESS : EXIT_FAILURE;
 } 
