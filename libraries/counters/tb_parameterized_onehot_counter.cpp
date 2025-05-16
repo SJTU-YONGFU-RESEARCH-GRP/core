@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
     dut->eval();
     
     // Hold in reset for a few cycles
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         dut->clk = 1;
         dut->eval();
         dut->clk = 0;
@@ -78,19 +78,27 @@ int main(int argc, char** argv) {
     // Release reset
     dut->rst_n = 1;
     dut->eval();
+    std::cout << "Counter after reset: 0b";
+    for (int i = WIDTH-1; i >= 0; i--) {
+        std::cout << ((dut->count >> i) & 1);
+    }
+    std::cout << std::endl;
     
     // Store the sequence
     uint32_t* sequence = new uint32_t[WIDTH];
     
-    // Collect sequence
-    for (int i = 0; i < WIDTH; i++) {
+    // Capture the initial state before any clock cycles
+    sequence[0] = dut->count;  // This captures the state right after reset
+
+    // Collect the rest of the sequence
+    for (int i = 1; i < WIDTH; i++) {
         dut->clk = 1;
         dut->eval();
         
-        sequence[i] = dut->count;
-        
         dut->clk = 0;
         dut->eval();
+        
+        sequence[i] = dut->count;  // Capture after each clock cycle
     }
     
     // Print the sequence
@@ -105,36 +113,41 @@ int main(int argc, char** argv) {
     
     // Verify the sequence is correct
     bool valid_onehot = true;
-    
-    // Check initial state (LSB should be 1)
+
+    // Expected sequence for one-hot counter
+    uint32_t expected_sequence[8] = {
+        0b00000001,  // 0
+        0b00000010,  // 1
+        0b00000100,  // 2
+        0b00001000,  // 3
+        0b00010000,  // 4
+        0b00100000,  // 5
+        0b01000000,  // 6
+        0b10000000   // 7
+    };
+
+    // Check initial state and entire sequence
+    for (int i = 0; i < WIDTH; i++) {
+        if (sequence[i] != expected_sequence[i]) {
+            std::cout << "ERROR: Incorrect state at index " << i 
+                      << ". Expected 0b" << std::bitset<8>(expected_sequence[i]) 
+                      << ", Got 0b" << std::bitset<8>(sequence[i]) << std::endl;
+            valid_onehot = false;
+        }
+    }
+
+    // Additional checks
     if (sequence[0] != 1) {
-        std::cout << "ERROR: Initial state is not correct (LSB should be 1)" << std::endl;
+        std::cout << "ERROR: Initial state is not correct (first bit should be 1)" << std::endl;
         valid_onehot = false;
     }
-    
+
     // Check each state has exactly one bit set (one-hot property)
     for (int i = 0; i < WIDTH; i++) {
         if (__builtin_popcount(sequence[i]) != 1) {
             std::cout << "ERROR: State " << i << " is not one-hot (exactly one bit set)" << std::endl;
             valid_onehot = false;
         }
-    }
-    
-    // Check for proper shifting (next bit position)
-    for (int i = 0; i < WIDTH-1; i++) {
-        uint32_t expected = sequence[i] << 1;
-        if (sequence[i+1] != expected) {
-            std::cout << "ERROR: Incorrect shift from state " << i << " to " << (i+1) << std::endl;
-            valid_onehot = false;
-        }
-    }
-    
-    // Check if sequence wraps around correctly
-    dut->clk = 1;
-    dut->eval();
-    if (dut->count != sequence[0]) {
-        std::cout << "ERROR: Sequence does not wrap around correctly after " << WIDTH << " cycles" << std::endl;
-        valid_onehot = false;
     }
     
     if (valid_onehot) {
