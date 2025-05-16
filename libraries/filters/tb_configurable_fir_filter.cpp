@@ -198,6 +198,10 @@ int main(int argc, char** argv) {
     // Initialize Verilator
     Verilated::commandArgs(argc, argv);
     
+    // Track test results
+    int total_tests = 0;
+    int passed_tests = 0;
+    
     // Determine filter type from command line
     int filter_type = 0; // Default to low-pass
     if (argc > 1) {
@@ -244,21 +248,18 @@ int main(int argc, char** argv) {
     };
     
     // Run the test for the specified filter type
-    bool test_passed = false;
     if (filter_type == 0 || filter_type == 1) {
-        test_passed = run_test(test_configs[filter_type], input_samples);
+        total_tests++;
+        bool test_passed = run_test(test_configs[filter_type], input_samples);
+        if (test_passed) passed_tests++;
     } else {
-        std::cerr << "Error: Invalid filter type: " << filter_type << ". Must be 0 (low-pass) or 1 (high-pass)." << std::endl;
+        std::cerr << "Invalid filter type specified. Must be 0 (low-pass) or 1 (high-pass)." << std::endl;
         return 1;
     }
-    
-    // Print overall result
-    std::cout << "\n==========================\n";
-    if (test_passed) {
-        std::cout << "TEST PASSED!\n";
-        return 0;
-    } else {
-        std::cout << "TEST FAILED!\n";
-        return 1;
-    }
+
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+
+    return (passed_tests == total_tests) ? 0 : 1;
 } 

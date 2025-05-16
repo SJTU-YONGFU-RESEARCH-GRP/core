@@ -18,7 +18,7 @@ std::vector<int> generate_sine_wave(int amplitude, int samples, double frequency
     return wave;
 }
 
-void check_filter(std::unique_ptr<Vfir_filter>& filter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
+bool check_filter(std::unique_ptr<Vfir_filter>& filter, VerilatedVcdC* tfp, vluint64_t& sim_time) {
     // Parameters from the design
     const int DATA_WIDTH = 8;
     const int OUTPUT_WIDTH = 19; // DATA_WIDTH + COEFF_WIDTH + 3
@@ -101,6 +101,18 @@ void check_filter(std::unique_ptr<Vfir_filter>& filter, VerilatedVcdC* tfp, vlui
     }
     
     std::cout << "\nFilter processed " << output_signal.size() << " samples." << std::endl;
+    
+    // Verify basic functionality
+    bool has_output = !output_signal.empty();
+    bool has_non_zero = false;
+    for (const auto& sample : output_signal) {
+        if (sample != 0) {
+            has_non_zero = true;
+            break;
+        }
+    }
+    
+    return has_output && has_non_zero;
 }
 
 int main(int argc, char** argv) {
@@ -119,13 +131,22 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
-    // Run tests
-    check_filter(filter, tfp.get(), sim_time);
+    // Track test results
+    int total_tests = 0;
+    int passed_tests = 0;
+    
+    // Run basic functionality test
+    total_tests++;
+    bool basic_test_passed = check_filter(filter, tfp.get(), sim_time);
+    if (basic_test_passed) passed_tests++;
     
     // Cleanup
     tfp->close();
     filter->final();
     
-    std::cout << "Simulation completed successfully!" << std::endl;
-    return 0;
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return (passed_tests == total_tests) ? 0 : 1;
 } 
