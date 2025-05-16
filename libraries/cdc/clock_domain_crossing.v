@@ -27,15 +27,28 @@ module clock_domain_crossing #(
     // Destination domain signals
     reg [SYNC_STAGES-1:0] dst_sync_toggle;
     reg dst_toggle_bit_prev;
+    reg [DATA_WIDTH-1:0] dst_data_sample;  // Added sampling register
+    reg dst_data_valid;                    // Added valid flag for sampled data
     
     // Synchronize toggle bit from source to destination
     always @(posedge dst_clk or negedge dst_rst_n) begin
         if (!dst_rst_n) begin
             dst_sync_toggle <= {SYNC_STAGES{1'b0}};
             dst_toggle_bit_prev <= 1'b0;
+            dst_data_sample <= {DATA_WIDTH{1'b0}};  // Reset sample register
+            dst_data_valid <= 1'b0;                 // Reset valid flag
         end else begin
             dst_sync_toggle <= {dst_sync_toggle[SYNC_STAGES-2:0], src_toggle_bit};
             dst_toggle_bit_prev <= dst_sync_toggle[SYNC_STAGES-1];
+            
+            // Sample data when toggle bit changes
+            if (dst_sync_toggle[SYNC_STAGES-1] != dst_toggle_bit_prev) begin
+                dst_data_sample <= src_data_reg;
+                dst_data_valid <= 1'b1;
+            end else if (dst_data_valid && dst_valid) begin
+                // Clear valid flag once data has been transferred to output
+                dst_data_valid <= 1'b0;
+            end
         end
     end
     
@@ -58,15 +71,15 @@ module clock_domain_crossing #(
         end
     end
     
-    // Destination domain control
+    // Destination domain output control
     always @(posedge dst_clk or negedge dst_rst_n) begin
         if (!dst_rst_n) begin
             dst_data <= {DATA_WIDTH{1'b0}};
             dst_valid <= 1'b0;
         end else begin
-            // Detect toggle bit change (new data available)
-            if (dst_sync_toggle[SYNC_STAGES-1] != dst_toggle_bit_prev && !dst_valid) begin
-                dst_data <= src_data_reg;
+            // Transfer sampled data to output when available
+            if (dst_data_valid && !dst_valid) begin
+                dst_data <= dst_data_sample;
                 dst_valid <= 1'b1;
             end else if (dst_valid && dst_ready) begin
                 // Clear valid when data is consumed
