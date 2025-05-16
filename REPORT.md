@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-16 18:56:07
+Generated on: 2025-05-16 19:47:39
 
 ## Table of Contents
 
@@ -39,45 +39,45 @@ Generated on: 2025-05-16 18:56:07
 - Total modules scanned: 138
 - Modules with missing testbenches: 12
 - Total modules tested: 126
-- Passed: 107 (84.9%)
-- Failed: 15 (11.9%)
+- Passed: 108 (85.7%)
+- Failed: 14 (11.1%)
 - Timeouts: 4
-- Total tests executed: 1330
-- Total tests passed: 1311 (98.6%)
+- Total tests executed: 1441
+- Total tests passed: 1423 (98.8%)
 - Average coverage: 0.0%
-- Total runtime: 1060.10 seconds
-- Average runtime per module: 8.41 seconds
+- Total runtime: 1054.20 seconds
+- Average runtime per module: 8.37 seconds
 
 ## Category Overview
 
 | Category | Modules | Passed | Failed | Pass Rate | Tests Passed | Coverage | Avg Runtime (s) |
 |----------|--------:|-------:|-------:|----------:|-------------:|---------:|----------------:|
-| [Adders](#category-adders) | 6 | 6 | 0 | 100.0% | 180/180 | 0.0% | 4.42 |
-| [Arbitration](#category-arbitration) | 4 | 3 | 1 | 75.0% | 6/7 | 0.0% | 3.57 |
-| [Arithmetic](#category-arithmetic) | 2 | 2 | 0 | 100.0% | 84/84 | 0.0% | 0.40 |
-| [CORDIC](#category-cordic) | 3 | 1 | 0 | 33.3% | 16/16 | 0.0% | 41.98 |
-| [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 4 | 0 | 100.0% | 11/20 | 0.0% | 4.71 |
-| [Communication](#category-communication) | 13 | 10 | 2 | 76.9% | 7/7 | 0.0% | 5.05 |
-| [Counters](#category-counters) | 15 | 10 | 5 | 66.7% | 24/24 | 0.0% | 4.82 |
+| [Adders](#category-adders) | 6 | 6 | 0 | 100.0% | 180/180 | 0.0% | 5.27 |
+| [Arbitration](#category-arbitration) | 4 | 3 | 1 | 75.0% | 7/7 | 0.0% | 3.64 |
+| [Arithmetic](#category-arithmetic) | 2 | 2 | 0 | 100.0% | 84/84 | 0.0% | 4.89 |
+| [CORDIC](#category-cordic) | 3 | 1 | 0 | 33.3% | 16/16 | 0.0% | 42.01 |
+| [Clock Domain Crossing](#category-clock-domain-crossing) | 4 | 4 | 0 | 100.0% | 87/96 | 0.0% | 0.15 |
+| [Communication](#category-communication) | 13 | 11 | 1 | 84.6% | 12/12 | 0.0% | 4.52 |
+| [Counters](#category-counters) | 15 | 10 | 5 | 66.7% | 24/24 | 0.0% | 5.02 |
 | [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.0% | 0.00 |
-| [Digital Signal Processing](#category-digital-signal-processing) | 2 | 1 | 1 | 50.0% | 100/100 | 0.0% | 2.64 |
-| [Division](#category-division) | 1 | 1 | 0 | 100.0% | 0/0 | 0.0% | 5.09 |
-| [Encoding/Decoding](#category-encoding/decoding) | 7 | 7 | 0 | 100.0% | 322/322 | 0.0% | 5.03 |
+| [Digital Signal Processing](#category-digital-signal-processing) | 2 | 1 | 1 | 50.0% | 100/100 | 0.0% | 2.61 |
+| [Division](#category-division) | 1 | 1 | 0 | 100.0% | 0/0 | 0.0% | 5.07 |
+| [Encoding/Decoding](#category-encoding/decoding) | 7 | 7 | 0 | 100.0% | 352/352 | 0.0% | 5.06 |
 | [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.0% | 0.00 |
-| [FIFOs](#category-fifos) | 20 | 17 | 1 | 85.0% | 3/3 | 0.0% | 16.28 |
-| [Filters](#category-filters) | 2 | 2 | 0 | 100.0% | 0/0 | 0.0% | 4.83 |
-| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 2/5 | 0.0% | 2.46 |
+| [FIFOs](#category-fifos) | 20 | 17 | 1 | 85.0% | 3/3 | 0.0% | 16.30 |
+| [Filters](#category-filters) | 2 | 2 | 0 | 100.0% | 0/0 | 0.0% | 4.84 |
+| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 2/5 | 0.0% | 2.45 |
 | [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.0% | 0.00 |
-| [Mathematics](#category-mathematics) | 2 | 1 | 1 | 50.0% | 0/0 | 0.0% | 2.48 |
-| [Memory](#category-memory) | 4 | 3 | 1 | 75.0% | 5/5 | 0.0% | 3.75 |
-| [Multiplication](#category-multiplication) | 3 | 3 | 0 | 100.0% | 16/20 | 0.0% | 5.11 |
-| [Network on Chip](#category-network-on-chip) | 4 | 2 | 1 | 50.0% | 23/23 | 0.0% | 32.56 |
-| [Power Management](#category-power-management) | 5 | 4 | 0 | 80.0% | 3/3 | 0.0% | 4.28 |
-| [Registers](#category-registers) | 20 | 19 | 1 | 95.0% | 448/449 | 0.0% | 5.35 |
-| [Signal Processing](#category-signal-processing) | 7 | 7 | 0 | 100.0% | 24/25 | 0.0% | 5.12 |
-| [State Machines](#category-state-machines) | 1 | 1 | 0 | 100.0% | 26/26 | 0.0% | 5.97 |
-| [Testing](#category-testing) | 2 | 2 | 0 | 100.0% | 7/7 | 0.0% | 4.74 |
-| [Voting](#category-voting) | 1 | 1 | 0 | 100.0% | 4/4 | 0.0% | 4.70 |
+| [Mathematics](#category-mathematics) | 2 | 1 | 1 | 50.0% | 0/0 | 0.0% | 2.47 |
+| [Memory](#category-memory) | 4 | 3 | 1 | 75.0% | 5/5 | 0.0% | 3.67 |
+| [Multiplication](#category-multiplication) | 3 | 3 | 0 | 100.0% | 16/20 | 0.0% | 5.17 |
+| [Network on Chip](#category-network-on-chip) | 4 | 2 | 1 | 50.0% | 23/23 | 0.0% | 32.57 |
+| [Power Management](#category-power-management) | 5 | 4 | 0 | 80.0% | 3/3 | 0.0% | 4.23 |
+| [Registers](#category-registers) | 20 | 19 | 1 | 95.0% | 448/449 | 0.0% | 5.42 |
+| [Signal Processing](#category-signal-processing) | 7 | 7 | 0 | 100.0% | 24/25 | 0.0% | 5.18 |
+| [State Machines](#category-state-machines) | 1 | 1 | 0 | 100.0% | 26/26 | 0.0% | 5.75 |
+| [Testing](#category-testing) | 2 | 2 | 0 | 100.0% | 7/7 | 0.0% | 4.77 |
+| [Voting](#category-voting) | 1 | 1 | 0 | 100.0% | 4/4 | 0.0% | 4.72 |
 
 ## Detailed Results
 
@@ -88,12 +88,12 @@ Generated on: 2025-05-16 18:56:07
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| configurable_brent_kung_adder | libraries/adders/configurable_brent_kung_adder.v | ✓ PASS | 30/30 | N/A | 4.81 | 30 of 30 |
-| configurable_carry_lookahead_adder | libraries/adders/configurable_carry_lookahead_adder.v | ✓ PASS | 30/30 | N/A | 5.04 | 30 of 30 |
-| configurable_carry_select_adder | libraries/adders/configurable_carry_select_adder.v | ✓ PASS | 30/30 | N/A | 5.96 | 30 of 30 |
-| configurable_carry_skip_adder | libraries/adders/configurable_carry_skip_adder.v | ✓ PASS | 30/30 | N/A | 5.02 | 30 of 30 |
-| configurable_conditional_sum_adder | libraries/adders/configurable_conditional_sum_adder.v | ✓ PASS | 30/30 | N/A | 0.72 | 30 of 30 |
-| configurable_kogge_stone_adder | libraries/adders/configurable_kogge_stone_adder.v | ✓ PASS | 30/30 | N/A | 5.01 | 30 of 30 |
+| configurable_brent_kung_adder | libraries/adders/configurable_brent_kung_adder.v | ✓ PASS | 30/30 | N/A | 5.11 | 30 of 30 |
+| configurable_carry_lookahead_adder | libraries/adders/configurable_carry_lookahead_adder.v | ✓ PASS | 30/30 | N/A | 5.27 | 30 of 30 |
+| configurable_carry_select_adder | libraries/adders/configurable_carry_select_adder.v | ✓ PASS | 30/30 | N/A | 6.04 | 30 of 30 |
+| configurable_carry_skip_adder | libraries/adders/configurable_carry_skip_adder.v | ✓ PASS | 30/30 | N/A | 5.07 | 30 of 30 |
+| configurable_conditional_sum_adder | libraries/adders/configurable_conditional_sum_adder.v | ✓ PASS | 30/30 | N/A | 5.12 | 30 of 30 |
+| configurable_kogge_stone_adder | libraries/adders/configurable_kogge_stone_adder.v | ✓ PASS | 30/30 | N/A | 5.02 | 30 of 30 |
 
 <a name='category-arbitration'></a>
 ### Arbitration
@@ -102,10 +102,22 @@ Generated on: 2025-05-16 18:56:07
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| arbiter | libraries/arbiters/arbiter.v | ✓ PASS | 2/2 | N/A | 4.70 | 2 of 2 |
-| arbiter_rr | libraries/arbiters/arbiter_rr.v | ✓ PASS | 0/1 | N/A | 4.68 | Execution completed successfully |
-| fair_priority_arbiter | libraries/arbiters/fair_priority_arbiter.v | ✓ PASS | 4/4 | N/A | 4.85 | 4 of 4 |
-| matrix_arbiter | libraries/arbiters/matrix_arbiter.v | ✗ FAIL | N/A | N/A | 0.06 | Module matrix_arbiter not built or missing executable
+| arbiter | libraries/arbiters/arbiter.v | ✓ PASS | 2/2 | N/A | 4.82 | 2 of 2 |
+| arbiter_rr | libraries/arbiters/arbiter_rr.v | ✓ PASS | 1/1 | N/A | 4.77 | 1 of 1 |
+| fair_priority_arbiter | libraries/arbiters/fair_priority_arbiter.v | ✓ PASS | 4/4 | N/A | 4.89 | 4 of 4 |
+| matrix_arbiter | libraries/arbiters/matrix_arbiter.v | ✗ FAIL | N/A | N/A | 0.06 | Build failed: MODULE="matrix_arbiter"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Warning-LATCH: libraries/arbiters/matrix_arbiter.v:45:5: Latch inferred for signal 'matrix_arbiter.unnamedblk1.start_idx' (not all control paths of combinational always assign a value)
+                                                        : ... Suggest use of always_latch for intentional latches
+   45 |     always @(*) begin
+      |     ^~~~~~
+                ... For warning description see https://verilator.org/warn/LATCH?v=5.020
+                ... Use "/* verilator lint_off LATCH */" and lint_on around source to disable this message.
+%Warning-LATCH: libraries/arbiters/matrix_arbiter.v:45:5: Latch inferred for signal 'matrix_arbiter.unnamedblk1.found' (not all control paths of combinational always assign a value)
+                                                        : ... Suggest use of always_latch for intentional latches
+   45 |     always @(*) begin
+      |     ^~~~~~
 Error: Module matrix_arbiter not built or missing executable |
 
 <a name='category-arithmetic'></a>
@@ -115,8 +127,8 @@ Error: Module matrix_arbiter not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| alu | libraries/alu/alu.v | ✓ PASS | 12/12 | N/A | 0.66 | 12 of 12 |
-| configurable_comparator | libraries/alu/configurable_comparator.v | ✓ PASS | 72/72 | N/A | 0.14 | 72 of 72 |
+| alu | libraries/alu/alu.v | ✓ PASS | 12/12 | N/A | 4.90 | 12 of 12 |
+| configurable_comparator | libraries/alu/configurable_comparator.v | ✓ PASS | 72/72 | N/A | 4.87 | 72 of 72 |
 
 <a name='category-cordic'></a>
 ### CORDIC
@@ -128,7 +140,7 @@ Error: Module matrix_arbiter not built or missing executable |
 | cordic | libraries/cordic/cordic.v | ⏱ TIMEOUT | N/A | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
 Error: Test execution timed out after 2 minutes |
 | cordic_core | libraries/cordic/cordic_core.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
-| sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | ✓ PASS | 16/16 | N/A | 5.93 | 16 of 16 |
+| sine_cosine_generator | libraries/cordic/sine_cosine_generator.v | ✓ PASS | 16/16 | N/A | 6.03 | 16 of 16 |
 
 <a name='category-clock-domain-crossing'></a>
 ### Clock Domain Crossing
@@ -137,10 +149,10 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | ✓ PASS | 1/10 | N/A | 4.65 | Execution completed successfully |
-| clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
-| handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | ✓ PASS | 10/10 | N/A | 4.72 | 10 of 10 |
-| multi_flop_synchronizer | libraries/cdc/multi_flop_synchronizer.v | ✓ PASS | N/A | N/A | 4.74 | Execution completed successfully |
+| clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | ✓ PASS | 1/10 | N/A | 0.14 | Execution completed successfully |
+| clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | ✓ PASS | 76/76 | N/A | 0.14 | 76 of 76 |
+| handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | ✓ PASS | 10/10 | N/A | 0.16 | 10 of 10 |
+| multi_flop_synchronizer | libraries/cdc/multi_flop_synchronizer.v | ✓ PASS | N/A | N/A | 0.17 | Execution completed successfully |
 
 <a name='category-communication'></a>
 ### Communication
@@ -149,20 +161,22 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| ahb_lite_master | libraries/comms/ahb_lite_master.v | ✓ PASS | 5/5 | N/A | 7.14 | Execution completed successfully |
-| basic_spi_master | libraries/comms/basic_spi_master.v | ✓ PASS | N/A | N/A | 4.61 | TEST PASSED |
-| final_spi_master | libraries/comms/final_spi_master.v | ✗ FAIL | N/A | N/A | 4.76 | TEST FAILED |
-| fixed_spi_master | libraries/comms/fixed_spi_master.v | ✓ PASS | N/A | N/A | 4.69 | TEST PASSED |
+| ahb_lite_master | libraries/comms/ahb_lite_master.v | ✓ PASS | 5/5 | N/A | 0.08 | Execution completed successfully |
+| basic_spi_master | libraries/comms/basic_spi_master.v | ✓ PASS | N/A | N/A | 4.87 | TEST PASSED |
+| final_spi_master | libraries/comms/final_spi_master.v | ✗ FAIL | N/A | N/A | 4.69 | TEST FAILED
+
+Error output sample:
+make: *** [Makefile:106: verify_final_spi_master] Error 1 |
+| fixed_spi_master | libraries/comms/fixed_spi_master.v | ✓ PASS | N/A | N/A | 4.68 | TEST PASSED |
 | parameterized_deserializer | libraries/comms/parameterized_deserializer.v | ✓ PASS | N/A | N/A | 5.42 | Execution completed successfully |
-| parameterized_i2c_master | libraries/comms/parameterized_i2c_master.v | ✓ PASS | 2/2 | N/A | 5.36 | 2 of 2 |
-| parameterized_serdes | libraries/comms/parameterized_serdes.v | ✓ PASS | N/A | N/A | 5.56 | Simulation completed! |
-| parameterized_spi_master | libraries/comms/parameterized_spi_master.v | ✓ PASS | N/A | N/A | 5.45 | TEST PASSED |
-| parameterized_uart_rx | libraries/comms/parameterized_uart_rx.v | ✗ FAIL | N/A | N/A | 5.26 | UART RX Test FAILED!
-Error: Did not receive byte 0! |
-| parameterized_uart_tx | libraries/comms/parameterized_uart_tx.v | ✓ PASS | N/A | N/A | 5.33 | Test PASSED! All data transmitted and received correctly. |
+| parameterized_i2c_master | libraries/comms/parameterized_i2c_master.v | ✓ PASS | 2/2 | N/A | 5.64 | 2 of 2 |
+| parameterized_serdes | libraries/comms/parameterized_serdes.v | ✓ PASS | N/A | N/A | 5.54 | Simulation completed! |
+| parameterized_spi_master | libraries/comms/parameterized_spi_master.v | ✓ PASS | N/A | N/A | 5.27 | TEST PASSED |
+| parameterized_uart_rx | libraries/comms/parameterized_uart_rx.v | ✓ PASS | 5/5 | N/A | 5.16 | 5 of 5 |
+| parameterized_uart_tx | libraries/comms/parameterized_uart_tx.v | ✓ PASS | N/A | N/A | 5.17 | Test PASSED! All data transmitted and received correctly. |
 | parameterized_uart_tx_fixed | libraries/comms/parameterized_uart_tx_fixed.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
-| simple_spi_master | libraries/comms/simple_spi_master.v | ✓ PASS | N/A | N/A | 6.02 | TEST PASSED |
-| spi_master | libraries/comms/spi_master.v | ✓ PASS | N/A | N/A | 6.07 | TEST PASSED |
+| simple_spi_master | libraries/comms/simple_spi_master.v | ✓ PASS | N/A | N/A | 6.25 | TEST PASSED |
+| spi_master | libraries/comms/spi_master.v | ✓ PASS | N/A | N/A | 6.03 | TEST PASSED |
 
 <a name='category-counters'></a>
 ### Counters
@@ -171,26 +185,41 @@ Error: Did not receive byte 0! |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
-| gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | N/A | 4.77 | 3 of 3 |
-| johnson_counter | libraries/counters/johnson_counter.v | ✓ PASS | N/A | N/A | 4.67 | Execution completed successfully |
+| configurable_clz_clo | libraries/counters/configurable_clz_clo.v | ✓ PASS | N/A | N/A | 4.75 | Execution completed successfully |
+| gray_counter | libraries/counters/gray_counter.v | ✓ PASS | 3/3 | N/A | 4.72 | 3 of 3 |
+| johnson_counter | libraries/counters/johnson_counter.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
 | leading_zero_counter | libraries/counters/leading_zero_counter.v | ✓ PASS | 20/20 | N/A | 4.77 | 20 of 20 |
-| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
-| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✗ FAIL | N/A | N/A | 1.26 | Count failed at 0, got 1 expected 0
+| loadable_updown_counter | libraries/counters/loadable_updown_counter.v | ✓ PASS | N/A | N/A | 4.69 | Execution completed successfully |
+| parameterized_decade_counter | libraries/counters/parameterized_decade_counter.v | ✗ FAIL | N/A | N/A | 5.20 | Count failed at 0, got 1 expected 0
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_decade_counter] Error 1
 Error: Count failed at 0, got 1 expected 0 |
-| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | N/A | N/A | 5.31 | Execution completed successfully |
-| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | N/A | 5.09 | Sequence does not repeat after expected length.
+| parameterized_gray_counter | libraries/counters/parameterized_gray_counter.v | ✓ PASS | N/A | N/A | 5.22 | Execution completed successfully |
+| parameterized_johnson_counter | libraries/counters/parameterized_johnson_counter.v | ✗ FAIL | N/A | N/A | 5.06 | Sequence does not repeat after expected length.
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_johnson_counter] Error 1
 Error: Sequence does not repeat after expected length. |
-| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✓ PASS | N/A | N/A | 5.11 | Execution completed successfully |
-| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | N/A | 5.10 | Count failed at 0, got 1
+| parameterized_johnson_updown_counter | libraries/counters/parameterized_johnson_updown_counter.v | ✓ PASS | N/A | N/A | 5.29 | Execution completed successfully |
+| parameterized_loadable_counter | libraries/counters/parameterized_loadable_counter.v | ✗ FAIL | N/A | N/A | 5.17 | Count failed at 0, got 1
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_loadable_counter] Error 1
 Error: Count failed at 0, got 1 |
-| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | N/A | 5.59 | Incorrect shift from state 6 to 7
+| parameterized_onehot_counter | libraries/counters/parameterized_onehot_counter.v | ✗ FAIL | N/A | N/A | 5.13 | Incorrect shift from state 6 to 7
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_onehot_counter] Error 1
 Error: Incorrect shift from state 6 to 7 |
-| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | N/A | 5.31 | Execution completed successfully |
-| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✗ FAIL | N/A | N/A | 5.43 | Count failed at 0, got 1 expected 0
+| parameterized_ring_counter | libraries/counters/parameterized_ring_counter.v | ✓ PASS | N/A | N/A | 5.23 | Execution completed successfully |
+| parameterized_self_correcting_counter | libraries/counters/parameterized_self_correcting_counter.v | ✗ FAIL | N/A | N/A | 5.02 | Count failed at 0, got 1 expected 0
+
+Error output sample:
+make: *** [Makefile:106: verify_parameterized_self_correcting_counter] Error 1
 Error: Count failed at 0, got 1 expected 0 |
-| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | N/A | 5.20 | Execution completed successfully |
-| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | N/A | 5.27 | 1 of 1 |
+| parameterized_sync_reset_counter | libraries/counters/parameterized_sync_reset_counter.v | ✓ PASS | N/A | N/A | 5.23 | Execution completed successfully |
+| parameterized_updown_counter | libraries/counters/parameterized_updown_counter.v | ✓ PASS | 1/1 | N/A | 5.11 | 1 of 1 |
 
 <a name='category-debugging'></a>
 ### Debugging
@@ -209,8 +238,18 @@ Error: Count failed at 0, got 1 expected 0 |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| parameterized_dds | libraries/dsp/parameterized_dds.v | ✓ PASS | 100/100 | N/A | 5.20 | 100 of 100 |
-| parameterized_fft | libraries/dsp/parameterized_fft.v | ✗ FAIL | N/A | N/A | 0.07 | Module parameterized_fft not built or missing executable
+| parameterized_dds | libraries/dsp/parameterized_dds.v | ✓ PASS | 100/100 | N/A | 5.15 | 100 of 100 |
+| parameterized_fft | libraries/dsp/parameterized_fft.v | ✗ FAIL | N/A | N/A | 0.07 | Build failed: MODULE="parameterized_fft"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Warning-BLKSEQ: libraries/dsp/parameterized_fft.v:116:21: Blocking assignment '=' in sequential logic process
+                                                         : ... Suggest using delayed assignment '<='
+  116 |                 out = (out << 1) | {{{LOG2_FFT_POINTS-1}{1'b0}}, in[j]};
+      |                     ^
+                 ... For warning description see https://verilator.org/warn/BLKSEQ?v=5.020
+                 ... Use "/* verilator lint_off BLKSEQ */" and lint_on around source to disable this message.
+%Error: Exiting due to 1 warning(s)
+make: *** [Makefile:106: verify_parameterized_fft] Error 1
 Error: Module parameterized_fft not built or missing executable |
 
 <a name='category-division'></a>
@@ -220,7 +259,7 @@ Error: Module parameterized_fft not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| non_restoring_divider | libraries/dividers/non_restoring_divider.v | ✓ PASS | N/A | N/A | 5.09 | All division tests PASSED! |
+| non_restoring_divider | libraries/dividers/non_restoring_divider.v | ✓ PASS | N/A | N/A | 5.07 | All division tests PASSED! |
 
 <a name='category-encoding/decoding'></a>
 ### Encoding/Decoding
@@ -229,13 +268,13 @@ Error: Module parameterized_fft not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| binary_to_gray | libraries/codings/binary_to_gray.v | ✓ PASS | 16/16 | N/A | 4.64 | 16 of 16 |
-| configurable_priority_encoder | libraries/codings/configurable_priority_encoder.v | ✓ PASS | N/A | N/A | 4.80 | ALL TESTS PASSED! |
-| gray_to_binary | libraries/codings/gray_to_binary.v | ✓ PASS | 16/16 | N/A | 4.74 | 16 of 16 |
-| hamming_code | libraries/codings/hamming_code.v | ✓ PASS | 31/31 | N/A | 4.88 | 31 of 31 |
-| parameterized_crc_generator | libraries/codings/parameterized_crc_generator.v | ✓ PASS | 1/1 | N/A | 5.04 | 1 of 1 |
-| parameterized_scrambler | libraries/codings/parameterized_scrambler.v | ✓ PASS | 2/2 | N/A | 5.27 | 2 of 2 |
-| priority_encoder | libraries/codings/priority_encoder.v | ✓ PASS | 256/256 | N/A | 5.86 | 256 of 256 |
+| binary_to_gray | libraries/codings/binary_to_gray.v | ✓ PASS | 16/16 | N/A | 4.84 | 16 of 16 |
+| configurable_priority_encoder | libraries/codings/configurable_priority_encoder.v | ✓ PASS | 30/30 | N/A | 4.81 | 30 of 30 |
+| gray_to_binary | libraries/codings/gray_to_binary.v | ✓ PASS | 16/16 | N/A | 4.72 | 16 of 16 |
+| hamming_code | libraries/codings/hamming_code.v | ✓ PASS | 31/31 | N/A | 4.85 | 31 of 31 |
+| parameterized_crc_generator | libraries/codings/parameterized_crc_generator.v | ✓ PASS | 1/1 | N/A | 5.20 | 1 of 1 |
+| parameterized_scrambler | libraries/codings/parameterized_scrambler.v | ✓ PASS | 2/2 | N/A | 5.03 | 2 of 2 |
+| priority_encoder | libraries/codings/priority_encoder.v | ✓ PASS | 256/256 | N/A | 6.01 | 256 of 256 |
 
 <a name='category-encryption'></a>
 ### Encryption
@@ -254,27 +293,39 @@ Error: Module parameterized_fft not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| async_fifo | libraries/fifo/async_fifo.v | ✓ PASS | N/A | N/A | 4.70 | Execution completed successfully |
-| barrel_shifter_fifo | libraries/fifo/barrel_shifter_fifo.v | ✓ PASS | N/A | N/A | 4.67 | Execution completed successfully |
-| bidirectional_fifo | libraries/fifo/bidirectional_fifo.v | ✓ PASS | N/A | N/A | 4.72 | Execution completed successfully |
-| cache_fifo | libraries/fifo/cache_fifo.v | ✓ PASS | N/A | N/A | 4.81 | Execution completed successfully |
-| circular_buffer_fifo | libraries/fifo/circular_buffer_fifo.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
-| configurable_param_fifo | libraries/fifo/configurable_param_fifo.v | ✓ PASS | N/A | N/A | 4.76 | All tests PASSED! |
-| configurable_sync_fifo | libraries/fifo/configurable_sync_fifo.v | ✓ PASS | N/A | N/A | 4.81 | ALL TESTS PASSED! |
+| async_fifo | libraries/fifo/async_fifo.v | ✓ PASS | N/A | N/A | 4.77 | Execution completed successfully |
+| barrel_shifter_fifo | libraries/fifo/barrel_shifter_fifo.v | ✓ PASS | N/A | N/A | 4.78 | Execution completed successfully |
+| bidirectional_fifo | libraries/fifo/bidirectional_fifo.v | ✓ PASS | N/A | N/A | 4.92 | Execution completed successfully |
+| cache_fifo | libraries/fifo/cache_fifo.v | ✓ PASS | N/A | N/A | 4.92 | Execution completed successfully |
+| circular_buffer_fifo | libraries/fifo/circular_buffer_fifo.v | ✓ PASS | N/A | N/A | 4.81 | Execution completed successfully |
+| configurable_param_fifo | libraries/fifo/configurable_param_fifo.v | ✓ PASS | N/A | N/A | 4.79 | All tests PASSED! |
+| configurable_sync_fifo | libraries/fifo/configurable_sync_fifo.v | ✓ PASS | N/A | N/A | 4.86 | ALL TESTS PASSED! |
 | credit_based_fifo | libraries/fifo/credit_based_fifo.v | ✓ PASS | N/A | N/A | 4.94 | Final FIFO status - Full: No, Empty: Yes |
 | dual_clock_fifo | libraries/fifo/dual_clock_fifo.v | ✓ PASS | N/A | N/A | 4.93 | Execution completed successfully |
 | elastic_buffer | libraries/fifo/elastic_buffer.v | ✓ PASS | N/A | N/A | 4.84 | Execution completed successfully |
-| fifo | libraries/fifo/fifo.v | ✓ PASS | 3/3 | N/A | 4.84 | 3 of 3 |
-| fwft_fifo | libraries/fifo/fwft_fifo.v | ✓ PASS | N/A | N/A | 4.78 | Execution completed successfully |
-| memory_mapped_fifo | libraries/fifo/memory_mapped_fifo.v | ✓ PASS | N/A | N/A | 4.80 | Execution completed successfully |
-| multi_ported_fifo | libraries/fifo/multi_ported_fifo.v | ✗ FAIL | N/A | N/A | 0.06 | Module multi_ported_fifo not built or missing executable
+| fifo | libraries/fifo/fifo.v | ✓ PASS | 3/3 | N/A | 4.82 | 3 of 3 |
+| fwft_fifo | libraries/fifo/fwft_fifo.v | ✓ PASS | N/A | N/A | 4.77 | Execution completed successfully |
+| memory_mapped_fifo | libraries/fifo/memory_mapped_fifo.v | ✓ PASS | N/A | N/A | 4.91 | Execution completed successfully |
+| multi_ported_fifo | libraries/fifo/multi_ported_fifo.v | ✗ FAIL | N/A | N/A | 0.07 | Build failed: MODULE="multi_ported_fifo"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Error: libraries/fifo/multi_ported_fifo.v:134:21: syntax error, unexpected IDENTIFIER, expecting "'{"
+  134 |             integer i;
+      |                     ^
+%Error: libraries/fifo/multi_ported_fifo.v:145:21: syntax error, unexpected IDENTIFIER, expecting "'{"
+  145 |             integer rp;
+      |                     ^~
+%Error: libraries/fifo/multi_ported_fifo.v:146:34: syntax error, unexpected IDENTIFIER, expecting "'{"
+  146 |             reg [ADDR_WIDTH-1:0] current_rd_addr;
+      |                                  ^~~~~~~~~~~~~~~
+%Error: Exiting due to 3 error(s)
 Error: Module multi_ported_fifo not built or missing executable |
-| parameterized_priority_queue | libraries/fifo/parameterized_priority_queue.v | ✓ PASS | N/A | N/A | 5.24 | Execution completed successfully |
+| parameterized_priority_queue | libraries/fifo/parameterized_priority_queue.v | ✓ PASS | N/A | N/A | 5.29 | Execution completed successfully |
 | pipelined_fifo | libraries/fifo/pipelined_fifo.v | ⏱ TIMEOUT | N/A | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
 Error: Test execution timed out after 2 minutes |
-| showahead_fifo | libraries/fifo/showahead_fifo.v | ✓ PASS | N/A | N/A | 5.92 | Execution completed successfully |
-| skid_buffer | libraries/fifo/skid_buffer.v | ✓ PASS | N/A | N/A | 5.91 | Execution completed successfully |
-| smart_fifo | libraries/fifo/smart_fifo.v | ✓ PASS | N/A | N/A | 6.16 | Execution completed successfully |
+| showahead_fifo | libraries/fifo/showahead_fifo.v | ✓ PASS | N/A | N/A | 5.76 | Execution completed successfully |
+| skid_buffer | libraries/fifo/skid_buffer.v | ✓ PASS | N/A | N/A | 5.79 | Execution completed successfully |
+| smart_fifo | libraries/fifo/smart_fifo.v | ✓ PASS | N/A | N/A | 5.95 | Execution completed successfully |
 | sync_fifo | libraries/fifo/sync_fifo.v | ⏱ TIMEOUT | N/A | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
 Error: Test execution timed out after 2 minutes |
 
@@ -285,7 +336,7 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| configurable_fir_filter | libraries/filters/configurable_fir_filter.v | ✓ PASS | N/A | N/A | 4.85 | TEST PASSED! |
+| configurable_fir_filter | libraries/filters/configurable_fir_filter.v | ✓ PASS | N/A | N/A | 4.89 | TEST PASSED! |
 | fir_filter | libraries/filters/fir_filter.v | ✓ PASS | N/A | N/A | 4.80 | Execution completed successfully |
 
 <a name='category-input/output'></a>
@@ -296,7 +347,10 @@ Error: Test execution timed out after 2 minutes |
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
 | dma_controller | libraries/io/dma_controller.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
-| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | 2/5 | N/A | 4.93 | 2 of 5 |
+| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | 2/5 | N/A | 4.91 | 2 of 5
+
+Error output sample:
+make: *** [Makefile:106: verify_gpio_controller] Error 1 |
 
 <a name='category-interfaces'></a>
 ### Interfaces
@@ -317,9 +371,21 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✗ FAIL | N/A | N/A | 0.06 | Module fixed_point_sqrt not built or missing executable
+| fixed_point_sqrt | libraries/math/fixed_point_sqrt.v | ✗ FAIL | N/A | N/A | 0.06 | Build failed: MODULE="fixed_point_sqrt"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Warning-UNDRIVEN: libraries/math/fixed_point_sqrt.v:12:37: Signal is not driven: 'in_ready'
+                                                          : ... note: In instance 'fixed_point_sqrt'
+   12 |     output wire                     in_ready,
+      |                                     ^~~~~~~~
+                   ... For warning description see https://verilator.org/warn/UNDRIVEN?v=5.020
+                   ... Use "/* verilator lint_off UNDRIVEN */" and lint_on around source to disable this message.
+%Warning-UNDRIVEN: libraries/math/fixed_point_sqrt.v:15:37: Signal is not driven: 'out_data'
+                                                          : ... note: In instance 'fixed_point_sqrt'
+   15 |     output reg [OUTPUT_WIDTH-1:0]   out_data,
+      |                                     ^~~~~~~~
 Error: Module fixed_point_sqrt not built or missing executable |
-| floating_point_adder | libraries/math/floating_point_adder.v | ✓ PASS | N/A | N/A | 4.89 | Execution completed successfully |
+| floating_point_adder | libraries/math/floating_point_adder.v | ✓ PASS | N/A | N/A | 4.88 | Execution completed successfully |
 
 <a name='category-memory'></a>
 ### Memory
@@ -328,11 +394,23 @@ Error: Module fixed_point_sqrt not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| ddr_controller | libraries/mems/ddr_controller.v | ✗ FAIL | N/A | N/A | 0.08 | Module ddr_controller not built or missing executable
+| ddr_controller | libraries/mems/ddr_controller.v | ✗ FAIL | N/A | N/A | 0.06 | Build failed: MODULE="ddr_controller"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Warning-GENUNNAMED: libraries/mems/ddr_controller.v:118:55: Unnamed generate block 'genblk1' (IEEE 1800-2017 27.6)
+                                                           : ... Suggest assign a label with 'begin : gen_<label_name>'
+  118 |         if (DDR_TYPE == "DDR4" || DDR_TYPE == "DDR5") begin
+      |                                                       ^~~~~
+                     ... For warning description see https://verilator.org/warn/GENUNNAMED?v=5.020
+                     ... Use "/* verilator lint_off GENUNNAMED */" and lint_on around source to disable this message.
+%Warning-GENUNNAMED: libraries/mems/ddr_controller.v:120:18: Unnamed generate block 'genblk1' (IEEE 1800-2017 27.6)
+                                                           : ... Suggest assign a label with 'begin : gen_<label_name>'
+  120 |         end else begin
+      |                  ^~~~~
 Error: Module ddr_controller not built or missing executable |
 | dual_port_ram | libraries/mems/dual_port_ram.v | ✓ PASS | N/A | N/A | 4.79 | Execution completed successfully |
-| memory_controller | libraries/mems/memory_controller.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
-| parameterized_cam | libraries/mems/parameterized_cam.v | ✓ PASS | 5/5 | N/A | 5.42 | 5 of 5 |
+| memory_controller | libraries/mems/memory_controller.v | ✓ PASS | N/A | N/A | 4.74 | Execution completed successfully |
+| parameterized_cam | libraries/mems/parameterized_cam.v | ✓ PASS | 5/5 | N/A | 5.08 | 5 of 5 |
 
 <a name='category-multiplication'></a>
 ### Multiplication
@@ -341,9 +419,9 @@ Error: Module ddr_controller not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| booth_multiplier | libraries/multipliers/booth_multiplier.v | ✓ PASS | 4/8 | N/A | 4.63 | Execution completed successfully |
-| configurable_mult | libraries/multipliers/configurable_mult.v | ✓ PASS | 6/6 | N/A | 4.89 | 6 of 6 |
-| radix4_booth_multiplier | libraries/multipliers/radix4_booth_multiplier.v | ✓ PASS | 6/6 | N/A | 5.80 | 6 of 6 |
+| booth_multiplier | libraries/multipliers/booth_multiplier.v | ✓ PASS | 4/8 | N/A | 4.71 | Execution completed successfully |
+| configurable_mult | libraries/multipliers/configurable_mult.v | ✓ PASS | 6/6 | N/A | 4.87 | 6 of 6 |
+| radix4_booth_multiplier | libraries/multipliers/radix4_booth_multiplier.v | ✓ PASS | 6/6 | N/A | 5.94 | 6 of 6 |
 
 <a name='category-network-on-chip'></a>
 ### Network on Chip
@@ -352,9 +430,21 @@ Error: Module ddr_controller not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| configurable_mesh_router | libraries/noc/configurable_mesh_router.v | ✓ PASS | 11/11 | N/A | 5.35 | 11 of 11 |
-| crossbar_switch | libraries/noc/crossbar_switch.v | ✓ PASS | 12/12 | N/A | 4.81 | 12 of 12 |
-| mesh_router | libraries/noc/mesh_router.v | ✗ FAIL | N/A | N/A | 0.07 | Module mesh_router not built or missing executable
+| configurable_mesh_router | libraries/noc/configurable_mesh_router.v | ✓ PASS | 11/11 | N/A | 5.38 | 11 of 11 |
+| crossbar_switch | libraries/noc/crossbar_switch.v | ✓ PASS | 12/12 | N/A | 4.83 | 12 of 12 |
+| mesh_router | libraries/noc/mesh_router.v | ✗ FAIL | N/A | N/A | 0.07 | Build failed: MODULE="mesh_router"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Warning-VARHIDDEN: libraries/noc/mesh_router.v:96:21: Declaration of signal hides declaration in upper scope: 'dest_x'
+   96 |         input [3:0] dest_x;
+      |                     ^~~~~~
+                    libraries/noc/mesh_router.v:79:16: ... Location of original declaration
+   79 |     wire [3:0] dest_x [0:PORT_COUNT-1];
+      |                ^~~~~~
+                    ... For warning description see https://verilator.org/warn/VARHIDDEN?v=5.020
+                    ... Use "/* verilator lint_off VARHIDDEN */" and lint_on around source to disable this message.
+%Warning-VARHIDDEN: libraries/noc/mesh_router.v:97:21: Declaration of signal hides declaration in upper scope: 'dest_y'
+   97 |         input [3:0] dest_y;
 Error: Module mesh_router not built or missing executable |
 | network_interface | libraries/noc/network_interface.v | ⏱ TIMEOUT | N/A | N/A | 120.00 | Execution exceeded 2 minutes and was terminated
 Error: Test execution timed out after 2 minutes |
@@ -366,11 +456,11 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| clock_divider | libraries/power/clock_divider.v | ✓ PASS | N/A | N/A | 4.71 | Execution completed successfully |
+| clock_divider | libraries/power/clock_divider.v | ✓ PASS | N/A | N/A | 4.88 | Execution completed successfully |
 | clock_gating | libraries/power/clock_gating.v | ⚠ NO TESTBENCH | 0/0 | N/A | 0.00 | No testbench available |
-| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✓ PASS | N/A | N/A | 5.33 | Execution completed successfully |
-| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✓ PASS | N/A | N/A | 5.54 | ALL TESTS PASSED! |
-| power_domain_controller | libraries/power/power_domain_controller.v | ✓ PASS | 3/3 | N/A | 5.84 | 3 of 3 |
+| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✓ PASS | N/A | N/A | 5.08 | Execution completed successfully |
+| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✓ PASS | N/A | N/A | 5.38 | ALL TESTS PASSED! |
+| power_domain_controller | libraries/power/power_domain_controller.v | ✓ PASS | 3/3 | N/A | 5.81 | 3 of 3 |
 
 <a name='category-registers'></a>
 ### Registers
@@ -379,27 +469,37 @@ Error: Test execution timed out after 2 minutes |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| barrel_rotator | libraries/registers/barrel_rotator.v | ✓ PASS | 80/80 | N/A | 4.69 | 80 of 80 |
-| barrel_shifter | libraries/registers/barrel_shifter.v | ✓ PASS | 300/300 | N/A | 4.68 | 300 of 300 |
-| bidirectional_shift_register | libraries/registers/bidirectional_shift_register.v | ✓ PASS | 6/6 | N/A | 4.61 | 6 of 6 |
+| barrel_rotator | libraries/registers/barrel_rotator.v | ✓ PASS | 80/80 | N/A | 4.98 | 80 of 80 |
+| barrel_shifter | libraries/registers/barrel_shifter.v | ✓ PASS | 300/300 | N/A | 4.73 | 300 of 300 |
+| bidirectional_shift_register | libraries/registers/bidirectional_shift_register.v | ✓ PASS | 6/6 | N/A | 4.84 | 6 of 6 |
 | dual_edge_register | libraries/registers/dual_edge_register.v | ✓ PASS | 6/6 | N/A | 4.70 | 6 of 6 |
-| lfsr | libraries/registers/lfsr.v | ✓ PASS | 2/2 | N/A | 4.79 | 2 of 2 |
-| onehot_decoder_register | libraries/registers/onehot_decoder_register.v | ✓ PASS | 5/5 | N/A | 5.44 | 5 of 5 |
-| parameterized_barrel_rotator | libraries/registers/parameterized_barrel_rotator.v | ✓ PASS | N/A | N/A | 5.52 | Tests: a0 of a0 |
-| parameterized_rotation_sipo | libraries/registers/parameterized_rotation_sipo.v | ✗ FAIL | N/A | N/A | 0.07 | Module parameterized_rotation_sipo not built or missing executable
+| lfsr | libraries/registers/lfsr.v | ✓ PASS | 2/2 | N/A | 4.78 | 2 of 2 |
+| onehot_decoder_register | libraries/registers/onehot_decoder_register.v | ✓ PASS | 5/5 | N/A | 5.03 | 5 of 5 |
+| parameterized_barrel_rotator | libraries/registers/parameterized_barrel_rotator.v | ✓ PASS | N/A | N/A | 5.27 | Tests: a0 of a0 |
+| parameterized_rotation_sipo | libraries/registers/parameterized_rotation_sipo.v | ✗ FAIL | N/A | N/A | 0.06 | Build failed: MODULE="parameterized_rotation_sipo"; VERILOG_FILE=$(find libraries -name "$MODULE.v"); TESTBENCH_FILE=$(find libraries -name "tb_$MODULE.cpp"); if [ -n "$VERILOG_FILE" ] && [ -n "$TESTBENCH_FILE" ]; then echo "Building $MODULE from $(dirname $VERILOG_FILE)..."; verilator -Wall -Wno-EOFNEWLINE --trace --cc --build -j --Mdir build -Wno-EOFNEWLINE -Wno-UNUSEDSIGNAL -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-UNUSEDPARAM --exe "$VERILOG_FILE" "$TESTBENCH_FILE"; touch build/.$MODULE.built; else echo "Module $MODULE not found or missing testbench"; echo "  Verilog file: $VERILOG_FILE"; echo "  Testbench file: $TESTBENCH_FILE"; exit 1; fi
+
+Error output sample:
+%Warning-SELRANGE: libraries/registers/parameterized_rotation_sipo.v:67:43: [-1:0] Slice range has ascending bit ordering, perhaps you wanted [0:-1]
+                                                                          : ... note: In instance 'parameterized_rotation_sipo'
+   67 |                 parallel_out <= {shift_reg[ROTATION-1:0], shift_reg[WIDTH-1:ROTATION]};
+      |                                           ^
+                   ... For warning description see https://verilator.org/warn/SELRANGE?v=5.020
+                   ... Use "/* verilator lint_off SELRANGE */" and lint_on around source to disable this message.
+%Error: Exiting due to 1 warning(s)
+make: *** [Makefile:106: verify_parameterized_rotation_sipo] Error 1
 Error: Module parameterized_rotation_sipo not built or missing executable |
-| piso_register | libraries/registers/piso_register.v | ✓ PASS | 1/1 | N/A | 5.84 | 1 of 1 |
+| piso_register | libraries/registers/piso_register.v | ✓ PASS | 1/1 | N/A | 5.85 | 1 of 1 |
 | register_file | libraries/registers/register_file.v | ✓ PASS | 5/5 | N/A | 6.02 | 5 of 5 |
-| scan_register | libraries/registers/scan_register.v | ✓ PASS | 4/4 | N/A | 5.81 | 4 of 4 |
-| shadow_register | libraries/registers/shadow_register.v | ✓ PASS | 7/7 | N/A | 5.91 | 7 of 7 |
-| shift_register | libraries/registers/shift_register.v | ✓ PASS | 1/2 | N/A | 6.13 | Execution completed successfully |
-| shift_register_left | libraries/registers/shift_register_left.v | ✓ PASS | 1/1 | N/A | 5.84 | 1 of 1 |
-| shift_register_right | libraries/registers/shift_register_right.v | ✓ PASS | 1/1 | N/A | 5.87 | 1 of 1 |
-| sipo_register | libraries/registers/sipo_register.v | ✓ PASS | 4/4 | N/A | 5.97 | 4 of 4 |
-| siso_register | libraries/registers/siso_register.v | ✓ PASS | 4/4 | N/A | 5.93 | 4 of 4 |
-| sync_preset_register | libraries/registers/sync_preset_register.v | ✓ PASS | 8/8 | N/A | 6.31 | 8 of 8 |
-| toggle_register | libraries/registers/toggle_register.v | ✓ PASS | 8/8 | N/A | 6.31 | 8 of 8 |
-| universal_shift_register | libraries/registers/universal_shift_register.v | ✓ PASS | 5/5 | N/A | 6.56 | 5 of 5 |
+| scan_register | libraries/registers/scan_register.v | ✓ PASS | 4/4 | N/A | 5.79 | 4 of 4 |
+| shadow_register | libraries/registers/shadow_register.v | ✓ PASS | 7/7 | N/A | 5.82 | 7 of 7 |
+| shift_register | libraries/registers/shift_register.v | ✓ PASS | 1/2 | N/A | 6.02 | Execution completed successfully |
+| shift_register_left | libraries/registers/shift_register_left.v | ✓ PASS | 1/1 | N/A | 5.89 | 1 of 1 |
+| shift_register_right | libraries/registers/shift_register_right.v | ✓ PASS | 1/1 | N/A | 5.99 | 1 of 1 |
+| sipo_register | libraries/registers/sipo_register.v | ✓ PASS | 4/4 | N/A | 6.18 | 4 of 4 |
+| siso_register | libraries/registers/siso_register.v | ✓ PASS | 4/4 | N/A | 6.03 | 4 of 4 |
+| sync_preset_register | libraries/registers/sync_preset_register.v | ✓ PASS | 8/8 | N/A | 6.96 | 8 of 8 |
+| toggle_register | libraries/registers/toggle_register.v | ✓ PASS | 8/8 | N/A | 6.55 | 8 of 8 |
+| universal_shift_register | libraries/registers/universal_shift_register.v | ✓ PASS | 5/5 | N/A | 6.88 | 5 of 5 |
 
 <a name='category-signal-processing'></a>
 ### Signal Processing
@@ -408,13 +508,13 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| configurable_lfsr | libraries/signals/configurable_lfsr.v | ✓ PASS | N/A | N/A | 4.78 | Execution completed successfully |
+| configurable_lfsr | libraries/signals/configurable_lfsr.v | ✓ PASS | N/A | N/A | 4.79 | Execution completed successfully |
 | configurable_prng | libraries/signals/configurable_prng.v | ✓ PASS | 3/3 | N/A | 4.82 | 3 of 3 |
 | digital_thermometer_controller | libraries/signals/digital_thermometer_controller.v | ✓ PASS | 5/5 | N/A | 4.73 | 5 of 5 |
-| multi_phase_pwm_controller | libraries/signals/multi_phase_pwm_controller.v | ✓ PASS | 5/5 | N/A | 4.76 | 5 of 5 |
-| parameterized_pwm | libraries/signals/parameterized_pwm.v | ✓ PASS | 6/6 | N/A | 5.13 | 6 of 6 |
-| pulse_width_detector | libraries/signals/pulse_width_detector.v | ✓ PASS | 2/3 | N/A | 5.79 | Execution completed successfully |
-| pwm_generator | libraries/signals/pwm_generator.v | ✓ PASS | 3/3 | N/A | 5.83 | 3 of 3 |
+| multi_phase_pwm_controller | libraries/signals/multi_phase_pwm_controller.v | ✓ PASS | 5/5 | N/A | 4.77 | 5 of 5 |
+| parameterized_pwm | libraries/signals/parameterized_pwm.v | ✓ PASS | 6/6 | N/A | 5.25 | 6 of 6 |
+| pulse_width_detector | libraries/signals/pulse_width_detector.v | ✓ PASS | 2/3 | N/A | 5.88 | Execution completed successfully |
+| pwm_generator | libraries/signals/pwm_generator.v | ✓ PASS | 3/3 | N/A | 6.04 | 3 of 3 |
 
 <a name='category-state-machines'></a>
 ### State Machines
@@ -423,7 +523,7 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| sequence_detector_fsm | libraries/fsm/sequence_detector_fsm.v | ✓ PASS | 26/26 | N/A | 5.97 | 26 of 26 |
+| sequence_detector_fsm | libraries/fsm/sequence_detector_fsm.v | ✓ PASS | 26/26 | N/A | 5.75 | 26 of 26 |
 
 <a name='category-testing'></a>
 ### Testing
@@ -432,8 +532,8 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| bist_controller | libraries/test/bist_controller.v | ✓ PASS | 4/4 | N/A | 4.71 | 4 of 4 |
-| jtag_controller | libraries/test/jtag_controller.v | ✓ PASS | 3/3 | N/A | 4.77 | 3 of 3 |
+| bist_controller | libraries/test/bist_controller.v | ✓ PASS | 4/4 | N/A | 4.78 | 4 of 4 |
+| jtag_controller | libraries/test/jtag_controller.v | ✓ PASS | 3/3 | N/A | 4.76 | 3 of 3 |
 
 <a name='category-voting'></a>
 ### Voting
@@ -442,7 +542,7 @@ Error: Module parameterized_rotation_sipo not built or missing executable |
 
 | Module | File Path | Status | Tests | Coverage | Runtime (s) | Details |
 |--------|-----------|:------:|------:|---------:|------------:|----------:|
-| majority_voter | libraries/voters/majority_voter.v | ✓ PASS | 4/4 | N/A | 4.70 | 4 of 4 |
+| majority_voter | libraries/voters/majority_voter.v | ✓ PASS | 4/4 | N/A | 4.72 | 4 of 4 |
 
 <a name='notes'></a>
 ## Notes
