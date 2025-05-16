@@ -40,17 +40,20 @@ module matrix_arbiter #(
     // Temporary variables for arbitration logic
     integer i, j;
     reg [NUM_REQUESTORS-1:0] winner;
+    reg [31:0] start_idx;  // Moved outside always block
+    reg found;             // Moved outside always block
     
     // Simplified arbitration logic that actually works
     always @(*) begin
-        // Initialize winner with the request vector
-        winner = req;
+        // Initialize all variables to prevent latches
+        winner = {NUM_REQUESTORS{1'b0}};
+        start_idx = 0;
+        found = 1'b0;
         
-        // If no requests, then no winner
-        if (req == {NUM_REQUESTORS{1'b0}}) begin
-            winner = {NUM_REQUESTORS{1'b0}};
-        end
-        else begin
+        if (req != {NUM_REQUESTORS{1'b0}}) begin
+            // Initialize winner with the request vector
+            winner = req;
+            
             // Compare each pair of active requestors
             for (i = 0; i < NUM_REQUESTORS; i = i + 1) begin
                 if (req[i]) begin
@@ -73,16 +76,9 @@ module matrix_arbiter #(
             
             // If no clear winner (winner is all zeros but there are requests)
             // then use round-robin based on prev_grant
-            if (winner == {NUM_REQUESTORS{1'b0}} && req != {NUM_REQUESTORS{1'b0}}) begin
-                // Variables for round-robin selection
-                reg [31:0] start_idx;
-                reg found;
-                
-                // Initialize these variables to avoid latches
-                start_idx = 0;
-                found = 1'b0;
-                
+            if (winner == {NUM_REQUESTORS{1'b0}}) begin
                 // Find the last granted requestor
+                start_idx = 0;  // Default if no previous grant
                 for (i = NUM_REQUESTORS-1; i >= 0; i = i - 1) begin
                     if (prev_grant[i]) begin
                         start_idx = (i + 1) % NUM_REQUESTORS;
@@ -91,6 +87,7 @@ module matrix_arbiter #(
                 end
                 
                 // Search for the next requestor starting from start_idx
+                found = 1'b0;  // Initialize found flag
                 for (i = 0; i < NUM_REQUESTORS; i = i + 1) begin
                     j = (start_idx + i) % NUM_REQUESTORS;
                     if (req[j]) begin
@@ -100,8 +97,8 @@ module matrix_arbiter #(
                     end
                 end
                 
-                // Fallback if nothing found (should not happen)
-                if (found == 1'b0) begin
+                // Fallback if nothing found (should not happen since we know req != 0)
+                if (!found) begin
                     for (i = 0; i < NUM_REQUESTORS; i = i + 1) begin
                         if (req[i]) begin
                             winner[i] = 1'b1;
