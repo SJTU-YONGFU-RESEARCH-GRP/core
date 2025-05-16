@@ -317,12 +317,10 @@ int main(int argc, char** argv) {
         test_passed = false;
     }
     
-    // Print test result
-    if (test_passed) {
-        std::cout << "\nUART RX Test PASSED!" << std::endl;
-    } else {
-        std::cout << "\nUART RX Test FAILED!" << std::endl;
-    }
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (test_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << (test_passed ? NUM_TEST_BYTES : received_count) << " of " << NUM_TEST_BYTES << std::endl;
     
     // Cleanup
     tfp->close();

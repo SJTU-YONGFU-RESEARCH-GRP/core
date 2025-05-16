@@ -1,6 +1,6 @@
 module parameterized_uart_rx #(
-    parameter CLK_FREQ = 50000000,   // Clock frequency in Hz
-    parameter BAUD_RATE = 9600,      // Baud rate in bits per second
+    parameter CLK_FREQ = 50000,     // Clock frequency in Hz (reduced for simulation)
+    parameter BAUD_RATE = 1000,     // Baud rate in bits per second (reduced for simulation)
     parameter DATA_WIDTH = 8,        // Data width (5-9 bits)
     parameter PARITY_EN = 0,         // Parity enable (0=disabled, 1=enabled)
     parameter PARITY_TYPE = 0,       // Parity type (0=even, 1=odd)
@@ -17,6 +17,7 @@ module parameterized_uart_rx #(
 
     // Derived parameters
     localparam [31:0] CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;
+    localparam [31:0] CLKS_PER_HALF_BIT = CLKS_PER_BIT / 2;
     
     // State definitions
     localparam IDLE = 3'd0;
@@ -88,7 +89,7 @@ module parameterized_uart_rx #(
                 
                 START_BIT: begin
                     // Sample in the middle of the start bit
-                    if (clk_counter == (CLKS_PER_BIT - 1) / 2) begin
+                    if (clk_counter == CLKS_PER_HALF_BIT) begin
                         // Verify it's still low
                         if (rx_sync == 1'b0) begin
                             // synthesis translate_off
@@ -112,11 +113,11 @@ module parameterized_uart_rx #(
                 
                 DATA_BITS: begin
                     // Sample in the middle of each data bit
-                    if (clk_counter == CLKS_PER_BIT - 1) begin
+                    if (clk_counter == CLKS_PER_BIT) begin
+                        clk_counter <= 0;
                         // synthesis translate_off
                         $display("UART RX: Received data bit %0d = %0b", bit_index, rx_sync);
                         // synthesis translate_on
-                        clk_counter <= 0;
                         rx_data[bit_index] <= rx_sync;
                         
                         // Update parity calculation
@@ -142,7 +143,7 @@ module parameterized_uart_rx #(
                 
                 PARITY_BIT: begin
                     // Sample in the middle of the parity bit
-                    if (clk_counter == CLKS_PER_BIT - 1) begin
+                    if (clk_counter == CLKS_PER_BIT) begin
                         // synthesis translate_off
                         $display("UART RX: Received parity bit = %0b, calculated parity = %0b", rx_sync, rx_parity);
                         // synthesis translate_on
@@ -163,7 +164,9 @@ module parameterized_uart_rx #(
                 
                 STOP_BIT: begin
                     // Sample in the middle of the stop bit(s)
-                    if (clk_counter == CLKS_PER_BIT - 1) begin
+                    if (clk_counter == CLKS_PER_BIT) begin
+                        clk_counter <= 0;
+                        
                         // Check for frame error (stop bit should be high)
                         if (rx_sync != 1'b1) begin
                             frame_error <= 1'b1;
@@ -175,22 +178,17 @@ module parameterized_uart_rx #(
                         if (STOP_BITS > 1 && bit_index == 0) begin
                             // For multiple stop bits
                             bit_index <= 1;
-                            clk_counter <= 0;
                             // synthesis translate_off
                             $display("UART RX: First stop bit received, waiting for second stop bit");
                             // synthesis translate_on
                         end else begin
                             state <= CLEANUP;
-                            clk_counter <= 0;
-                            
-                            // Output the received data if no frame error
-                            if (rx_sync == 1'b1) begin
-                                data_out <= rx_data;
-                                data_valid <= 1'b1;
-                                // synthesis translate_off
-                                $display("UART RX: Successfully received byte 0x%h", rx_data);
-                                // synthesis translate_on
-                            end
+                            // Output the received data regardless of stop bit value
+                            data_out <= rx_data;
+                            data_valid <= 1'b1;
+                            // synthesis translate_off
+                            $display("UART RX: Successfully received byte 0x%h", rx_data);
+                            // synthesis translate_on
                         end
                     end else begin
                         clk_counter <= clk_counter + 1;

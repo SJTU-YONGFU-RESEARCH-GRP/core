@@ -259,21 +259,22 @@ module ahb_lite_master #(
         reg [ADDR_WIDTH-1:0] mask;
         reg [7:0] boundary;
         reg [31:0] boundary_wide;
-        begin
-            // Changed blocking assignments to non-blocking
-            case (burst)
-                BURST_WRAP4:  boundary <= 4;
-                BURST_WRAP8:  boundary <= 8;
-                BURST_WRAP16: boundary <= 16;
-                default:      boundary <= 4;
-            endcase
-            
-            boundary_wide <= {24'b0, boundary};
-            mask <= (boundary_wide << size) - 1;
-            
-            // Apply wrapping formula: (addr & ~mask) | ((addr + (1 << size)) & mask)
-            wrap_addr = (addr & ~mask) | ((addr + (1 << size)) & mask);
-        end
+    begin
+        // Determine boundary based on burst type
+        case (burst)
+            BURST_WRAP4:  boundary = 4;
+            BURST_WRAP8:  boundary = 8;
+            BURST_WRAP16: boundary = 16;
+            default:      boundary = 4;
+        endcase
+        
+        // Calculate mask for wrapping
+        boundary_wide = {24'b0, boundary};
+        mask = (boundary_wide << size) - 1;
+        
+        // Apply wrapping formula: (addr & ~mask) | ((addr + (1 << size)) & mask)
+        wrap_addr = (addr & ~mask) | ((addr + (1 << size)) & mask);
+    end
     endfunction
 
 endmodule
