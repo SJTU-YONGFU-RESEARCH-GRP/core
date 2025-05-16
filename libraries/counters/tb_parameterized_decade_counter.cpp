@@ -64,39 +64,33 @@ int main(int argc, char** argv) {
     
     // Initial state
     dut->clk = 0;
-    dut->enable = 0;  // Disable counter
-    dut->rst_n = 1;   // Not in reset
+    dut->enable = 0;
+    dut->rst_n = 1;
     dut->eval();
     
-    // Apply asynchronous reset
-    dut->rst_n = 0;   // Assert reset
-    dut->eval();      // Let async reset take effect
-    
-    // Hold reset for a few cycles
-    for (int i = 0; i < 4; i++) {
-        dut->clk = !dut->clk;
-        dut->eval();
-    }
-    
-    // Release reset while clock is low
-    dut->clk = 0;
-    dut->rst_n = 1;   // Release reset
-    dut->eval();      // Let it propagate
-    
-    // Enable the counter
-    dut->enable = 1;
+    // Apply reset
+    dut->rst_n = 0;
     dut->eval();
     
-    // Complete the clock cycle
+    // Clock cycle while in reset
     dut->clk = 1;
     dut->eval();
     dut->clk = 0;
     dut->eval();
     
+    // Release reset and enable counter
+    dut->rst_n = 1;
+    dut->enable = 1;
+    dut->eval();
+    
     // Verify counting sequence
     bool count_correct = true;
     for (int i = 0; i < MODULO * 2; i++) {
-        // Check value at current state
+        // Rising edge
+        dut->clk = 1;
+        dut->eval();
+        
+        // Check value after clock edge
         int expected = i % MODULO;
         if ((int)dut->count != expected) {
             std::cout << "ERROR: Count failed at " << i << ", got " << (int)dut->count 
@@ -114,9 +108,7 @@ int main(int argc, char** argv) {
             break;
         }
         
-        // Apply clock edge for next state
-        dut->clk = 1;
-        dut->eval();
+        // Falling edge
         dut->clk = 0;
         dut->eval();
     }
