@@ -117,6 +117,7 @@ module axi_lite_master #(
                     next_state = IDLE;
             end
             
+            // Default case to handle all other possible states
             default: next_state = IDLE;
         endcase
     end
@@ -163,6 +164,18 @@ module axi_lite_master #(
                         write_done_r <= 1'b1;
                     end
                 end
+                
+                // For read states, keep write signals unchanged
+                R_ADDR, R_DATA: begin
+                    // No change to write signals
+                end
+                
+                // Default case for all other possible states
+                default: begin
+                    awvalid <= 1'b0;
+                    wvalid <= 1'b0;
+                    bready <= 1'b0;
+                end
             endcase
         end
     end
@@ -198,6 +211,17 @@ module axi_lite_master #(
                         read_data <= rdata;
                         read_done_r <= 1'b1;
                     end
+                end
+                
+                // For write states, keep read signals unchanged
+                W_ADDR, W_DATA, W_RESP: begin
+                    // No change to read signals
+                end
+                
+                // Default case for all other possible states
+                default: begin
+                    arvalid <= 1'b0;
+                    rready <= 1'b0;
                 end
             endcase
         end

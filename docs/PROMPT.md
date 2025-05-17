@@ -19,7 +19,7 @@ Tests: X of X
   - FIFOs (50%)
 - Filters (Done)
 - Input/Output (Done)
-  - Interfaces
+  - Interfaces (75%)
 - Mathematics (Done)
 - Memory (Done)
 - Multiplication (Done)
