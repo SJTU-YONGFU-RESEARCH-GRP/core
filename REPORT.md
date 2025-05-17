@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-17 16:48:07
+Generated on: 2025-05-17 17:27:26
 
 ## Table of Contents
 
@@ -35,15 +35,15 @@ Generated on: 2025-05-17 16:48:07
 ## Summary
 
 - Total modules scanned: 137
-- Modules with missing testbenches: 5
-- Total modules tested: 1
+- Modules with missing testbenches: 4
+- Total modules tested: 2
 - Passed: 0 (0.0%)
-- Failed: 1 (100.0%)
+- Failed: 2 (100.0%)
 - Timeouts: 0
-- Total tests executed: 5
-- Total tests passed: 2 (40.0%)
-- Total runtime: 2.11 seconds
-- Average runtime per module: 2.11 seconds
+- Total tests executed: 0
+- Total tests passed: 0 (0.0%)
+- Total runtime: 0.01 seconds
+- Average runtime per module: 0.01 seconds
 
 ## Category Overview
 
@@ -58,10 +58,10 @@ Generated on: 2025-05-17 16:48:07
 | [Counters](#category-counters) | 15 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Debugging](#category-debugging) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Encoding/Decoding](#category-encoding/decoding) | 7 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Encryption](#category-encryption) | 2 | 0 | 2 | 0.0% | 0/0 | 0.01 |
 | [FIFOs](#category-fifos) | 20 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Filters](#category-filters) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 2/5 | 1.06 |
+| [Input/Output](#category-input/output) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Mathematics](#category-mathematics) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Memory](#category-memory) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -210,8 +210,14 @@ Generated on: 2025-05-17 16:48:07
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| aes_core | libraries/encryption/aes_core.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
-| true_random_generator | libraries/encryption/true_random_generator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| aes_core | libraries/encryption/aes_core.v | ✗ FAIL | N/A | 0.01 | Process exited with code 2
+
+Error output sample:
+make: *** No rule to make target 'verify_aes_core'.  Stop. |
+| true_random_generator | libraries/encryption/true_random_generator.v | ✗ FAIL | N/A | 0.01 | Process exited with code 2
+
+Error output sample:
+make: *** No rule to make target 'verify_true_random_generator'.  Stop. |
 
 <a name='category-fifos'></a>
 ### FIFOs
@@ -258,11 +264,8 @@ Generated on: 2025-05-17 16:48:07
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| dma_controller | libraries/io/dma_controller.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | 2/5 | 2.11 | 2 of 5
-
-Error output sample:
-make: *** [Makefile:106: verify_gpio_controller] Error 1 |
+| dma_controller | libraries/io/dma_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| gpio_controller | libraries/io/gpio_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-interfaces'></a>
 ### Interfaces

@@ -6,27 +6,27 @@ can you standardize the output information from the testbench (cpp) files? For t
 Result: Pass|Fail
 Tests: X of X 
 
-- Adders Done
-- Arbitration Done
-- Arithmetic Done
-- CORDIC Done
-- Clock Domain Crossing Done
-- Communication Done
-- Counters Done
-- Debugging Done
-- Encoding/Decoding Done
-  - Encryption
-  - FIFOs
-- Filters Done
-  - Input/Output
+- Adders (Done)
+- Arbitration (Done)
+- Arithmetic (Done)
+- CORDIC (Done)
+- Clock Domain Crossing (Done)
+- Communication (Done)
+- Counters (Done)
+- Debugging (Done)
+- Encoding/Decoding (Done)
+  - Encryption (50%)
+  - FIFOs (50%)
+- Filters (Done)
+- Input/Output (Done)
   - Interfaces
-- Mathematics Done
-- Memory Done
-- Multiplication Done
-  - Network on Chip
-- Power Management Done
-  - Registers
-  - Signal Processing
-- State Machines Done
-- Testing Done
-- Voting Done
+- Mathematics (Done)
+- Memory (Done)
+- Multiplication (Done)
+  - Network on Chip (50%)
+- Power Management (Done)
+  - Registers (50%)
+  - Signal Processing (50%)
+- State Machines (Done)
+- Testing (Done)
+- Voting (Done)
