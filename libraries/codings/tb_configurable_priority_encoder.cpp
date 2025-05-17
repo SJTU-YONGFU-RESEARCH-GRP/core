@@ -151,7 +151,8 @@ bool run_tests_for_width(int width) {
     test_cases.push_back({alt_pairs, static_cast<uint64_t>(highest_pair_bit), true});
     
     // Run tests
-    bool all_tests_passed = true;
+    int total_tests = test_cases.size();
+    int tests_passed = 0;
     
     for (size_t t = 0; t < test_cases.size(); t++) {
         const auto& test = test_cases[t];
@@ -196,18 +197,23 @@ bool run_tests_for_width(int width) {
         
         if (test_ok) {
             std::cout << "PASS\n";
+            tests_passed++;
         } else {
             std::cout << "FAIL\n";
-            all_tests_passed = false;
         }
         std::cout << std::endl;
     }
+    
+    // Summary for this width
+    std::cout << "==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (tests_passed == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Cleanup
     tfp->close();
     encoder->final();
     
-    return all_tests_passed;
+    return (tests_passed == total_tests);
 }
 
 int main(int argc, char** argv) {
@@ -230,8 +236,8 @@ int main(int argc, char** argv) {
         }
     }
     
-    // Print overall result
-    std::cout << "\n==== Test Summary ====" << std::endl;
+    // Print overall summary
+    std::cout << "==== Test Summary ====" << std::endl;
     std::cout << "Result: " << (all_tests_passed ? "Pass" : "Fail") << std::endl;
     std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     

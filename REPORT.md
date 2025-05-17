@@ -1,6 +1,6 @@
 # RTL Verification Report
 
-Generated on: 2025-05-17 05:03:17
+Generated on: 2025-05-17 16:48:07
 
 ## Table of Contents
 
@@ -35,15 +35,15 @@ Generated on: 2025-05-17 05:03:17
 ## Summary
 
 - Total modules scanned: 137
-- Modules with missing testbenches: 9
-- Total modules tested: 5
-- Passed: 5 (100.0%)
-- Failed: 0 (0.0%)
+- Modules with missing testbenches: 5
+- Total modules tested: 1
+- Passed: 0 (0.0%)
+- Failed: 1 (100.0%)
 - Timeouts: 0
-- Total tests executed: 26
-- Total tests passed: 26 (100.0%)
-- Total runtime: 6.76 seconds
-- Average runtime per module: 1.35 seconds
+- Total tests executed: 5
+- Total tests passed: 2 (40.0%)
+- Total runtime: 2.11 seconds
+- Average runtime per module: 2.11 seconds
 
 ## Category Overview
 
@@ -61,13 +61,13 @@ Generated on: 2025-05-17 05:03:17
 | [Encryption](#category-encryption) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [FIFOs](#category-fifos) | 20 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Filters](#category-filters) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Input/Output](#category-input/output) | 2 | 0 | 0 | 0.0% | 0/0 | 0.00 |
+| [Input/Output](#category-input/output) | 2 | 0 | 1 | 0.0% | 2/5 | 1.06 |
 | [Interfaces](#category-interfaces) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Mathematics](#category-mathematics) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Memory](#category-memory) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Multiplication](#category-multiplication) | 3 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Network on Chip](#category-network-on-chip) | 4 | 0 | 0 | 0.0% | 0/0 | 0.00 |
-| [Power Management](#category-power-management) | 5 | 5 | 0 | 100.0% | 26/26 | 1.35 |
+| [Power Management](#category-power-management) | 5 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Registers](#category-registers) | 20 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [Signal Processing](#category-signal-processing) | 9 | 0 | 0 | 0.0% | 0/0 | 0.00 |
 | [State Machines](#category-state-machines) | 1 | 0 | 0 | 0.0% | 0/0 | 0.00 |
@@ -185,8 +185,8 @@ Generated on: 2025-05-17 05:03:17
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| logic_analyzer | libraries/debug/logic_analyzer.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| performance_counter | libraries/debug/performance_counter.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
+| logic_analyzer | libraries/debug/logic_analyzer.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| performance_counter | libraries/debug/performance_counter.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-encoding/decoding'></a>
 ### Encoding/Decoding
@@ -210,8 +210,8 @@ Generated on: 2025-05-17 05:03:17
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| aes_core | libraries/encryption/aes_core.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| true_random_generator | libraries/encryption/true_random_generator.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
+| aes_core | libraries/encryption/aes_core.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| true_random_generator | libraries/encryption/true_random_generator.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-fifos'></a>
 ### FIFOs
@@ -259,7 +259,10 @@ Generated on: 2025-05-17 05:03:17
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
 | dma_controller | libraries/io/dma_controller.v | ⚠ NO TESTBENCH | 0/0 | 0.00 | No testbench available |
-| gpio_controller | libraries/io/gpio_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| gpio_controller | libraries/io/gpio_controller.v | ✗ FAIL | 2/5 | 2.11 | 2 of 5
+
+Error output sample:
+make: *** [Makefile:106: verify_gpio_controller] Error 1 |
 
 <a name='category-interfaces'></a>
 ### Interfaces
@@ -326,11 +329,11 @@ Generated on: 2025-05-17 05:03:17
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| clock_divider | libraries/power/clock_divider.v | ✓ PASS | 5/5 | 0.34 | 5 of 5 |
-| clock_gating | libraries/power/clock_gating.v | ✓ PASS | 4/4 | 1.83 | 4 of 4 |
-| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | ✓ PASS | 4/4 | 1.93 | 4 of 4 |
-| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | ✓ PASS | 10/10 | 0.67 | 10 of 10 |
-| power_domain_controller | libraries/power/power_domain_controller.v | ✓ PASS | 3/3 | 1.99 | 3 of 3 |
+| clock_divider | libraries/power/clock_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| clock_gating | libraries/power/clock_gating.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_clock_gating | libraries/power/parameterized_clock_gating.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| parameterized_freq_divider | libraries/power/parameterized_freq_divider.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
+| power_domain_controller | libraries/power/power_domain_controller.v | - NOT TESTED | 0/0 | 0.00 | Module was not tested |
 
 <a name='category-registers'></a>
 ### Registers

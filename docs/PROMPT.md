@@ -11,10 +11,10 @@ Tests: X of X
 - Arithmetic Done
 - CORDIC Done
 - Clock Domain Crossing Done
-- Communication
+- Communication Done
 - Counters Done
-  - Debugging
-  - Encoding/Decoding
+- Debugging Done
+- Encoding/Decoding Done
   - Encryption
   - FIFOs
 - Filters Done

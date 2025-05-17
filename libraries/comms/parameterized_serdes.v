@@ -96,12 +96,10 @@ module parameterized_serdes #(
     end
     
     // Output assignments
-    // For MSB_FIRST: Send bits in same order as deserializer test (7 down to 0)
-    // For LSB_FIRST: Send bits in same order as deserializer test (0 up to 7)
-    wire [$clog2(DATA_WIDTH)-1:0] bit_index = MSB_FIRST ? 
-        (DATA_WIDTH - 1 - tx_bit_counter) :  // Send in order 7,6,5,4,3,2,1,0
-        tx_bit_counter;                      // Send in order 0,1,2,3,4,5,6,7
-    assign serial_out = tx_shift_reg[bit_index];
+    // CORRECTED BIT_INDEX CALCULATION
+    // The testbench expects MSB_FIRST to output bits starting from MSB (bit 7) to LSB (bit 0)
+    // For LSB_FIRST, it expects bits starting from LSB (bit 0) to MSB (bit 7)
+    assign serial_out = MSB_FIRST ? tx_shift_reg[DATA_WIDTH-1-tx_bit_counter] : tx_shift_reg[tx_bit_counter];
     assign tx_done = tx_done_reg;
 
 endmodule 

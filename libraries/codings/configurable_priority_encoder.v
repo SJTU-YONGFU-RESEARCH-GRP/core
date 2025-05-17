@@ -16,7 +16,7 @@ module configurable_priority_encoder #(
         // Priority encoding logic (MSB has highest priority)
         for (i = INPUT_WIDTH-1; i >= 0; i = i - 1) begin
             if (request[i]) begin
-                grant_index = OUTPUT_WIDTH'(i);  // Properly size the integer
+                grant_index = i;  // Assign index directly (fits output width)
                 valid = 1'b1;
                 // Break out of the loop using a manual approach
                 i = -1;  // Force loop exit (simulator-compatible alternative to 'break')
