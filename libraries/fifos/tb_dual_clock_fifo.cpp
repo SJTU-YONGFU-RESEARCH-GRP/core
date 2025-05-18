@@ -7,6 +7,7 @@
 #include <queue>
 #include <random>
 #include <bitset>
+#include <functional>
 
 // Clock generation functions
 void wr_clock_tick(std::unique_ptr<Vdual_clock_fifo>& fifo, VerilatedVcdC* tfp, vluint64_t& sim_time) {
@@ -267,12 +268,45 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
+    
+    std::cout << "Starting Dual-Clock FIFO test..." << std::endl;
+    
+    // Wrapper function to run tests with error tracking
+    auto run_test = [&](const std::function<void(std::unique_ptr<Vdual_clock_fifo>&, VerilatedVcdC*, vluint64_t&)>& test_func) {
+        total_tests++;
+        bool test_passed = true;
+        
+        try {
+            test_func(fifo, tfp.get(), sim_time);
+        } catch (const std::exception& e) {
+            std::cout << "Test failed with exception: " << e.what() << std::endl;
+            test_passed = false;
+        }
+        
+        if (test_passed) {
+            passed_tests++;
+            std::cout << "  PASS: Dual-Clock FIFO Test" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Dual-Clock FIFO Test" << std::endl;
+        }
+    };
+    
     // Run tests
-    test_dual_clock_fifo(fifo, tfp.get(), sim_time);
+    run_test(test_dual_clock_fifo);
     
     // Cleanup
     tfp->close();
     fifo->final();
     
-    return 0;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+    
+    return global_test_pass ? 0 : 1;
 } 

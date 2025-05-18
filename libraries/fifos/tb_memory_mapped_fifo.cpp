@@ -134,6 +134,13 @@ int main(int argc, char** argv) {
     dut->ext_wr_en = 0;
     dut->ext_wr_data = 0;
     
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
+    
+    std::cout << "Starting Memory-Mapped FIFO test..." << std::endl;
+    
     // Apply reset
     for (int i = 0; i < 5; i++) {
         clock_cycle(dut, m_trace);
@@ -143,116 +150,177 @@ int main(int argc, char** argv) {
         clock_cycle(dut, m_trace);
     }
     
-    std::cout << "Starting Memory-Mapped FIFO test..." << std::endl;
-    
     // Test 1: Memory-mapped interface
-    std::cout << "Test 1: Memory-mapped interface" << std::endl;
-    
-    // Check initial status
-    uint32_t status = mem_read(dut, m_trace, FIFO_STATUS_REG);
-    std::cout << "Initial status: 0x" << std::hex << status << std::dec << std::endl;
-    std::cout << "  Empty: " << ((status >> STATUS_EMPTY_BIT) & 1) << std::endl;
-    std::cout << "  Full: " << ((status >> STATUS_FULL_BIT) & 1) << std::endl;
-    
-    // Write data using memory-mapped interface
-    std::vector<uint32_t> test_data;
-    for (int i = 1; i <= 8; i++) {
-        uint32_t data = i * 0x100 + i;
-        test_data.push_back(data);
+    {
+        total_tests++;
+        std::cout << "Test 1: Memory-mapped interface" << std::endl;
+        bool test_pass = true;
         
-        std::cout << "Writing data via memory-mapped interface: 0x" << std::hex << data << std::dec << std::endl;
-        mem_write(dut, m_trace, FIFO_DATA_REG, data);
-    }
-    
-    // Check FIFO count
-    uint32_t count = mem_read(dut, m_trace, FIFO_COUNT_REG);
-    std::cout << "FIFO count after writes: " << (int)count << std::endl;
-    
-    // Read data using memory-mapped interface
-    std::cout << "\nReading data via memory-mapped interface:" << std::endl;
-    for (int i = 0; i < 4; i++) {
-        uint32_t data = mem_read(dut, m_trace, FIFO_DATA_REG);
-        std::cout << "Read data: 0x" << std::hex << data << std::dec;
-        std::cout << " (Expected: 0x" << std::hex << test_data[i] << std::dec << ")" << std::endl;
-    }
-    
-    // Check FIFO count again
-    count = mem_read(dut, m_trace, FIFO_COUNT_REG);
-    std::cout << "FIFO count after reads: " << (int)count << std::endl;
-    
-    // Test 2: External interface
-    std::cout << "\nTest 2: External interface" << std::endl;
-    
-    // Read remaining data using external interface
-    std::cout << "Reading remaining data via external interface:" << std::endl;
-    for (int i = 4; i < 8; i++) {
-        uint32_t data;
-        if (ext_read_data(dut, m_trace, data)) {
+        // Check initial status
+        uint32_t status = mem_read(dut, m_trace, FIFO_STATUS_REG);
+        std::cout << "Initial status: 0x" << std::hex << status << std::dec << std::endl;
+        std::cout << "  Empty: " << ((status >> STATUS_EMPTY_BIT) & 1) << std::endl;
+        std::cout << "  Full: " << ((status >> STATUS_FULL_BIT) & 1) << std::endl;
+        
+        // Write data using memory-mapped interface
+        std::vector<uint32_t> test_data;
+        for (int i = 1; i <= 8; i++) {
+            uint32_t data = i * 0x100 + i;
+            test_data.push_back(data);
+            
+            std::cout << "Writing data via memory-mapped interface: 0x" << std::hex << data << std::dec << std::endl;
+            mem_write(dut, m_trace, FIFO_DATA_REG, data);
+        }
+        
+        // Check FIFO count
+        uint32_t count = mem_read(dut, m_trace, FIFO_COUNT_REG);
+        std::cout << "FIFO count after writes: " << (int)count << std::endl;
+        
+        // Read data using memory-mapped interface
+        std::cout << "\nReading data via memory-mapped interface:" << std::endl;
+        for (int i = 0; i < 4; i++) {
+            uint32_t data = mem_read(dut, m_trace, FIFO_DATA_REG);
             std::cout << "Read data: 0x" << std::hex << data << std::dec;
             std::cout << " (Expected: 0x" << std::hex << test_data[i] << std::dec << ")" << std::endl;
-        } else {
-            std::cout << "Failed to read data (FIFO empty)" << std::endl;
+            
+            if (data != test_data[i]) {
+                test_pass = false;
+            }
         }
-    }
-    
-    // Write data using external interface
-    std::cout << "\nWriting data via external interface:" << std::endl;
-    for (int i = 0xA; i < 0xA + 4; i++) {
-        uint32_t data = i * 0x1000 + i;
         
-        if (ext_write_data(dut, m_trace, data)) {
-            std::cout << "Wrote data: 0x" << std::hex << data << std::dec << std::endl;
+        // Check FIFO count again
+        count = mem_read(dut, m_trace, FIFO_COUNT_REG);
+        std::cout << "FIFO count after reads: " << (int)count << std::endl;
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Memory-mapped interface" << std::endl;
         } else {
-            std::cout << "Failed to write data (FIFO full)" << std::endl;
+            global_test_pass = false;
+            std::cout << "  FAIL: Memory-mapped interface" << std::endl;
         }
     }
     
-    // Read data using memory-mapped interface
-    std::cout << "\nReading data via memory-mapped interface:" << std::endl;
-    for (int i = 0; i < 4; i++) {
-        uint32_t data = mem_read(dut, m_trace, FIFO_DATA_REG);
-        std::cout << "Read data: 0x" << std::hex << data << std::dec << std::endl;
+    // Test 2: External interface
+    {
+        total_tests++;
+        std::cout << "\nTest 2: External interface" << std::endl;
+        bool test_pass = true;
+        
+        // Read remaining data using external interface
+        std::cout << "Reading remaining data via external interface:" << std::endl;
+        std::vector<uint32_t> test_data = {0x505, 0x606, 0x707, 0x808};
+        for (int i = 0; i < 4; i++) {
+            uint32_t data;
+            if (ext_read_data(dut, m_trace, data)) {
+                std::cout << "Read data: 0x" << std::hex << data << std::dec;
+                std::cout << " (Expected: 0x" << std::hex << test_data[i] << std::dec << ")" << std::endl;
+                
+                if (data != test_data[i]) {
+                    test_pass = false;
+                }
+            } else {
+                std::cout << "Failed to read data (FIFO empty)" << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        // Write data using external interface
+        std::cout << "\nWriting data via external interface:" << std::endl;
+        std::vector<uint32_t> write_data = {0xA00A, 0xB00B, 0xC00C, 0xD00D};
+        for (uint32_t data : write_data) {
+            if (ext_write_data(dut, m_trace, data)) {
+                std::cout << "Wrote data: 0x" << std::hex << data << std::dec << std::endl;
+            } else {
+                std::cout << "Failed to write data (FIFO full)" << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        // Read data using memory-mapped interface
+        std::cout << "\nReading data via memory-mapped interface:" << std::endl;
+        for (uint32_t expected : write_data) {
+            uint32_t data = mem_read(dut, m_trace, FIFO_DATA_REG);
+            std::cout << "Read data: 0x" << std::hex << data << std::dec << std::endl;
+            
+            if (data != expected) {
+                test_pass = false;
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: External interface" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: External interface" << std::endl;
+        }
     }
     
     // Test 3: Control operations
-    std::cout << "\nTest 3: Control operations" << std::endl;
-    
-    // Write some data
-    for (int i = 0; i < 4; i++) {
-        mem_write(dut, m_trace, FIFO_DATA_REG, 0xDEADBEEF + i);
+    {
+        total_tests++;
+        std::cout << "\nTest 3: Control operations" << std::endl;
+        bool test_pass = true;
+        
+        // Write some data
+        for (int i = 0; i < 4; i++) {
+            mem_write(dut, m_trace, FIFO_DATA_REG, 0xDEADBEEF + i);
+        }
+        
+        // Check count
+        uint32_t count = mem_read(dut, m_trace, FIFO_COUNT_REG);
+        std::cout << "FIFO count before flush: " << (int)count << std::endl;
+        
+        // Flush the FIFO
+        std::cout << "Flushing FIFO..." << std::endl;
+        mem_write(dut, m_trace, FIFO_CONTROL_REG, (1 << CTRL_FLUSH_BIT));
+        
+        // Check count again
+        count = mem_read(dut, m_trace, FIFO_COUNT_REG);
+        std::cout << "FIFO count after flush: " << (int)count << std::endl;
+        
+        if (count != 0) {
+            test_pass = false;
+        }
+        
+        // Write more data
+        for (int i = 0; i < 4; i++) {
+            mem_write(dut, m_trace, FIFO_DATA_REG, 0xCAFEBABE + i);
+        }
+        
+        // Reset the FIFO
+        std::cout << "Resetting FIFO..." << std::endl;
+        mem_write(dut, m_trace, FIFO_CONTROL_REG, (1 << CTRL_RESET_BIT));
+        
+        // Check count again
+        count = mem_read(dut, m_trace, FIFO_COUNT_REG);
+        std::cout << "FIFO count after reset: " << (int)count << std::endl;
+        
+        if (count != 0) {
+            test_pass = false;
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Control operations" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Control operations" << std::endl;
+        }
     }
     
-    // Check count
-    count = mem_read(dut, m_trace, FIFO_COUNT_REG);
-    std::cout << "FIFO count before flush: " << (int)count << std::endl;
-    
-    // Flush the FIFO
-    std::cout << "Flushing FIFO..." << std::endl;
-    mem_write(dut, m_trace, FIFO_CONTROL_REG, (1 << CTRL_FLUSH_BIT));
-    
-    // Check count again
-    count = mem_read(dut, m_trace, FIFO_COUNT_REG);
-    std::cout << "FIFO count after flush: " << (int)count << std::endl;
-    
-    // Write more data
-    for (int i = 0; i < 4; i++) {
-        mem_write(dut, m_trace, FIFO_DATA_REG, 0xCAFEBABE + i);
-    }
-    
-    // Reset the FIFO
-    std::cout << "Resetting FIFO..." << std::endl;
-    mem_write(dut, m_trace, FIFO_CONTROL_REG, (1 << CTRL_RESET_BIT));
-    
-    // Check count again
-    count = mem_read(dut, m_trace, FIFO_COUNT_REG);
-    std::cout << "FIFO count after reset: " << (int)count << std::endl;
-    
-    std::cout << "\nMemory-Mapped FIFO test completed!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return global_test_pass ? 0 : 1;
 } 

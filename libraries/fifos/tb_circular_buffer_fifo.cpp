@@ -101,115 +101,264 @@ int main(int argc, char** argv) {
         clock_cycle(dut, m_trace);
     }
     
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
+    
     std::cout << "Starting Circular Buffer FIFO test..." << std::endl;
     
     // Test 1: Fill FIFO
-    std::cout << "Test 1: Fill FIFO" << std::endl;
-    std::vector<uint8_t> test_data;
-    for (int i = 1; i <= FIFO_DEPTH; i++) {
-        uint8_t data = i;  // Use sequential data for easier debugging
-        test_data.push_back(data);
-        if (write_to_fifo(dut, m_trace, data)) {
-            std::cout << "Wrote data: " << (int)data << std::endl;
+    {
+        std::cout << "Test 1: Fill FIFO" << std::endl;
+        total_tests++;
+        bool test_pass = true;
+        std::vector<uint8_t> test_data;
+        
+        for (int i = 1; i <= FIFO_DEPTH; i++) {
+            uint8_t data = i;
+            test_data.push_back(data);
+            
+            if (!write_to_fifo(dut, m_trace, data)) {
+                std::cout << "Failed to write data: " << (int)data << " (FIFO full)" << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Fill FIFO" << std::endl;
         } else {
-            std::cout << "Failed to write data: " << (int)data << " (FIFO full)" << std::endl;
+            global_test_pass = false;
+            std::cout << "  FAIL: Fill FIFO" << std::endl;
         }
     }
     
     // Test 2: Peek operations
-    std::cout << "Test 2: Peek operations" << std::endl;
-    uint8_t peek_data;
-    
-    // Peek at the first element
-    if (peek_from_fifo(dut, m_trace, 0, peek_data)) {
-        std::cout << "Peeked at index 0: " << (int)peek_data;
-        std::cout << " (Expected: " << (int)test_data[0] << ")" << std::endl;
-    }
-    
-    // Peek at the middle element
-    if (peek_from_fifo(dut, m_trace, FIFO_DEPTH/2, peek_data)) {
-        std::cout << "Peeked at index " << FIFO_DEPTH/2 << ": " << (int)peek_data;
-        std::cout << " (Expected: " << (int)test_data[FIFO_DEPTH/2] << ")" << std::endl;
-    }
-    
-    // Peek at the last element
-    if (peek_from_fifo(dut, m_trace, FIFO_DEPTH-1, peek_data)) {
-        std::cout << "Peeked at index " << FIFO_DEPTH-1 << ": " << (int)peek_data;
-        std::cout << " (Expected: " << (int)test_data[FIFO_DEPTH-1] << ")" << std::endl;
+    {
+        std::cout << "Test 2: Peek operations" << std::endl;
+        total_tests++;
+        bool test_pass = true;
+        std::vector<uint8_t> test_data;
+        
+        // Populate test_data with initial fill
+        for (int i = 1; i <= FIFO_DEPTH; i++) {
+            test_data.push_back(i);
+        }
+        
+        // Peek at various indices
+        uint8_t peek_data;
+        int peek_indices[] = {0, FIFO_DEPTH/2, FIFO_DEPTH-1};
+        
+        for (int idx : peek_indices) {
+            if (!peek_from_fifo(dut, m_trace, idx, peek_data)) {
+                std::cout << "Failed to peek at index " << idx << std::endl;
+                test_pass = false;
+                break;
+            }
+            
+            if (peek_data != test_data[idx]) {
+                std::cout << "Peek mismatch at index " << idx 
+                          << ": Got " << (int)peek_data 
+                          << ", Expected " << (int)test_data[idx] << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Peek operations" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Peek operations" << std::endl;
+        }
     }
     
     // Test 3: Read half of the FIFO
-    std::cout << "Test 3: Read half of the FIFO" << std::endl;
-    for (int i = 0; i < FIFO_DEPTH/2; i++) {
-        uint8_t data;
-        if (read_from_fifo(dut, m_trace, data)) {
-            std::cout << "Read data: " << (int)data;
-            std::cout << " (Expected: " << (int)test_data[i] << ")" << std::endl;
+    {
+        std::cout << "Test 3: Read half of the FIFO" << std::endl;
+        total_tests++;
+        bool test_pass = true;
+        std::vector<uint8_t> test_data;
+        
+        // Populate test_data with initial fill
+        for (int i = 1; i <= FIFO_DEPTH; i++) {
+            test_data.push_back(i);
+        }
+        
+        for (int i = 0; i < FIFO_DEPTH/2; i++) {
+            uint8_t data;
+            if (!read_from_fifo(dut, m_trace, data)) {
+                std::cout << "Failed to read data at index " << i << std::endl;
+                test_pass = false;
+                break;
+            }
+            
+            if (data != test_data[i]) {
+                std::cout << "Read mismatch at index " << i 
+                          << ": Got " << (int)data 
+                          << ", Expected " << (int)test_data[i] << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Read half of the FIFO" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Read half of the FIFO" << std::endl;
         }
     }
     
-    // Test 4: Write more data to wrap around
-    std::cout << "Test 4: Write more data to wrap around" << std::endl;
-    for (int i = 0; i < FIFO_DEPTH/2; i++) {
-        uint8_t data = 100 + i;
-        test_data.push_back(data);
-        if (write_to_fifo(dut, m_trace, data)) {
-            std::cout << "Wrote data: " << (int)data << std::endl;
+    // Test 4 & 5: Write more data to wrap around and Peek after wrap-around
+    {
+        std::cout << "Test 4 & 5: Wrap-around and Peek" << std::endl;
+        total_tests++;
+        bool test_pass = true;
+        // Build expected data: remaining old entries (9..FIFO_DEPTH) then wrap-around data (100..)
+        std::vector<uint8_t> expected_data;
+        for (int i = FIFO_DEPTH/2 + 1; i <= FIFO_DEPTH; i++) {
+            expected_data.push_back((uint8_t)i);
         }
-    }
-    
-    // Test 5: Peek after wrap-around
-    std::cout << "Test 5: Peek after wrap-around" << std::endl;
-    
-    // Peek at various indices
-    for (int i = 0; i < FIFO_DEPTH; i += FIFO_DEPTH/4) {
-        if (peek_from_fifo(dut, m_trace, i, peek_data)) {
-            std::cout << "Peeked at index " << i << ": " << (int)peek_data;
-            std::cout << " (Expected: " << (int)test_data[FIFO_DEPTH/2 + i] << ")" << std::endl;
+ 
+        // Write wrap-around data and append to expected data
+        for (int i = 0; i < FIFO_DEPTH/2; i++) {
+            uint8_t data = 100 + i;
+            expected_data.push_back(data);
+             
+            if (!write_to_fifo(dut, m_trace, data)) {
+                std::cout << "Failed to write wrap-around data: " << (int)data << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        // Peek after wrap-around
+        int peek_indices[] = {0, 4, 8, 12};
+        for (int idx : peek_indices) {
+            uint8_t peek_data;
+            if (!peek_from_fifo(dut, m_trace, idx, peek_data)) {
+                std::cout << "Failed to peek at index " << idx << std::endl;
+                test_pass = false;
+                break;
+            }
+            
+            if (peek_data != expected_data[idx]) {
+                std::cout << "Peek mismatch at index " << idx \
+                          << ": Got " << (int)peek_data \
+                          << ", Expected " << (int)expected_data[idx] << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Wrap-around and Peek" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Wrap-around and Peek" << std::endl;
         }
     }
     
     // Test 6: Read all remaining data
-    std::cout << "Test 6: Read all remaining data" << std::endl;
-    for (int i = 0; i < FIFO_DEPTH; i++) {
-        uint8_t data;
-        if (read_from_fifo(dut, m_trace, data)) {
-            std::cout << "Read data: " << (int)data;
-            std::cout << " (Expected: " << (int)test_data[FIFO_DEPTH/2 + i] << ")" << std::endl;
+    {
+        std::cout << "Test 6: Read all remaining data" << std::endl;
+        total_tests++;
+        bool test_pass = true;
+        std::vector<uint8_t> test_data;
+        
+        // Populate test_data with remaining data
+        for (int i = 9; i <= 16; i++) {
+            test_data.push_back(i);
+        }
+        for (int i = 100; i < 108; i++) {
+            test_data.push_back(i);
+        }
+        
+        for (size_t i = 0; i < test_data.size(); i++) {
+            uint8_t data;
+            if (!read_from_fifo(dut, m_trace, data)) {
+                std::cout << "Failed to read data at index " << i << std::endl;
+                test_pass = false;
+                break;
+            }
+            
+            if (data != test_data[i]) {
+                std::cout << "Read mismatch at index " << i 
+                          << ": Got " << (int)data 
+                          << ", Expected " << (int)test_data[i] << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Read all remaining data" << std::endl;
         } else {
-            std::cout << "Failed to read data (FIFO empty)" << std::endl;
-            break;
+            global_test_pass = false;
+            std::cout << "  FAIL: Read all remaining data" << std::endl;
         }
     }
     
     // Test 7: Test almost_full and almost_empty flags
-    std::cout << "Test 7: Test almost_full and almost_empty flags" << std::endl;
-    
-    // Fill FIFO to almost_full
-    for (int i = 0; i < FIFO_DEPTH - 3; i++) {
-        write_to_fifo(dut, m_trace, i);
+    {
+        std::cout << "Test 7: Test almost_full and almost_empty flags" << std::endl;
+        total_tests++;
+        bool test_pass = true;
+        
+        // Fill FIFO to almost_full
+        for (int i = 0; i < FIFO_DEPTH - 3; i++) {
+            if (!write_to_fifo(dut, m_trace, i)) {
+                std::cout << "Failed to write data for almost_full test" << std::endl;
+                test_pass = false;
+                break;
+            }
+        }
+        
+        // Verify almost_full and almost_empty states
+        if (test_pass) {
+            // Verify FIFO is not full or empty
+            test_pass = (dut->fifo_count == FIFO_DEPTH - 3) && 
+                        (dut->almost_full == 0) && 
+                        (dut->almost_empty == 0);
+        }
+        
+        // Read until almost_empty
+        if (test_pass) {
+            while (dut->fifo_count > 3) {
+                uint8_t data;
+                if (!read_from_fifo(dut, m_trace, data)) {
+                    std::cout << "Failed to read data for almost_empty test" << std::endl;
+                    test_pass = false;
+                    break;
+                }
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Almost full and almost empty flags" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Almost full and almost empty flags" << std::endl;
+        }
     }
     
-    std::cout << "FIFO count: " << (int)dut->fifo_count << std::endl;
-    std::cout << "almost_full: " << (int)dut->almost_full << std::endl;
-    std::cout << "almost_empty: " << (int)dut->almost_empty << std::endl;
-    
-    // Read until almost_empty
-    while (dut->fifo_count > 3) {
-        uint8_t data;
-        read_from_fifo(dut, m_trace, data);
-    }
-    
-    std::cout << "FIFO count: " << (int)dut->fifo_count << std::endl;
-    std::cout << "almost_full: " << (int)dut->almost_full << std::endl;
-    std::cout << "almost_empty: " << (int)dut->almost_empty << std::endl;
-    
-    std::cout << "Circular Buffer FIFO test completed successfully!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return global_test_pass ? 0 : 1;
 } 

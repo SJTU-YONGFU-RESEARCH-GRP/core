@@ -182,11 +182,11 @@ if (add_result[MANT_WIDTH+3]) begin
     // Carry occurred, shift right and increment exponent
     final_mant <= add_result[MANT_WIDTH+2:3];
     final_exp <= result_exp_stage2 + 1;
-} else if (add_result[MANT_WIDTH+2] == 0) begin
+end else if (add_result[MANT_WIDTH+2] == 0) begin
     // Normalize: shift left and decrement exponent
     final_exp <= result_exp_stage2 - leading_zeros;
     final_mant <= add_result[MANT_WIDTH+1:2] << leading_zeros;
-}
+end
 ```
 
 ## Performance Comparison

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
+#include <cstdio>
 #include "Vcache_fifo.h"
 
 #define MAX_SIM_TIME 1000
@@ -59,8 +60,8 @@ void read_data_by_tag(Vcache_fifo *dut, VerilatedVcdC *m_trace, uint8_t tag, uin
 
 // Format hit ratio as percentage string
 std::string formatHitRatio(uint32_t ratio) {
-    char buffer[10];
-    sprintf(buffer, "%d.%02d%%", ratio / 100, ratio % 100);
+    char buffer[16];
+    snprintf(buffer, sizeof(buffer), "%u.%02u%%", ratio / 100, ratio % 100);
     return std::string(buffer);
 }
 
@@ -95,142 +96,150 @@ int main(int argc, char** argv) {
         clock_cycle(dut, m_trace);
     }
     
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
+    
     std::cout << "Starting Cache FIFO test..." << std::endl;
     
     // Create a map to store tag->data pairs
     std::unordered_map<uint8_t, uint32_t> tag_data_map;
     
     // Test 1: Basic write and read operations with different tags
-    std::cout << "Test 1: Basic write and read operations with different tags" << std::endl;
-    
-    // Write several items with different tags
-    for (int i = 1; i <= 8; i++) {
-        uint8_t tag = i;
-        uint32_t data = i * 0x1000 + i;
-        bool success;
+    {
+        std::cout << "Test 1: Basic write and read operations with different tags" << std::endl;
+        total_tests++;
+        bool test_pass = true;
         
-        write_data(dut, m_trace, data, tag, success);
-        
-        if (success) {
-            tag_data_map[tag] = data;
-            std::cout << "Wrote data: 0x" << std::hex << data << std::dec
-                     << " with tag: " << (int)tag 
-                     << " (data_count=" << (int)dut->data_count << ")" << std::endl;
-        }
-    }
-    
-    // Read the data back in a different order to test cache behavior
-    std::cout << "\nReading data in different order:" << std::endl;
-    
-    // First read in sequential order to fill cache
-    for (int tag = 1; tag <= 4; tag++) {
-        uint32_t data;
-        bool valid, hit;
-        
-        read_data_by_tag(dut, m_trace, tag, data, valid, hit);
-        
-        std::cout << "Read tag " << tag << ": data=0x" << std::hex << data << std::dec
-                 << " (Expected: 0x" << std::hex << tag_data_map[tag] << std::dec << ")"
-                 << " (Valid: " << valid << ", Hit: " << hit << ")"
-                 << " (Cache stats: hits=" << dut->cache_hits 
-                 << ", misses=" << dut->cache_misses
-                 << ", ratio=" << formatHitRatio(dut->hit_ratio) << ")" << std::endl;
-    }
-    
-    // Then read the same data again to test cache hits
-    std::cout << "\nReading same data again to test cache hits:" << std::endl;
-    for (int tag = 1; tag <= 4; tag++) {
-        uint32_t data;
-        bool valid, hit;
-        
-        read_data_by_tag(dut, m_trace, tag, data, valid, hit);
-        
-        std::cout << "Read tag " << tag << " again: data=0x" << std::hex << data << std::dec
-                 << " (Expected cache hit: " << (hit ? "YES" : "NO") << ")"
-                 << " (Cache stats: hits=" << dut->cache_hits 
-                 << ", misses=" << dut->cache_misses
-                 << ", ratio=" << formatHitRatio(dut->hit_ratio) << ")" << std::endl;
-    }
-    
-    // Read tags that should cause cache eviction
-    std::cout << "\nReading data that causes cache eviction:" << std::endl;
-    for (int tag = 5; tag <= 8; tag++) {
-        uint32_t data;
-        bool valid, hit;
-        
-        read_data_by_tag(dut, m_trace, tag, data, valid, hit);
-        
-        std::cout << "Read tag " << tag << ": data=0x" << std::hex << data << std::dec
-                 << " (Expected: 0x" << std::hex << tag_data_map[tag] << std::dec << ")"
-                 << " (Valid: " << valid << ", Hit: " << hit << ")"
-                 << " (Cache stats: hits=" << dut->cache_hits 
-                 << ", misses=" << dut->cache_misses
-                 << ", ratio=" << formatHitRatio(dut->hit_ratio) << ")" << std::endl;
-    }
-    
-    // Test 2: Clear statistics and test LRU eviction policy
-    std::cout << "\nTest 2: Clear statistics and test LRU eviction policy" << std::endl;
-    
-    // Clear statistics
-    dut->clear_stats = 1;
-    clock_cycle(dut, m_trace);
-    dut->clear_stats = 0;
-    clock_cycle(dut, m_trace);
-    
-    std::cout << "After clearing stats: hits=" << dut->cache_hits 
-              << ", misses=" << dut->cache_misses
-              << ", ratio=" << formatHitRatio(dut->hit_ratio) << std::endl;
-    
-    // Test the LRU eviction policy by accessing specific tags in particular order
-    std::cout << "\nTest LRU policy with specific access pattern:" << std::endl;
-    
-    // First read some tags to fill the cache
-    uint8_t access_sequence[] = {10, 20, 30, 40, 10, 20, 50, 60, 10, 30};
-    
-    // Write these tags with data
-    for (uint8_t tag : access_sequence) {
-        if (tag_data_map.find(tag) == tag_data_map.end()) {
-            uint32_t data = tag * 0x1000 + tag;
+        // Write several items with different tags
+        for (int i = 1; i <= 8; i++) {
+            uint8_t tag = i;
+            uint32_t data = i * 0x1000 + i;
             bool success;
             
             write_data(dut, m_trace, data, tag, success);
             
-            if (success) {
-                tag_data_map[tag] = data;
-                std::cout << "Wrote data: 0x" << std::hex << data << std::dec
-                         << " with tag: " << (int)tag << std::endl;
+            if (!success) {
+                test_pass = false;
+                break;
             }
+            
+            tag_data_map[tag] = data;
+        }
+        
+        // Read and verify data
+        if (test_pass) {
+            for (int tag = 1; tag <= 8; tag++) {
+                uint32_t data;
+                bool valid, hit;
+                
+                read_data_by_tag(dut, m_trace, tag, data, valid, hit);
+                
+                if (!valid || data != tag_data_map[tag]) {
+                    test_pass = false;
+                    break;
+                }
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Basic write and read operations" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Basic write and read operations" << std::endl;
         }
     }
     
-    // Now access in the sequence designed to test LRU
-    for (int i = 0; i < sizeof(access_sequence)/sizeof(access_sequence[0]); i++) {
-        uint8_t tag = access_sequence[i];
-        uint32_t data;
-        bool valid, hit;
+    // Test 2: Cache hit and miss behavior
+    {
+        std::cout << "\nTest 2: Cache hit and miss behavior" << std::endl;
+        // Reset cache FIFO state for Test 2
+        dut->rst_n = 0;
+        for (int i = 0; i < 5; i++) {
+            clock_cycle(dut, m_trace);
+        }
+        dut->rst_n = 1;
+        for (int i = 0; i < 2; i++) {
+            clock_cycle(dut, m_trace);
+        }
+        total_tests++;
+        bool test_pass = true;
         
-        read_data_by_tag(dut, m_trace, tag, data, valid, hit);
+        // Clear statistics
+        dut->clear_stats = 1;
+        clock_cycle(dut, m_trace);
+        dut->clear_stats = 0;
+        clock_cycle(dut, m_trace);
         
-        std::cout << "Access " << (i+1) << ": tag " << (int)tag 
-                 << ", data=0x" << std::hex << data << std::dec
-                 << " (Hit: " << hit << ")"
-                 << " (Cache stats: hits=" << dut->cache_hits 
-                 << ", misses=" << dut->cache_misses
-                 << ", ratio=" << formatHitRatio(dut->hit_ratio) << ")" << std::endl;
+        // Test the LRU eviction policy by accessing specific tags in particular order
+        uint8_t access_sequence[] = {10, 20, 30, 40, 10, 20, 50, 60, 10, 30};
+        
+        // Write these tags with data
+        for (uint8_t tag : access_sequence) {
+            if (tag_data_map.find(tag) == tag_data_map.end()) {
+                uint32_t data = tag * 0x1000 + tag;
+                bool success;
+                
+                write_data(dut, m_trace, data, tag, success);
+                
+                if (!success) {
+                    test_pass = false;
+                    break;
+                }
+                
+                tag_data_map[tag] = data;
+            }
+        }
+        
+        // Verify cache hit/miss behavior
+        if (test_pass) {
+            for (int i = 0; i < sizeof(access_sequence)/sizeof(access_sequence[0]); i++) {
+                uint8_t tag = access_sequence[i];
+                uint32_t data;
+                bool valid, hit;
+                
+                read_data_by_tag(dut, m_trace, tag, data, valid, hit);
+                
+                // Ensure data is valid and matches expected
+                if (!valid || data != tag_data_map[tag]) {
+                    test_pass = false;
+                    break;
+                }
+            }
+        }
+        
+        // Check final cache statistics
+        if (test_pass) {
+            // Adjust these thresholds based on expected behavior
+            test_pass = (dut->cache_hits > 0) && (dut->cache_misses > 0);
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Cache hit and miss behavior" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Cache hit and miss behavior" << std::endl;
+        }
+        
+        // Print final cache statistics
+        std::cout << "  Final cache statistics:" << std::endl;
+        std::cout << "    Hits:      " << dut->cache_hits << std::endl;
+        std::cout << "    Misses:    " << dut->cache_misses << std::endl;
+        std::cout << "    Hit ratio: " << formatHitRatio(dut->hit_ratio) << std::endl;
     }
     
-    // Final cache hit rate
-    std::cout << "\nFinal cache statistics:" << std::endl;
-    std::cout << "Hits:      " << dut->cache_hits << std::endl;
-    std::cout << "Misses:    " << dut->cache_misses << std::endl;
-    std::cout << "Hit ratio: " << formatHitRatio(dut->hit_ratio) << std::endl;
-    
-    std::cout << "\nCache FIFO test completed!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return global_test_pass ? 0 : 1;
 } 

@@ -132,7 +132,14 @@ bool run_test(std::unique_ptr<Vconfigurable_sync_fifo>& fifo, VerilatedVcdC* tfp
     std::cout << "  - Reads: " << reads << std::endl;
     std::cout << "  - Errors: " << errors << std::endl;
     std::cout << "  - Final fill level: " << (int)fifo->fill_level << std::endl;
-    std::cout << "  - Test " << (errors == 0 ? "PASSED" : "FAILED") << std::endl;
+    
+    // Verify final state
+    if (!fifo->empty && errors == 0) {
+        std::cout << "  WARNING: FIFO not empty at test end" << std::endl;
+        errors++;
+    }
+    
+    std::cout << "  Test " << (errors == 0 ? "PASSED" : "FAILED") << std::endl;
     std::cout << std::endl;
     
     return (errors == 0);
@@ -154,22 +161,42 @@ int main(int argc, char** argv) {
     // Initialize simulation time
     vluint64_t sim_time = 0;
     
-    // Define a simple test case
-    TestCase simple_test = {"Basic FIFO Operation", 100};
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
     
-    // Run the test and get the result
-    bool test_passed = run_test(fifo, tfp.get(), sim_time, simple_test);
+    std::cout << "Starting Configurable Sync FIFO test..." << std::endl;
+    
+    // Define test cases
+    std::vector<TestCase> test_cases = {
+        {"Basic FIFO Operation", 100}
+    };
+    
+    // Run tests
+    for (const auto& test : test_cases) {
+        total_tests++;
+        std::cout << "Test: " << test.name << std::endl;
+        
+        bool test_passed = run_test(fifo, tfp.get(), sim_time, test);
+        
+        if (test_passed) {
+            passed_tests++;
+            std::cout << "  PASS: " << test.name << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: " << test.name << std::endl;
+        }
+    }
     
     // Cleanup
     tfp->close();
     fifo->final();
     
-    // Print overall result
-    if (test_passed) {
-        std::cout << "ALL TESTS PASSED!" << std::endl;
-    } else {
-        std::cout << "TEST FAILED!" << std::endl;
-    }
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
-    return test_passed ? 0 : 1;
+    return global_test_pass ? 0 : 1;
 } 

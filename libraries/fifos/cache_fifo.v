@@ -42,6 +42,8 @@ module cache_fifo #(
     // FIFO pointers and control signals
     reg [ADDR_WIDTH:0] wr_ptr;
     reg [ADDR_WIDTH:0] rd_ptr;
+    // Index for associative tag lookup
+    reg [ADDR_WIDTH-1:0] search_idx;
     
     // Cache storage
     reg [DATA_WIDTH-1:0] cache_data [0:CACHE_SIZE-1];
@@ -57,7 +59,9 @@ module cache_fifo #(
     assign full = (fifo_count == (1<<ADDR_WIDTH));
     assign empty = (fifo_count == 0);
     assign wr_ready = !full;
-    assign rd_valid = !empty;
+    // rd_valid indicates when a read is accepted
+    reg rd_valid_reg;
+    assign rd_valid = rd_valid_reg;
     
     // Calculate hit ratio as fixed point (0-10000 for 0.00%-100.00%)
     assign hit_ratio = (cache_hits + cache_misses == 0) ? 0 :
@@ -128,7 +132,7 @@ module cache_fifo #(
     
     // FIFO state management
     always @(posedge clk or negedge rst_n) begin
-        integer i;
+        integer i, k;
         reg [$clog2(CACHE_SIZE)-1:0] cache_idx;
         reg [CACHE_SIZE-1:0] matched_tag;
         reg [$clog2(CACHE_SIZE)-1:0] hit_index;
@@ -137,6 +141,7 @@ module cache_fifo #(
             wr_ptr <= 0;
             rd_ptr <= 0;
             rd_hit <= 0;
+            rd_valid_reg <= 0;
             cache_hits <= 0;
             cache_misses <= 0;
             fifo_replacement_ptr <= 0;
@@ -149,6 +154,9 @@ module cache_fifo #(
                 cache_tags[i] <= 0;
             end
         end else begin
+            // Indicate when a read cycle is valid
+            rd_valid_reg <= rd_en;
+            
             // Clear statistics if requested
             if (clear_stats) begin
                 cache_hits <= 0;
@@ -161,7 +169,7 @@ module cache_fifo #(
             end
             
             // Handle read operation
-            if (rd_en && !empty) begin
+            if (rd_en) begin
                 // Initialize variables for tag matching
                 matched_tag = 0;
                 hit_index = 0;
@@ -192,16 +200,22 @@ module cache_fifo #(
                         end
                     end
                 end else begin
-                    // Cache miss - read from FIFO memory
-                    rd_data <= mem[rd_ptr[ADDR_WIDTH-1:0]];
+                    // Cache miss - associative read from memory
+                    // Find memory index for this tag
+                    search_idx = 0;
+                    for (k = 0; k < (1<<ADDR_WIDTH); k = k + 1) begin
+                        if (tag_mem[k] == rd_tag) begin
+                            search_idx = k;
+                        end
+                    end
+                    rd_data <= mem[search_idx];
                     cache_misses <= cache_misses + 1;
                     
                     // Add to cache
                     cache_idx = find_cache_index(cache_valid, lru_counters, fifo_replacement_ptr);
-                    
                     cache_valid[cache_idx] <= 1;
                     cache_tags[cache_idx] <= rd_tag;
-                    cache_data[cache_idx] <= mem[rd_ptr[ADDR_WIDTH-1:0]];
+                    cache_data[cache_idx] <= mem[search_idx];
                     
                     // Update replacement policy state
                     if (LRU_POLICY) begin
@@ -220,9 +234,6 @@ module cache_fifo #(
                         end
                     end
                 end
-                
-                // Advance read pointer
-                rd_ptr <= rd_ptr + 1'b1;
             end
         end
     end

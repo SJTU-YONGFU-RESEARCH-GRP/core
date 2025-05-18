@@ -30,6 +30,13 @@ int main(int argc, char** argv) {
         test_data[i] = i + 1; // Simple data pattern
     }
     
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
+    
+    std::cout << "Starting Credit-Based FIFO test..." << std::endl;
+    
     // Test variables
     int write_count = 0;
     int read_count = 0;
@@ -99,7 +106,7 @@ int main(int argc, char** argv) {
                     // Check if FIFO is full
                     if (dut->full) {
                         std::cout << "FIFO full detected at time " << sim_time 
-                                  << ", FIFO level: " << (int)dut->fifo_level 
+                                  << ", FIFO level: " << (int)dut->fifo_level
                                   << ", Written: " << write_count
                                   << ", Read: " << read_count << std::endl;
                         test_phase = 3; // Move to normal operation
@@ -149,19 +156,6 @@ int main(int argc, char** argv) {
                     }
                     read_count++;
                 }
-                
-                // Print status
-                if (sim_time % 20 == 0) {
-                    std::cout << "Time: " << sim_time
-                              << ", Phase: " << test_phase
-                              << ", Credits: " << (int)dut->credits_available
-                              << ", FIFO level: " << (int)dut->fifo_level
-                              << ", Full: " << (dut->full ? "Yes" : "No")
-                              << ", Empty: " << (dut->empty ? "Yes" : "No")
-                              << ", Written: " << write_count
-                              << ", Read: " << read_count
-                              << ", Credits returned: " << credit_return_count << std::endl;
-                }
             }
         }
         
@@ -176,7 +170,9 @@ int main(int argc, char** argv) {
     }
     
     // Final check
+    total_tests++;
     if (read_count > 0 && test_passed) {
+        passed_tests++;
         std::cout << "Test PASSED!" << std::endl;
         std::cout << "Total writes: " << write_count << std::endl;
         std::cout << "Total reads: " << read_count << std::endl;
@@ -185,13 +181,19 @@ int main(int argc, char** argv) {
         std::cout << "Final FIFO status - Full: " << (dut->full ? "Yes" : "No") 
                   << ", Empty: " << (dut->empty ? "Yes" : "No") << std::endl;
     } else {
+        global_test_pass = false;
         std::cout << "Test FAILED or no data processed!" << std::endl;
     }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return global_test_pass ? 0 : 1;
 } 

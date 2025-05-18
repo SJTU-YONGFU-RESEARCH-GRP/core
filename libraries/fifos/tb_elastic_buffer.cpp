@@ -91,6 +91,13 @@ int main(int argc, char** argv) {
     dut->rd_en = 0;
     dut->wr_data = 0;
     
+    // Test tracking variables
+    int total_tests = 0;
+    int passed_tests = 0;
+    bool global_test_pass = true;
+    
+    std::cout << "Starting Elastic Buffer test..." << std::endl;
+    
     // Apply reset to both domains
     for (int i = 0; i < 5; i++) {
         wr_clock_cycle(dut, m_trace);
@@ -111,117 +118,183 @@ int main(int argc, char** argv) {
         }
     }
     
-    std::cout << "Starting Elastic Buffer test..." << std::endl;
-    
     // Test 1: Fill buffer with write clock running
-    std::cout << "Test 1: Fill buffer with write clock running" << std::endl;
-    std::vector<uint8_t> test_data;
-    
-    for (int i = 1; i <= DEPTH; i++) {
-        uint8_t data = i;
-        test_data.push_back(data);
+    {
+        total_tests++;
+        std::cout << "Test 1: Fill buffer with write clock running" << std::endl;
+        std::vector<uint8_t> test_data;
+        bool test_pass = true;
         
-        if (write_to_fifo(dut, m_trace, data)) {
-            std::cout << "Wrote data: " << (int)data;
-            std::cout << " (wr_count=" << (int)dut->wr_count << ")" << std::endl;
-        } else {
-            std::cout << "Failed to write data: " << (int)data << " (buffer full)" << std::endl;
+        for (int i = 1; i <= DEPTH; i++) {
+            uint8_t data = i;
+            test_data.push_back(data);
+            
+            if (write_to_fifo(dut, m_trace, data)) {
+                std::cout << "Wrote data: " << (int)data;
+                std::cout << " (wr_count=" << (int)dut->wr_count << ")" << std::endl;
+            } else {
+                std::cout << "Failed to write data: " << (int)data << " (buffer full)" << std::endl;
+                test_pass = false;
+                break;
+            }
+            
+            // Run read clock (but don't read data yet)
+            for (int j = 0; j < RATE_RATIO; j++) {
+                rd_clock_cycle(dut, m_trace);
+            }
         }
         
-        // Run read clock (but don't read data yet)
-        for (int j = 0; j < RATE_RATIO; j++) {
-            rd_clock_cycle(dut, m_trace);
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Fill buffer with write clock running" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Fill buffer with write clock running" << std::endl;
         }
     }
     
     // Test 2: Read data with read clock running faster
-    std::cout << "\nTest 2: Read data with read clock running faster" << std::endl;
-    
-    for (int i = 0; i < DEPTH; i++) {
-        uint8_t data;
-        if (read_from_fifo(dut, m_trace, data)) {
-            std::cout << "Read data: " << (int)data;
-            std::cout << " (Expected: " << (int)test_data[i] << ")";
-            std::cout << " (rd_count=" << (int)dut->rd_count << ")" << std::endl;
-        } else {
-            std::cout << "Failed to read data (buffer empty)" << std::endl;
-        }
+    {
+        total_tests++;
+        std::cout << "\nTest 2: Read data with read clock running faster" << std::endl;
+        std::vector<uint8_t> test_data = {1, 2, 3, 4, 5, 6, 7};
+        bool test_pass = true;
         
-        // Run write clock (but don't write data)
-        wr_clock_cycle(dut, m_trace);
-    }
-    
-    // Test 3: Continuous operation with different clock rates
-    std::cout << "\nTest 3: Continuous operation with different clock rates" << std::endl;
-    
-    // Reset test data vector
-    test_data.clear();
-    
-    // Continuous operation for a while
-    for (int i = 0; i < 20; i++) {
-        // Write data on some cycles
-        if (i % 2 == 0) {
-            uint8_t data = 100 + i;
-            test_data.push_back(data);
-            
-            if (write_to_fifo(dut, m_trace, data)) {
-                std::cout << "Cycle " << i << ": Wrote data " << (int)data;
-                std::cout << " (wr_count=" << (int)dut->wr_count << ")" << std::endl;
+        for (int i = 0; i < DEPTH - 1; i++) {
+            uint8_t data;
+            if (read_from_fifo(dut, m_trace, data)) {
+                std::cout << "Read data: " << (int)data;
+                std::cout << " (Expected: " << (int)test_data[i] << ")";
+                std::cout << " (rd_count=" << (int)dut->rd_count << ")" << std::endl;
+                
+                if (data != test_data[i]) {
+                    test_pass = false;
+                }
+            } else {
+                std::cout << "Failed to read data (buffer empty)" << std::endl;
+                test_pass = false;
+                break;
             }
-        } else {
+            
+            // Run write clock (but don't write data)
             wr_clock_cycle(dut, m_trace);
         }
         
-        // Read data on some cycles (at faster rate)
-        for (int j = 0; j < RATE_RATIO; j++) {
-            if (!test_data.empty() && !dut->rd_empty && (i % 3 == 0 || j > 0)) {
-                uint8_t data;
-                if (read_from_fifo(dut, m_trace, data)) {
-                    std::cout << "Cycle " << i << "." << j << ": Read data " << (int)data;
-                    std::cout << " (Expected: " << (int)test_data.front() << ")";
-                    std::cout << " (rd_count=" << (int)dut->rd_count << ")" << std::endl;
-                    test_data.erase(test_data.begin());
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Read data with read clock running faster" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Read data with read clock running faster" << std::endl;
+        }
+    }
+    
+    // Test 3: Continuous operation with different clock rates
+    {
+        total_tests++;
+        std::cout << "\nTest 3: Continuous operation with different clock rates" << std::endl;
+        std::vector<uint8_t> test_data;
+        bool test_pass = true;
+        
+        // Continuous operation for a while
+        for (int i = 0; i < 20; i++) {
+            // Write data on some cycles
+            if (i % 2 == 0) {
+                uint8_t data = 100 + i;
+                test_data.push_back(data);
+                
+                if (write_to_fifo(dut, m_trace, data)) {
+                    std::cout << "Cycle " << i << ": Wrote data " << (int)data;
+                    std::cout << " (wr_count=" << (int)dut->wr_count << ")" << std::endl;
                 }
             } else {
-                rd_clock_cycle(dut, m_trace);
+                wr_clock_cycle(dut, m_trace);
             }
+            
+            // Read data on some cycles (at faster rate)
+            for (int j = 0; j < RATE_RATIO; j++) {
+                if (!test_data.empty() && !dut->rd_empty && (i % 3 == 0 || j > 0)) {
+                    uint8_t data;
+                    if (read_from_fifo(dut, m_trace, data)) {
+                        std::cout << "Cycle " << i << "." << j << ": Read data " << (int)data;
+                        std::cout << " (Expected: " << (int)test_data.front() << ")";
+                        std::cout << " (rd_count=" << (int)dut->rd_count << ")" << std::endl;
+                        
+                        if (data != test_data.front()) {
+                            test_pass = false;
+                        }
+                        test_data.erase(test_data.begin());
+                    }
+                } else {
+                    rd_clock_cycle(dut, m_trace);
+                }
+            }
+        }
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Continuous operation with different clock rates" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Continuous operation with different clock rates" << std::endl;
         }
     }
     
     // Test 4: Check almost_full and almost_empty flags
-    std::cout << "\nTest 4: Check almost_full and almost_empty flags" << std::endl;
-    
-    // Fill buffer to almost full
-    while (!dut->wr_almost_full) {
-        write_to_fifo(dut, m_trace, 200);
+    {
+        total_tests++;
+        std::cout << "\nTest 4: Check almost_full and almost_empty flags" << std::endl;
+        bool test_pass = true;
         
-        // Run read clock (but don't read)
-        for (int j = 0; j < RATE_RATIO; j++) {
-            rd_clock_cycle(dut, m_trace);
+        // Fill buffer to almost full
+        while (!dut->wr_almost_full) {
+            if (!write_to_fifo(dut, m_trace, 200)) {
+                test_pass = false;
+                break;
+            }
+            
+            // Run read clock (but don't read)
+            for (int j = 0; j < RATE_RATIO; j++) {
+                rd_clock_cycle(dut, m_trace);
+            }
+        }
+        
+        std::cout << "Buffer almost full: wr_count=" << (int)dut->wr_count 
+                  << ", wr_almost_full=" << (int)dut->wr_almost_full << std::endl;
+        
+        // Read until almost empty
+        while (!dut->rd_almost_empty) {
+            uint8_t data;
+            if (!read_from_fifo(dut, m_trace, data)) {
+                test_pass = false;
+                break;
+            }
+            
+            // Run write clock (but don't write)
+            wr_clock_cycle(dut, m_trace);
+        }
+        
+        std::cout << "Buffer almost empty: rd_count=" << (int)dut->rd_count 
+                  << ", rd_almost_empty=" << (int)dut->rd_almost_empty << std::endl;
+        
+        if (test_pass) {
+            passed_tests++;
+            std::cout << "  PASS: Check almost_full and almost_empty flags" << std::endl;
+        } else {
+            global_test_pass = false;
+            std::cout << "  FAIL: Check almost_full and almost_empty flags" << std::endl;
         }
     }
     
-    std::cout << "Buffer almost full: wr_count=" << (int)dut->wr_count 
-              << ", wr_almost_full=" << (int)dut->wr_almost_full << std::endl;
-    
-    // Read until almost empty
-    while (!dut->rd_almost_empty) {
-        uint8_t data;
-        read_from_fifo(dut, m_trace, data);
-        
-        // Run write clock (but don't write)
-        wr_clock_cycle(dut, m_trace);
-    }
-    
-    std::cout << "Buffer almost empty: rd_count=" << (int)dut->rd_count 
-              << ", rd_almost_empty=" << (int)dut->rd_almost_empty << std::endl;
-    
-    std::cout << "\nElastic Buffer test completed successfully!" << std::endl;
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (global_test_pass ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();
     delete m_trace;
     delete dut;
     
-    return 0;
+    return global_test_pass ? 0 : 1;
 } 
