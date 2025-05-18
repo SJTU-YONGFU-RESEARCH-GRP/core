@@ -30,17 +30,19 @@ module pulse_width_detector #(
             end
             // Count while signal is high
             else if (signal_in) begin
-                counter <= counter + 1'b1;
+                // Increment counter, but prevent overflow
+                counter <= (counter == {WIDTH{1'b1}}) ? counter : counter + 1'b1;
                 
                 // Check if threshold is exceeded
                 if (counter >= threshold) begin
                     pulse_detected <= 1'b1;
                 end
             end
-            // Reset counter and detection when signal goes low
-            else if (!signal_in) begin
+            // Falling edge detection
+            else if (!signal_in && signal_prev) begin
+                // Reset counter and detection when signal goes low
                 counter <= {WIDTH{1'b0}};
-                // Keep pulse_detected high until next rising edge
+                pulse_detected <= 1'b0;
             end
         end
     end

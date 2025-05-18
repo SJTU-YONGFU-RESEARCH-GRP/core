@@ -215,7 +215,7 @@ verify_codings: init
 	@echo "\nAll coding verifications completed."
 
 verify_noc: init
-	@for module in $(filter $(patsubst build_%,%,$(filter build_%router build_%switch build_%network,$(BUILD_TARGETS))),$(TESTABLE_MODULES)); do \
+	@for module in $(filter $(patsubst build_%,%,$(filter build_%router build_%switch build_%network,$(BUILD_TARGETS))),$(TESTABLE_MODULES)) network_interface_cdc; do \
 		echo "\n=== Verifying NoC: $$module ==="; \
 		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
 	done

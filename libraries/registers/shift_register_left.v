@@ -11,7 +11,7 @@ module shift_register_left #(
     output reg [WIDTH-1:0] parallel_out
 );
 
-    // Serial out is the MSB for left shift
+    // Serial out is MSB for left shift
     assign serial_out = parallel_out[WIDTH-1];
 
     always @(posedge clk or negedge rst_n) begin
@@ -22,7 +22,7 @@ module shift_register_left #(
             parallel_out <= parallel_in;
         end
         else if (en) begin
-            // Left shift
+            // Left shift - bits move left, MSB shifted out, new bit at LSB
             parallel_out <= {parallel_out[WIDTH-2:0], serial_in};
         end
     end

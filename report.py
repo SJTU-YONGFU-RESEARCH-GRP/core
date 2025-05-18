@@ -361,10 +361,22 @@ def categorize_modules(module_mappings):
     # Map each target to its category
     for target, info in module_mappings.items():
         directory = info["directory"]
+        module_name = info["module_name"]
         
         # Special case for fp_adder in root directory
-        if not directory and "fp_adder" in info["module_name"]:
+        if not directory and "fp_adder" in module_name:
             category = "Arithmetic"
+        # Special case for CDC-NOC integration
+        elif directory == "noc" and "cdc" in module_name:
+            # Add to both NOC and CDC categories
+            if "Network on Chip" not in categories:
+                categories["Network on Chip"] = []
+            categories["Network on Chip"].append(target)
+            
+            if "Clock Domain Crossing" not in categories:
+                categories["Clock Domain Crossing"] = []
+            categories["Clock Domain Crossing"].append(target)
+            continue
         else:
             category = DIRECTORY_TO_CATEGORY.get(directory, "Miscellaneous")
             

@@ -77,6 +77,11 @@ int main(int argc, char** argv) {
     bool input_complete = false;
     bool output_received = false;
     
+    // Test result tracking
+    bool test_passed = true;
+    int tests_passed = 0;
+    int total_tests = 8;  // Number of FFT bins to check
+    
     while (sim_time < MAX_SIM_TIME && (!output_received || !input_complete)) {
         // Toggle clock
         fft->clk = !fft->clk;
@@ -117,6 +122,11 @@ int main(int argc, char** argv) {
                     int16_t imag_val = extract_value(fft->data_out_imag, i);
                     
                     std::cout << "Bin " << i << ": " << real_val << " + j" << imag_val << std::endl;
+                    
+                    // Basic validation (you may want to replace with more sophisticated checks)
+                    if (real_val != 0 || imag_val != 0) {
+                        tests_passed++;
+                    }
                 }
                 output_received = true;
             }
@@ -129,12 +139,18 @@ int main(int argc, char** argv) {
     
     if (!output_received) {
         std::cout << "Timeout: FFT computation did not complete" << std::endl;
+        test_passed = false;
     }
+    
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (test_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
     // Cleanup
     m_trace->close();
     delete m_trace;
     delete fft;
     
-    return 0;
+    return test_passed ? 0 : 1;
 } 

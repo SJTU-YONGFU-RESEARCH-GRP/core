@@ -93,6 +93,8 @@ void test_configurable_lfsr(std::unique_ptr<Vconfigurable_lfsr>& lfsr, Verilated
     
     // Run the LFSR and check outputs
     bool all_passed = true;
+    int tests_passed = 0;
+    int total_tests = MAX_CYCLES;
     
     for (int i = 0; i < MAX_CYCLES; i++) {
         // Enable LFSR operation
@@ -104,6 +106,7 @@ void test_configurable_lfsr(std::unique_ptr<Vconfigurable_lfsr>& lfsr, Verilated
         
         if (expected == actual) {
             printf("%-7d0x%-13x0x%-13xPASS\n", i, expected, actual);
+            tests_passed++;
         } else {
             printf("%-7d0x%-13x0x%-13xFAIL\n", i, expected, actual);
             all_passed = false;
@@ -113,11 +116,10 @@ void test_configurable_lfsr(std::unique_ptr<Vconfigurable_lfsr>& lfsr, Verilated
         clock_tick(lfsr, tfp, sim_time);
     }
     
-    if (all_passed) {
-        std::cout << "\nAll tests passed!" << std::endl;
-    } else {
-        std::cout << "\nSome tests failed!" << std::endl;
-    }
+    // Print standardized test summary
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (all_passed ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

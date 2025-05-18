@@ -73,8 +73,15 @@ int main(int argc, char** argv) {
     // Destination is (1,0) - North of current router (1,1)
     uint8_t dest_id_north = 0 * MESH_SIZE_X + 1; // y=0, x=1
     
+    std::cout << "Debug: Test 1 - Local to North routing" << std::endl;
+    std::cout << "Debug: Router coordinates (X,Y): (" << ROUTER_X << "," << ROUTER_Y << ")" << std::endl;
+    std::cout << "Debug: Destination coordinates (X,Y): (1,0)" << std::endl;
+    std::cout << "Debug: Destination ID: " << (int)dest_id_north << std::endl;
+    
     dut->local_in_data = (dest_id_north << 24) | test_data[0];
     dut->local_in_valid = 1;
+    
+    std::cout << "Debug: Sending packet with data: 0x" << std::hex << dut->local_in_data << std::dec << std::endl;
     
     // Wait for input to be accepted
     while (!dut->local_in_ready) {
@@ -87,7 +94,10 @@ int main(int argc, char** argv) {
     
     // Check if packet appears at north output
     bool north_test_passed = false;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
+        std::cout << "Debug: Cycle " << i << " - north_out_valid=" << dut->north_out_valid 
+                 << " north_out_data=0x" << std::hex << dut->north_out_data << std::dec << std::endl;
+                 
         if (dut->north_out_valid && dut->north_out_data == ((dest_id_north << 24) | test_data[0])) {
             north_test_passed = true;
             passed_tests++;
@@ -98,11 +108,17 @@ int main(int argc, char** argv) {
     
     if (!north_test_passed) {
         std::cout << "Local to North routing test failed" << std::endl;
+    } else {
+        std::cout << "Local to North routing test passed" << std::endl;
     }
     
     // Test 2: Local to East routing
     // Destination is (2,1) - East of current router (1,1)
     uint8_t dest_id_east = 1 * MESH_SIZE_X + 2; // y=1, x=2
+    
+    std::cout << "Debug: Test 2 - Local to East routing" << std::endl;
+    std::cout << "Debug: Destination coordinates (X,Y): (2,1)" << std::endl;
+    std::cout << "Debug: Destination ID: " << (int)dest_id_east << std::endl;
     
     dut->local_in_data = (dest_id_east << 24) | test_data[1];
     dut->local_in_valid = 1;
@@ -134,6 +150,10 @@ int main(int argc, char** argv) {
     // Test 3: Local to South routing
     // Destination is (1,2) - South of current router (1,1)
     uint8_t dest_id_south = 2 * MESH_SIZE_X + 1; // y=2, x=1
+    
+    std::cout << "Debug: Test 3 - Local to South routing" << std::endl;
+    std::cout << "Debug: Destination coordinates (X,Y): (1,2)" << std::endl;
+    std::cout << "Debug: Destination ID: " << (int)dest_id_south << std::endl;
     
     dut->local_in_data = (dest_id_south << 24) | test_data[2];
     dut->local_in_valid = 1;

@@ -106,18 +106,21 @@ module parameterized_fft #(
     end
     
     // Bit-reversed addressing for input reordering
+    /* verilator lint_off BLKSEQ */
     function [LOG2_FFT_POINTS-1:0] bit_reverse;
         input [LOG2_FFT_POINTS-1:0] in;
-        integer j;
         reg [LOG2_FFT_POINTS-1:0] out;
+        integer j;
         begin
-            out = {LOG2_FFT_POINTS{1'b0}};
+            out = 0; // Initialize with zeros
             for (j = 0; j < LOG2_FFT_POINTS; j = j + 1) begin
-                out = (out << 1) | {{{LOG2_FFT_POINTS-1}{1'b0}}, in[j]};
+                // Use a purely combinational approach
+                out[LOG2_FFT_POINTS-1-j] = in[j];
             end
             bit_reverse = out;
         end
     endfunction
+    /* verilator lint_on BLKSEQ */
     
     // State machine logic
     always @(posedge clk or negedge rst_n) begin

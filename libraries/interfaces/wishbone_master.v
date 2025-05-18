@@ -120,12 +120,6 @@ module wishbone_master #(
             // Update state
             state <= next_state;
             
-            // Default values for single-cycle outputs
-            write_done <= 1'b0;
-            write_err <= 1'b0;
-            read_done <= 1'b0;
-            read_err <= 1'b0;
-            
             case (state)
                 IDLE: begin
                     // Reset bus signals
@@ -133,6 +127,7 @@ module wishbone_master #(
                     wb_cyc_o <= 1'b0;
                     retry_count <= 4'b0;
                     
+                    // Clear status signals when starting a new transaction
                     if (write_req) begin
                         // Setup for write transaction
                         wb_adr_o <= write_addr;
@@ -141,6 +136,9 @@ module wishbone_master #(
                         wb_sel_o <= write_sel;
                         wb_stb_o <= 1'b1;
                         wb_cyc_o <= 1'b1;
+                        // Clear status signals
+                        write_done <= 1'b0;
+                        write_err <= 1'b0;
                     end else if (read_req) begin
                         // Setup for read transaction
                         wb_adr_o <= read_addr;
@@ -148,6 +146,9 @@ module wishbone_master #(
                         wb_sel_o <= read_sel;
                         wb_stb_o <= 1'b1;
                         wb_cyc_o <= 1'b1;
+                        // Clear status signals
+                        read_done <= 1'b0;
+                        read_err <= 1'b0;
                     end
                 end
                 

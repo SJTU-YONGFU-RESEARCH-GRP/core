@@ -137,6 +137,7 @@ int main(int argc, char** argv) {
     std::cout << "\nTest case 3: Multiple pulses with different widths" << std::endl;
     bool test3_pass = true;
     bool mid_pulse_detected = false;
+    bool other_pulses_not_detected = true;
     
     for (int i = 0; i < 50; i++) {
         tb->clk = !tb->clk;
@@ -151,9 +152,12 @@ int main(int argc, char** argv) {
             // Only the middle pulse should be detected (width > threshold)
             if (i >= 15 && i < 30 && tb->pulse_detected) {
                 mid_pulse_detected = true;
-            } else if ((i >= 2 && i < 7 || i >= 35 && i < 40) && tb->pulse_detected) {
+            } 
+            
+            // Check that other pulses do not trigger detection
+            if ((i >= 2 && i < 7 || i >= 35 && i < 40) && tb->pulse_detected) {
                 // Short pulses should not be detected
-                test3_pass = false;
+                other_pulses_not_detected = false;
             }
         } else {
             tb->signal_in = 0;
@@ -174,7 +178,7 @@ int main(int argc, char** argv) {
     }
     
     // Test 3 passes if only the middle pulse was detected
-    test3_pass = test3_pass && mid_pulse_detected;
+    test3_pass = mid_pulse_detected && other_pulses_not_detected;
     if (test3_pass) {
         std::cout << "Test 3 PASSED: Only pulses > threshold were detected" << std::endl;
         tests_passed++;
@@ -193,5 +197,5 @@ int main(int argc, char** argv) {
     std::cout << "Result: " << (all_tests_pass ? "Pass" : "Fail") << std::endl;
     std::cout << "Tests: " << tests_passed << " of " << total_tests << std::endl;
     
-    return 0;
+    return all_tests_pass ? 0 : 1;
 } 
