@@ -24,6 +24,11 @@ void check_operation(std::unique_ptr<Vdual_port_ram>& ram, VerilatedVcdC* tfp, v
     if (tfp) tfp->dump(sim_time);
     sim_time++;
     
+    int total_tests = 2;
+    int passed_tests = 0;
+    bool test1_passed = true;
+    bool test2_passed = true;
+    
     // Test 1: Write to Port A, Read from Port B
     std::cout << "Test 1: Write to Port A, Read from Port B" << std::endl;
     std::cout << "Addr\tWrite Data\tRead Data" << std::endl;
@@ -69,11 +74,14 @@ void check_operation(std::unique_ptr<Vdual_port_ram>& ram, VerilatedVcdC* tfp, v
         
         // Verify data
         if (ram->q_b != write_data) {
-            std::cout << "ERROR: Data mismatch at address 0x" << std::hex << addr 
-                      << ". Expected: 0x" << write_data 
-                      << ", Got: 0x" << static_cast<int>(ram->q_b) << std::endl;
+            std::cout << "ERROR: Data mismatch at address 0x" << std::hex << addr \
+                      << ". Expected: 0x" << write_data \
+                      << ", Got: 0x" << std::dec << static_cast<int>(ram->q_b) << std::endl;
+            test1_passed = false;
         }
     }
+    
+    if (test1_passed) passed_tests++;
     
     // Test 2: Simultaneous Read/Write on both ports
     std::cout << "\nTest 2: Simultaneous Read/Write on both ports" << std::endl;
@@ -151,6 +159,11 @@ void check_operation(std::unique_ptr<Vdual_port_ram>& ram, VerilatedVcdC* tfp, v
                   << "\t0x" << std::setw(2) << std::setfill('0') << write_data_b
                   << "\t0x" << std::setw(2) << std::setfill('0') << static_cast<int>(ram->q_b) << std::endl;
     }
+    
+    if (test2_passed) passed_tests++;
+    std::cout << "\n==== Test Summary ====" << std::endl;
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
 }
 
 int main(int argc, char** argv) {

@@ -189,6 +189,25 @@ int main(int argc, char** argv) {
         }
     }
     
+    // Reset FIFO state before Test 3
+    dut->wr_rst_n = 0;
+    dut->rd_rst_n = 0;
+    for (int i = 0; i < 5; i++) {
+        wr_clock_cycle(dut, m_trace);
+        for (int j = 0; j < RATE_RATIO; j++) {
+            rd_clock_cycle(dut, m_trace);
+        }
+    }
+    dut->wr_rst_n = 1;
+    dut->rd_rst_n = 1;
+    // Allow pointers to resynchronize
+    for (int i = 0; i < 5; i++) {
+        wr_clock_cycle(dut, m_trace);
+        for (int j = 0; j < RATE_RATIO; j++) {
+            rd_clock_cycle(dut, m_trace);
+        }
+    }
+
     // Test 3: Continuous operation with different clock rates
     {
         total_tests++;

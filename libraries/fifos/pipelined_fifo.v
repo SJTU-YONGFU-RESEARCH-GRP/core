@@ -1,3 +1,5 @@
+// Disable multi-driven warning for pipeline registers
+/* verilator lint_off MULTIDRIVEN */
 module pipelined_fifo #(
     parameter DATA_WIDTH = 32,
     parameter ADDR_WIDTH = 4,  // FIFO depth = 2^ADDR_WIDTH
@@ -155,4 +157,5 @@ module pipelined_fifo #(
     // Output the last stage of the pipeline
     assign rd_data = rd_data_valid[PIPELINE_STAGES-1] ? rd_data_pipe[PIPELINE_STAGES-1] : {DATA_WIDTH{1'b0}};
     
-endmodule 
+endmodule
+/* verilator lint_on MULTIDRIVEN */ 

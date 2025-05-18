@@ -46,6 +46,8 @@ module memory_mapped_fifo #(
     // FIFO pointers
     reg [ADDR_WIDTH:0] wr_ptr;
     reg [ADDR_WIDTH:0] rd_ptr;
+    // Register to hold data for external read interface
+    reg [DATA_WIDTH-1:0] ext_data_reg;
     
     // Internal control signals
     wire fifo_wr_en = (mem_valid && mem_write && mem_addr == FIFO_DATA_REG) || ext_wr_en;
@@ -85,9 +87,13 @@ module memory_mapped_fifo #(
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             rd_ptr <= 0;
+            ext_data_reg <= {DATA_WIDTH{1'b0}};
         end else if (fifo_reset || fifo_flush) begin
             rd_ptr <= 0;
+            ext_data_reg <= {DATA_WIDTH{1'b0}};
         end else if (fifo_rd_en && !fifo_empty) begin
+            // Capture the data at current read pointer, then increment pointer
+            ext_data_reg <= mem[rd_ptr[ADDR_WIDTH-1:0]];
             rd_ptr <= rd_ptr + 1'b1;
         end
     end
@@ -122,6 +128,6 @@ module memory_mapped_fifo #(
     // External interface signals
     assign ext_empty = fifo_empty;
     assign ext_full = fifo_full;
-    assign ext_rd_data = fifo_empty ? {DATA_WIDTH{1'b0}} : mem[rd_ptr[ADDR_WIDTH-1:0]];
+    assign ext_rd_data = ext_data_reg;
     
 endmodule 

@@ -1,6 +1,6 @@
 module elastic_buffer #(
     parameter DATA_WIDTH = 8,
-    parameter DEPTH = 4,        // Must be a power of 2
+    parameter DEPTH = 8,        // Must be a power of 2
     parameter ALMOST_FULL_THRESHOLD = 2,
     parameter ALMOST_EMPTY_THRESHOLD = 2
 ) (

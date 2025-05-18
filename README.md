@@ -1,4 +1,4 @@
-# RTL Designs Verilog Dataset
+# CORE: Corpus Of RTL designs for EDA Research
 
 This repository contains a collection of parameterized and configurable RTL modules written in Verilog, organized by category. Each category has a dedicated documentation page in the `docs/` directory.
 

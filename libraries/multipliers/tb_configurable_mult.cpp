@@ -1,6 +1,5 @@
 #include "Vconfigurable_mult.h"
 #include "verilated.h"
-#include "verilated_vcd_c.h"
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -77,20 +76,6 @@ bool run_tests_for_config(int width, bool is_signed) {
     // Create and initialize model
     std::unique_ptr<Vconfigurable_mult> mult = std::make_unique<Vconfigurable_mult>();
     
-    // Initialize VCD tracing
-    Verilated::traceEverOn(true);
-    std::unique_ptr<VerilatedVcdC> tfp = std::make_unique<VerilatedVcdC>();
-    mult->trace(tfp.get(), 99);
-    
-    // Create a unique VCD filename for each config
-    std::stringstream vcd_filename;
-    vcd_filename << "configurable_mult_" << width << "bit_" 
-                 << (is_signed ? "signed" : "unsigned") << "_sim.vcd";
-    tfp->open(vcd_filename.str().c_str());
-    
-    // Simulation time
-    vluint64_t sim_time = 0;
-
     // Generate test cases
     std::vector<TestCase> test_cases;
     
@@ -235,7 +220,6 @@ bool run_tests_for_config(int width, bool is_signed) {
         
         // Evaluate model
         mult->eval();
-        if (tfp) tfp->dump(sim_time++);
         
         // Check results
         uint64_t actual_product = mult->product;
@@ -278,7 +262,6 @@ bool run_tests_for_config(int width, bool is_signed) {
     }
     
     // Cleanup
-    tfp->close();
     mult->final();
     
     return all_tests_passed;

@@ -77,11 +77,19 @@ int main(int argc, char** argv) {
     aes->clk = 0;
     aes->eval();
     
-    // Set inputs
-    aes->data_in = (input_high << 64) | input_low;
-    aes->key_in = (key_high << 64) | key_low;
-    aes->encrypt_mode = 1;  // Encryption mode
-    aes->start = 1;
+    // Set inputs: assign plaintext and key words from low/high 64-bit halves
+    {
+        aes->data_in[0] = static_cast<uint32_t>((input_high >> 32) & 0xffffffff);
+        aes->data_in[1] = static_cast<uint32_t>( input_high        & 0xffffffff);
+        aes->data_in[2] = static_cast<uint32_t>((input_low  >> 32) & 0xffffffff);
+        aes->data_in[3] = static_cast<uint32_t>( input_low         & 0xffffffff);
+        aes->key[0]     = static_cast<uint32_t>((key_high   >> 32) & 0xffffffff);
+        aes->key[1]     = static_cast<uint32_t>( key_high          & 0xffffffff);
+        aes->key[2]     = static_cast<uint32_t>((key_low    >> 32) & 0xffffffff);
+        aes->key[3]     = static_cast<uint32_t>( key_low           & 0xffffffff);
+        aes->encrypt    = 1;  // Encryption mode
+        aes->start      = 1;
+    }
     
     // Clock cycles
     for (int i = 0; i < 20; ++i) {
@@ -95,15 +103,20 @@ int main(int argc, char** argv) {
         }
     }
     
-    // Check result
+    // Extract 32-bit words and reconstruct output bytes
+    uint32_t w0 = aes->data_out[0];
+    uint32_t w1 = aes->data_out[1];
+    uint32_t w2 = aes->data_out[2];
+    uint32_t w3 = aes->data_out[3];
     uint8_t output[16];
-    uint64_t result_low = aes->data_out & ((1ULL << 64) - 1);
-    uint64_t result_high = aes->data_out >> 64;
-    
-    for (int i = 0; i < 8; ++i) {
-        output[i] = (result_low >> (i * 8)) & 0xFF;
-        output[i+8] = (result_high >> (i * 8)) & 0xFF;
-    }
+    output[0]  = (w0 >> 24) & 0xFF; output[1]  = (w0 >> 16) & 0xFF;
+    output[2]  = (w0 >> 8)  & 0xFF; output[3]  = (w0 >> 0)  & 0xFF;
+    output[4]  = (w1 >> 24) & 0xFF; output[5]  = (w1 >> 16) & 0xFF;
+    output[6]  = (w1 >> 8)  & 0xFF; output[7]  = (w1 >> 0)  & 0xFF;
+    output[8]  = (w2 >> 24) & 0xFF; output[9]  = (w2 >> 16) & 0xFF;
+    output[10] = (w2 >> 8)  & 0xFF; output[11] = (w2 >> 0)  & 0xFF;
+    output[12] = (w3 >> 24) & 0xFF; output[13] = (w3 >> 16) & 0xFF;
+    output[14] = (w3 >> 8)  & 0xFF; output[15] = (w3 >> 0)  & 0xFF;
     
     print_hex("Plaintext", TEST_PLAINTEXT, 16);
     print_hex("Key", TEST_KEY, 16);

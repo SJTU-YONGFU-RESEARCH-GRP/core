@@ -1,3 +1,6 @@
+/* verilator lint_off VARHIDDEN */
+/* verilator lint_off CASEINCOMPLETE */
+/* verilator lint_off BLKSEQ */
 module aes_core (
     // Global signals
     input  wire         clk,
@@ -660,5 +663,8 @@ module aes_core (
         endcase
     end
 /* verilator lint_on SYNCASYNCNET */
-endmodule 
+endmodule
+/* verilator lint_on BLKSEQ */
+/* verilator lint_on CASEINCOMPLETE */
+/* verilator lint_on VARHIDDEN */ 
 

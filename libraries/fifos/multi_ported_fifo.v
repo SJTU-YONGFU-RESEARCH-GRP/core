@@ -32,6 +32,8 @@ module multi_ported_fifo #(
     reg [DATA_WIDTH-1:0] mem [(1<<ADDR_WIDTH)-1:0];
     
     // Write port data access helper function
+    // Disable BLKSEQ lint for combinational function
+    // verilator lint_off BLKSEQ
     function [DATA_WIDTH-1:0] get_wr_data(input integer port);
         integer start_bit;
         begin
@@ -39,6 +41,8 @@ module multi_ported_fifo #(
             get_wr_data = wr_data[start_bit +: DATA_WIDTH];
         end
     endfunction
+    // Re-enable BLKSEQ lint
+    // verilator lint_on BLKSEQ
     
     // FIFO pointers and control signals
     reg [ADDR_WIDTH:0] wr_ptr;
