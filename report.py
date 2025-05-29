@@ -390,12 +390,63 @@ def categorize_modules(module_mappings):
     
     return categories
 
+def get_tool_versions() -> Dict[str, str]:
+    """Get versions of all tools used in verification."""
+    versions = {}
+    
+    # Get Verilator version
+    try:
+        result = subprocess.run(["verilator", "--version"], 
+                              capture_output=True, 
+                              text=True, 
+                              check=False)
+        if result.returncode == 0:
+            verilator_version = result.stdout.strip()
+            versions["Verilator"] = verilator_version
+    except Exception as e:
+        logging.warning(f"Could not get Verilator version: {e}")
+        versions["Verilator"] = "Unknown"
+    
+    # Get Icarus Verilog version
+    try:
+        result = subprocess.run(["iverilog", "-V"], 
+                              capture_output=True, 
+                              text=True, 
+                              check=False)
+        if result.returncode == 0:
+            iverilog_version = result.stdout.strip()
+            versions["Icarus Verilog"] = iverilog_version
+    except Exception as e:
+        logging.warning(f"Could not get Icarus Verilog version: {e}")
+        versions["Icarus Verilog"] = "Unknown"
+    
+    # Get Python version
+    versions["Python"] = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    
+    # Get GTKWave version if available
+    try:
+        result = subprocess.run(["gtkwave", "--version"], 
+                              capture_output=True, 
+                              text=True, 
+                              check=False)
+        if result.returncode == 0:
+            gtkwave_version = result.stdout.strip()
+            versions["GTKWave"] = gtkwave_version
+    except Exception as e:
+        logging.warning(f"Could not get GTKWave version: {e}")
+        versions["GTKWave"] = "Unknown"
+    
+    return versions
+
 # Generate the report
 def generate_report(results, module_mappings):
     categories = categorize_modules(module_mappings)
     
     # Build a dictionary for quick lookup
     results_dict = {r["target"]: r for r in results}
+    
+    # Get tool versions
+    tool_versions = get_tool_versions()
     
     # Define more visible status symbols
     status_symbols = {
@@ -410,6 +461,14 @@ def generate_report(results, module_mappings):
     with open(REPORT_FILE, "w") as f:
         f.write("# RTL Verification Report\n\n")
         f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        
+        # Add tool versions section
+        f.write("## Tool Versions\n\n")
+        f.write("| Tool | Version |\n")
+        f.write("|------|----------|\n")
+        for tool, version in tool_versions.items():
+            f.write(f"| {tool} | {version} |\n")
+        f.write("\n")
         
         # Add table of contents
         f.write("## Table of Contents\n\n")

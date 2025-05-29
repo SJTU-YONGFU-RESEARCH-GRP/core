@@ -2,6 +2,81 @@
 
 This repository contains a collection of parameterized and configurable RTL modules written in Verilog, organized by category. Each category has a dedicated documentation page in the `docs/` directory.
 
+## Installation
+
+### Prerequisites
+- Python 3.8 or higher
+- Icarus Verilog (iverilog) 12.0 or higher
+- GTKWave (for waveform viewing)
+- Make
+- Verilator 5.0 or higher
+
+### Installation Steps
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/core.git
+cd core
+```
+
+2. Install Verilator (if not already installed):
+
+Using package manager:
+```bash
+# For Ubuntu/Debian
+sudo apt-get install verilator
+
+# For CentOS/RHEL
+sudo yum install verilator
+
+# For macOS
+brew install verilator
+
+# For Windows (using WSL)
+sudo apt-get install verilator
+```
+
+Or install from GitHub source (recommended for latest version):
+```bash
+# Install build dependencies
+# For Ubuntu/Debian
+sudo apt-get install git make autoconf g++ flex bison
+
+# For CentOS/RHEL
+sudo yum install git make autoconf gcc-c++ flex bison
+
+# For macOS
+brew install git make autoconf flex bison
+
+# Clone and build Verilator
+git clone https://github.com/verilator/verilator
+cd verilator
+git checkout stable  # or 'git checkout master' for latest development version
+autoconf
+./configure
+make
+sudo make install
+```
+
+3. Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Verify the installation:
+```bash
+make test
+```
+
+## Version Information
+- Current Version: 1.0.0
+- Last Updated: 2024
+- Supported Verilog Standards: IEEE 1364-2005, IEEE 1800-2012
+- Tool Versions:
+  - Verilator: 5.020
+  - Icarus Verilog: 12.0
+  - Python: 3.8+
+  - GTKWave: 3.3.111+
+
 ## Directory Structure
 ```
 / libraries         # Verilog RTL modules

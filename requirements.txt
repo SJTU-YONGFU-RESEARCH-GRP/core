@@ -1,0 +1,17 @@
+# Python version requirement: 3.6 or higher
+# Note: This is a requirement for the Python interpreter, not a pip package
+
+# Core dependencies
+typing-extensions>=0.4.6  # For enhanced type hints support
+colorama>=0.4.6  # For colored terminal output
+tqdm>=4.65.0  # For progress bars
+rich>=13.0.0  # For rich terminal formatting and logging
+
+# System Requirements
+# Verilator (not a Python package, must be installed separately)
+# Installation instructions:
+# - Ubuntu/Debian: sudo apt-get install verilator
+# - macOS: brew install verilator
+# - Windows: Use WSL or install via MSYS2/MinGW
+# Minimum version: 5.0 or higher required (for -Wno-EOFNEWLINE support)
+# Note: The -Wno-EOFNEWLINE flag requires Verilator 5.0 or newer 
