@@ -6,6 +6,8 @@ typing-extensions>=0.4.6  # For enhanced type hints support
 colorama>=0.4.6  # For colored terminal output
 tqdm>=4.65.0  # For progress bars
 rich>=13.0.0  # For rich terminal formatting and logging
+matplotlib
+seaborn 
 
 # System Requirements
 # Verilator (not a Python package, must be installed separately)

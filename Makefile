@@ -41,19 +41,53 @@ endef
 
 # Default target to list available commands
 help:
-	@echo "LLM RTL Generation Project Makefile"
-	@echo "Available targets:"
+	@echo "CORE Project Makefile"
+	@echo ""
+	@echo "Basic targets:"
+	@echo "  help            - Display this help message"
+	@echo "  init            - Create necessary build directories"
 	@echo "  list_modules    - List all available modules and testable modules"
+	@echo ""
+	@echo "Verification targets:"
 	@echo "  verify <module> - Verify a specific module (e.g., make verify shift_register)"
 	@echo "  verify_all      - Verify all modules with testbenches"
+	@echo ""
+	@echo "Synthesis targets:"
+	@echo "  synth <module>  - Synthesize a specific module using Yosys (e.g., make synth_shift_register)"
+	@echo "  synth_all       - Synthesize all available modules"
+	@echo ""
+	@echo "Cleaning targets:"
 	@echo "  clean           - Clean all build products"
-	@echo "  clean_<module>  - Clean specific module"
+	@echo "  clean_<module>  - Clean specific module build products"
 	@echo ""
 	@echo "Group verification targets:"
-	@echo "  verify_adders, verify_fifos, verify_registers, verify_alu, verify_cordic,"
-	@echo "  verify_counters, verify_dividers, verify_arbiters, verify_codings,"
-	@echo "  verify_noc, verify_dsp, verify_mems, verify_filters, verify_fsm,"
-	@echo "  verify_comms, verify_signals, verify_voters, verify_interfaces"
+	@echo "  verify_adders     - Verify all adder modules"
+	@echo "  verify_fifos      - Verify all FIFO and buffer modules"
+	@echo "  verify_registers  - Verify all register and counter modules"
+	@echo "  verify_alu        - Verify ALU module"
+	@echo "  verify_cordic     - Verify CORDIC and trigonometric modules"
+	@echo "  verify_counters   - Verify counter modules"
+	@echo "  verify_dividers   - Verify divider modules"
+	@echo "  verify_arbiters   - Verify arbiter modules"
+	@echo "  verify_codings    - Verify encoder/decoder/CRC modules"
+	@echo "  verify_noc        - Verify Network-on-Chip related modules"
+	@echo "  verify_dsp        - Verify DSP modules (FFT, filters, etc.)"
+	@echo "  verify_mems       - Verify memory modules (RAM, CAM, etc.)"
+	@echo "  verify_filters    - Verify filter modules"
+	@echo "  verify_fsm        - Verify finite state machine modules"
+	@echo "  verify_comms      - Verify communication modules (UART, SPI, I2C)"
+	@echo "  verify_signals    - Verify signal processing modules"
+	@echo "  verify_voters     - Verify voter modules"
+	@echo "  verify_interfaces - Verify interface modules"
+	@echo ""
+	@echo "Output directories:"
+	@echo "  build/          - Contains all build products and synthesis results"
+	@echo ""
+	@echo "Example usage:"
+	@echo "  make list_modules"
+	@echo "  make verify_shift_register"
+	@echo "  make synth_alu"
+	@echo "  make clean"
 
 # Create directories
 init:
@@ -283,3 +317,22 @@ verify_adders verify_fifos verify_registers verify_alu verify_cordic \
 verify_counters verify_dividers verify_arbiters verify_codings \
 verify_noc verify_dsp verify_mems verify_filters verify_fsm \
 verify_comms verify_signals verify_voters verify_interfaces
+
+# Yosys Synthesis Targets
+YOSYS = yosys
+
+synth_%:
+	@MODULE=$*; \
+	VERILOG_FILE=$$(find $(LIB_DIR) -name "$$MODULE.v"); \
+	if [ -n "$$VERILOG_FILE" ]; then \
+		echo "Synthesizing $$MODULE..."; \
+		$(YOSYS) -L $(OBJDIR)/$$MODULE.yosys.log -p "read_verilog $$VERILOG_FILE; hierarchy -check -top $$MODULE; synth -top $$MODULE; stat -top $$MODULE"; \
+	else \
+		echo "Module $$MODULE not found"; \
+		exit 1; \
+	fi
+
+synth_all: init
+	@for module in $(MODULES); do \
+		$(MAKE) synth_$$module; \
+	done
