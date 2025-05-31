@@ -170,7 +170,7 @@ class VerilogAnalyzer:
         plt.close()
 
         # --- Yosys-based plots ---
-        synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts = self.gather_synthesis_stats()
+        synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts, area_counts = self.gather_synthesis_stats()
         # Histogram of cell counts
         if cell_counts:
             plt.figure(figsize=(10, 6))
@@ -178,7 +178,6 @@ class VerilogAnalyzer:
             plt.title('Distribution of Cell Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Cell Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
-            #plt.grid(True, linestyle='--', alpha=0.7, color='black')
             plt.tight_layout()
             plt.savefig('plots/cell_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
@@ -189,7 +188,6 @@ class VerilogAnalyzer:
             plt.title('Distribution of Wire Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Wire Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
-            #plt.grid(True, linestyle='--', alpha=0.7, color='black')
             plt.tight_layout()
             plt.savefig('plots/wire_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
@@ -200,7 +198,6 @@ class VerilogAnalyzer:
             plt.title('Distribution of Memory Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Memory Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
-            plt.grid(True, linestyle='--', alpha=0.7, color='black')
             plt.tight_layout()
             plt.savefig('plots/memory_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
@@ -227,6 +224,22 @@ class VerilogAnalyzer:
         with open(log_path, 'r') as f:
             lines = f.readlines()
         for i, line in enumerate(lines):
+            if 'Number of wires:' in line:
+                stats['wire_count'] = int(line.split(':')[1].strip())
+            if 'Number of wire bits:' in line:
+                stats['wire_bits'] = int(line.split(':')[1].strip())
+            if 'Number of public wires:' in line:
+                stats['public_wire_count'] = int(line.split(':')[1].strip())
+            if 'Number of public wire bits:' in line:
+                stats['public_wire_bits'] = int(line.split(':')[1].strip())
+            if 'Number of ports:' in line:
+                stats['port_count'] = int(line.split(':')[1].strip())
+            if 'Number of port bits:' in line:
+                stats['port_bits'] = int(line.split(':')[1].strip())
+            if 'Number of memories:' in line:
+                stats['memories'] = int(line.split(':')[1].strip())
+            if 'Number of memory bits:' in line:
+                stats['memory_bits'] = int(line.split(':')[1].strip())
             if 'Number of cells:' in line:
                 stats['cell_count'] = int(line.split(':')[1].strip())
             if '=== cells ===' in line:
@@ -245,28 +258,83 @@ class VerilogAnalyzer:
         wire_counts = []
         memory_counts = []
         cell_counts = []
+        area_counts = []
         for mod in self.stats['module_complexity']:
             name = mod['name'].replace('.v', '')
             log_path = os.path.join('build', f'{name}.yosys.log')
+            json_path = os.path.join('build', f'{name}.yosys.json')
             stats = self.parse_yosys_log(log_path)
-            if stats:
-                synth_stats[name] = stats
-                for cell, count in stats.get('cell_types', {}).items():
-                    cell_type_totals[cell] = cell_type_totals.get(cell, 0) + count
+            # Try to parse JSON for richer details
+            if os.path.exists(json_path):
+                try:
+                    with open(json_path, 'r') as jf:
+                        yosys_json = json.load(jf)
+                    modules = yosys_json.get('modules', {})
+                    design = modules.get(name)
+                    if not design:
+                        if len(modules) == 1:
+                            only_mod_name = list(modules.keys())[0]
+                            print(f"[DEBUG] Module '{name}' not found in {json_path}. Using only module '{only_mod_name}' in file.")
+                            design = modules[only_mod_name]
+                        else:
+                            print(f"[DEBUG] Module '{name}' not found in {json_path}. Available modules: {list(modules.keys())}")
+                    # Only extract if a design is found
+                    if design:
+                        # Prefer log values for wire_count, memories, port_count
+                        if 'wire_count' not in stats:
+                            wire_count = len(design.get('wires', {}))
+                            stats['wire_count'] = wire_count
+                        if 'memories' not in stats:
+                            memories = design.get('memories', {})
+                            stats['memories'] = len(memories)
+                        if 'port_count' not in stats:
+                            ports = design.get('ports', {})
+                            stats['port_count'] = len(ports)
+                        # Collect for summary/plots
+                        if 'wire_count' in stats:
+                            wire_counts.append(stats['wire_count'])
+                        if 'memories' in stats:
+                            memory_counts.append(stats['memories'])
+                        # Cells
+                        cells = design.get('cells', {})
+                        stats['cell_count'] = len(cells)
+                        cell_counts.append(len(cells))
+                        # Area (if available)
+                        area = design.get('attributes', {}).get('area', None)
+                        if area is not None:
+                            stats['area'] = area
+                            area_counts.append(float(area))
+                        # Cell breakdown
+                        cell_types = {}
+                        for cell in cells.values():
+                            cell_type = cell.get('type', 'unknown')
+                            cell_types[cell_type] = cell_types.get(cell_type, 0) + 1
+                        stats['cell_types'] = cell_types
+                        for cell, count in cell_types.items():
+                            cell_type_totals[cell] = cell_type_totals.get(cell, 0) + count
+                except Exception as e:
+                    self.logger.warning(f"Failed to parse {json_path}: {e}")
+            else:
+                # Fallback: parse log for cell types
+                if stats.get('cell_types'):
+                    for cell, count in stats['cell_types'].items():
+                        cell_type_totals[cell] = cell_type_totals.get(cell, 0) + count
                 if 'wire_count' in stats:
                     wire_counts.append(stats['wire_count'])
                 if 'memories' in stats:
                     memory_counts.append(stats['memories'])
                 if 'cell_count' in stats:
                     cell_counts.append(stats['cell_count'])
-        return synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts
+            if stats:
+                synth_stats[name] = stats
+        return synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts, area_counts
         
     def generate_markdown_report(self):
         # Generate plots first
         self.generate_plots()
         
         # Gather synthesis stats
-        synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts = self.gather_synthesis_stats()
+        synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts, area_counts = self.gather_synthesis_stats()
         
         # Create markdown content
         md_content = f"""# Verilog Dataset Analysis Report
@@ -319,20 +387,63 @@ The dataset contains {self.stats['total_modules']} Verilog modules across {len(s
             md_content += f"- {category}: {count} modules\n"
         
         # Add synthesis statistics
+        # Determine which columns to include based on available data
+        include_area = any(s.get('area') is not None for s in synth_stats.values())
+        include_wire = any(s.get('wire_count') not in (None, 'N/A') for s in synth_stats.values())
+        include_mem = any(s.get('memories') not in (None, 'N/A') for s in synth_stats.values())
+
+        # Build table header
+        table_header = '| Module | Gate/Cell Count '
+        if include_area:
+            table_header += '| Area '
+        if include_wire:
+            table_header += '| Wire Count '
+        if include_mem:
+            table_header += '| Memory Count '
+        table_header += '|\n'
+        table_header += '|--------|-----------------'
+        if include_area:
+            table_header += '|------'
+        if include_wire:
+            table_header += '|------------'
+        if include_mem:
+            table_header += '|--------------'
+        table_header += '|\n'
         md_content += """
 
 ## Synthesis Statistics (Yosys)
 
-The following table summarizes the gate (cell) count for each module as reported by Yosys synthesis:
+The following table summarizes the gate (cell) count{}for each module as reported by Yosys synthesis:
 
-| Module | Gate/Cell Count |
-|--------|-----------------|
-"""
+""".format(
+    (', area' if include_area else '') + (', wire count' if include_wire else '') + (', memory count' if include_mem else '')
+)
+        md_content += table_header
         for mod in self.stats['module_complexity']:
             name = mod['name'].replace('.v', '')
             cell_count = synth_stats.get(name, {}).get('cell_count', 'N/A')
-            md_content += f"| {name} | {cell_count} |\n"
-        
+            row = f'| {name} | {cell_count} '
+            if include_area:
+                area = synth_stats.get(name, {}).get('area', 'N/A')
+                row += f'| {area} '
+            if include_wire:
+                wire_count = synth_stats.get(name, {}).get('wire_count', 'N/A')
+                row += f'| {wire_count} '
+            if include_mem:
+                mem_count = synth_stats.get(name, {}).get('memories', 'N/A')
+                row += f'| {mem_count} '
+            row += '|\n'
+            md_content += row
+        # Add summary statistics if available
+        if cell_counts:
+            md_content += f"\n- **Average Gate/Cell Count:** {statistics.mean(cell_counts):.2f}\n"
+        if include_area and area_counts:
+            md_content += f"- **Average Area:** {statistics.mean([float(a) for a in area_counts]):.2f}\n"
+        if include_wire and wire_counts:
+            md_content += f"- **Average Wire Count:** {statistics.mean(wire_counts):.2f}\n"
+        if include_mem and memory_counts:
+            md_content += f"- **Average Memory Count:** {statistics.mean(memory_counts):.2f}\n"
+
         # Add cell type summary if available
         if cell_type_totals:
             md_content += "\n### Most Common Cell Types (All Modules)\n\n"
@@ -352,42 +463,35 @@ The following table summarizes the gate (cell) count for each module as reported
 """
 
         # Dynamically generate conclusion
-        conclusion_intro = "This dataset provides a diverse collection of Verilog modules that represent various aspects of digital design:\\n\\n"
-            
+        conclusion_intro = "This dataset provides a diverse collection of Verilog modules that represent various aspects of digital design:\n\n"
         # 1. Design Complexity
         simple_modules = len([m for m in self.stats['code_metrics'] if m['lines'] <= 50])
         medium_modules = len([m for m in self.stats['code_metrics'] if 50 < m['lines'] <= 200])
         complex_modules = len([m for m in self.stats['code_metrics'] if m['lines'] > 200])
         complexity_point = (f"1. **Design Complexity**: The dataset includes {simple_modules} simple (0-50 lines), "
                             f"{medium_modules} medium (51-200 lines), and {complex_modules} complex (>200 lines) modules, "
-                            f"offering a varied set for analysis and research purposes.\\n\\n")
-
+                            f"offering a varied set for analysis and research purposes.\n\n")
         # 2. Design Patterns
         if self.stats['total_modules'] > 0 and self.stats['design_patterns']:
             sorted_patterns = sorted(self.stats['design_patterns'].items(), key=lambda item: item[1], reverse=True)
-            # Take top 3 or fewer if not enough patterns
             top_patterns_list = [f"{p[0]} ({p[1]/self.stats['total_modules']*100:.1f}%)" for p in sorted_patterns[:min(3, len(sorted_patterns))]]
             top_patterns_str = ", ".join(top_patterns_list) if top_patterns_list else "various common constructs"
             patterns_point = (f"2. **Design Patterns**: Common Verilog constructs such as {top_patterns_str} are frequently used ({len(self.stats['design_patterns'])} distinct patterns observed), "
-                            f"indicating that the dataset reflects typical coding practices.\\n\\n")
+                            f"indicating that the dataset reflects typical coding practices.\n\n")
         else:
-            patterns_point = "2. **Design Patterns**: The dataset exhibits a range of Verilog design patterns, aligning with standard coding practices.\\n\\n"
-
+            patterns_point = "2. **Design Patterns**: The dataset exhibits a range of Verilog design patterns, aligning with standard coding practices.\n\n"
         # 3. Parameterization
         avg_params = statistics.mean([m['parameters'] for m in self.stats['code_metrics']]) if self.stats['code_metrics'] else 0
         parameterization_point = (f"3. **Parameterization**: An average of {avg_params:.2f} parameters per module "
-                                f"suggests that many designs are configurable and promote reusability.\\n\\n")
-
+                                f"suggests that many designs are configurable and promote reusability.\n\n")
         # 4. Interface Complexity
         avg_ports = statistics.mean([m['ports'] for m in self.stats['code_metrics']]) if self.stats['code_metrics'] else 0
         interface_point = (f"4. **Interface Complexity**: With an average of {avg_ports:.2f} ports per module, "
-                        f"the designs demonstrate a range of interface complexities suitable for diverse applications.\\n\\n")
-
+                        f"the designs demonstrate a range of interface complexities suitable for diverse applications.\n\n")
         # 5. Synthesis Metrics
-        avg_syn_cells = statistics.mean(cell_counts) if cell_counts else 0 # cell_counts is from the 5-tuple unpack
+        avg_syn_cells = statistics.mean(cell_counts) if cell_counts else 0
         synthesis_point = (f"5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of {avg_syn_cells:.2f} cells for {len(cell_counts)} successfully synthesized modules with cell data) "
-                        f"provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.\\n\\n")
-            
+                        f"provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.\n\n")
         research_areas = """This dataset is well-suited for research in areas such as:
 - RTL design patterns and best practices
 - Code complexity analysis and prediction
@@ -396,9 +500,11 @@ The following table summarizes the gate (cell) count for each module as reported
 - Design reuse strategies and parameterization effectiveness
 - Benchmarking for synthesis tools and hardware cost analysis
 """
-        dynamic_conclusion = f"\\n## Conclusion\\n\\n{conclusion_intro}{complexity_point}{patterns_point}{parameterization_point}{interface_point}{synthesis_point}{research_areas}"
-            
-        md_content += dynamic_conclusion        
+        # Fix: Properly format the conclusion as Markdown
+        dynamic_conclusion = f"\n## Conclusion\n\n{conclusion_intro}{complexity_point}{patterns_point}{parameterization_point}{interface_point}{synthesis_point}{research_areas}"
+        # Unescape double backslashes and ensure newlines are correct
+        dynamic_conclusion = dynamic_conclusion.replace('\\n', '\n')
+        md_content += dynamic_conclusion
         return md_content
 
 def setup_logger(level=logging.INFO):

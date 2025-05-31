@@ -326,7 +326,8 @@ synth_%:
 	VERILOG_FILE=$$(find $(LIB_DIR) -name "$$MODULE.v"); \
 	if [ -n "$$VERILOG_FILE" ]; then \
 		echo "Synthesizing $$MODULE..."; \
-		$(YOSYS) -L $(OBJDIR)/$$MODULE.yosys.log -p "read_verilog $$VERILOG_FILE; hierarchy -check -top $$MODULE; synth -top $$MODULE; stat -top $$MODULE"; \
+		$(YOSYS) -L $(OBJDIR)/$$MODULE.yosys.log \
+			-p "read_verilog $$VERILOG_FILE; hierarchy -check -top $$MODULE; synth -top $$MODULE; stat -top $$MODULE; write_json $(OBJDIR)/$$MODULE.yosys.json;"; \
 	else \
 		echo "Module $$MODULE not found"; \
 		exit 1; \

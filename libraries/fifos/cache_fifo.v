@@ -46,8 +46,8 @@ module cache_fifo #(
     reg [ADDR_WIDTH-1:0] search_idx;
     
     // Cache storage
-    reg [DATA_WIDTH-1:0] cache_data [0:CACHE_SIZE-1];
-    reg [TAG_WIDTH-1:0]  cache_tags [0:CACHE_SIZE-1];
+    reg [DATA_WIDTH*CACHE_SIZE-1:0] cache_data_flat;
+    reg [TAG_WIDTH*CACHE_SIZE-1:0]  cache_tags_flat;
     reg [CACHE_SIZE-1:0] cache_valid;
     reg [$clog2(CACHE_SIZE)-1:0] lru_counters [0:CACHE_SIZE-1];
     reg [$clog2(CACHE_SIZE)-1:0] fifo_replacement_ptr;  // For FIFO replacement policy
@@ -67,57 +67,51 @@ module cache_fifo #(
     assign hit_ratio = (cache_hits + cache_misses == 0) ? 0 :
                        (cache_hits * 10000) / (cache_hits + cache_misses);
     
-    // Function to find index of least recently used cache entry
+    // Function to find index of least recently used cache entry (flattened for Verilog-2005)
     function [$clog2(CACHE_SIZE)-1:0] find_lru_index;
-        input [$clog2(CACHE_SIZE)-1:0] counters [0:CACHE_SIZE-1];
-        reg [$clog2(CACHE_SIZE)-1:0] min_idx;
-        reg [$clog2(CACHE_SIZE)-1:0] min_counter;
+        input [CACHE_SIZE*$clog2(CACHE_SIZE)-1:0] counters_flat;
+        integer i;
+        reg [$clog2(CACHE_SIZE)-1:0] min_idx, min_counter, counter_i;
         begin
             min_idx = 0;
-            min_counter = counters[0];
-            
-            for (integer i = 1; i < CACHE_SIZE; i = i + 1) begin
-                if (counters[i] < min_counter) begin
-                    min_counter = counters[i];
-                    min_idx = i;
+            min_counter = counters_flat[$clog2(CACHE_SIZE)-1:0];
+            for (i = 1; i < CACHE_SIZE; i = i + 1) begin
+                counter_i = counters_flat[(i+1)*$clog2(CACHE_SIZE)-1:i*$clog2(CACHE_SIZE)];
+                if (counter_i < min_counter) begin
+                    min_counter = counter_i;
+                    min_idx = i[$clog2(CACHE_SIZE)-1:0];
                 end
             end
-            
             find_lru_index = min_idx;
         end
     endfunction
     
-    // Function to find index of first available cache entry or victim for replacement
+    // Function to find index of first available cache entry or victim for replacement (flattened for Verilog-2005)
     function [$clog2(CACHE_SIZE)-1:0] find_cache_index;
         input [CACHE_SIZE-1:0] valid;
-        input [$clog2(CACHE_SIZE)-1:0] counters [0:CACHE_SIZE-1];
+        input [CACHE_SIZE*$clog2(CACHE_SIZE)-1:0] counters_flat;
         input [$clog2(CACHE_SIZE)-1:0] fifo_ptr;
+        integer i;
         reg [$clog2(CACHE_SIZE)-1:0] idx;
         reg found_empty;
         begin
             found_empty = 0;
             idx = 0;
-            
             // First, look for an invalid entry
-            for (integer i = 0; i < CACHE_SIZE; i = i + 1) begin
+            for (i = 0; i < CACHE_SIZE; i = i + 1) begin
                 if (!valid[i]) begin
-                    idx = i;
+                    idx = i[$clog2(CACHE_SIZE)-1:0];
                     found_empty = 1;
-                    i = CACHE_SIZE; // Break the loop
                 end
             end
-            
             // If no invalid entry, use replacement policy
             if (!found_empty) begin
                 if (LRU_POLICY) begin
-                    // LRU replacement - find entry with highest counter value
-                    idx = find_lru_index(counters);
+                    idx = find_lru_index(counters_flat);
                 end else begin
-                    // FIFO replacement - use round-robin pointer
                     idx = fifo_ptr;
                 end
             end
-            
             find_cache_index = idx;
         end
     endfunction
@@ -148,10 +142,10 @@ module cache_fifo #(
             
             // Initialize cache
             for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                cache_valid[i] <= 0;
-                lru_counters[i] <= i[$clog2(CACHE_SIZE)-1:0];
-                cache_data[i] <= 0;
-                cache_tags[i] <= 0;
+                cache_valid[i] = 0;
+                lru_counters[i] = i;
+                cache_data_flat[(i+1)*DATA_WIDTH-1:i*DATA_WIDTH] = 0;
+                cache_tags_flat[(i+1)*TAG_WIDTH-1:i*TAG_WIDTH] = 0;
             end
         end else begin
             // Indicate when a read cycle is valid
@@ -177,7 +171,7 @@ module cache_fifo #(
                 
                 // Check for tag match in cache
                 for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                    if (cache_valid[i] && cache_tags[i] == rd_tag) begin
+                    if (cache_valid[i] && cache_tags_flat[(i+1)*TAG_WIDTH-1:i*TAG_WIDTH] == rd_tag) begin
                         matched_tag[i] = 1;
                         hit_index = i[$clog2(CACHE_SIZE)-1:0];
                     end
@@ -185,7 +179,7 @@ module cache_fifo #(
                 
                 // Process cache hit
                 if (|matched_tag) begin
-                    rd_data <= cache_data[hit_index];
+                    rd_data <= cache_data_flat[(hit_index+1)*DATA_WIDTH-1:hit_index*DATA_WIDTH];
                     rd_hit <= 1;
                     cache_hits <= cache_hits + 1;
                     
@@ -211,11 +205,15 @@ module cache_fifo #(
                     rd_data <= mem[search_idx];
                     cache_misses <= cache_misses + 1;
                     
-                    // Add to cache
-                    cache_idx = find_cache_index(cache_valid, lru_counters, fifo_replacement_ptr);
+                    // Flatten lru_counters for function call
+                    reg [CACHE_SIZE*$clog2(CACHE_SIZE)-1:0] lru_counters_flat;
+                    for (i = 0; i < CACHE_SIZE; i = i + 1) begin
+                        lru_counters_flat[(i+1)*$clog2(CACHE_SIZE)-1:i*$clog2(CACHE_SIZE)] = lru_counters[i];
+                    end
+                    cache_idx = find_cache_index(cache_valid, lru_counters_flat, fifo_replacement_ptr);
                     cache_valid[cache_idx] <= 1;
-                    cache_tags[cache_idx] <= rd_tag;
-                    cache_data[cache_idx] <= mem[search_idx];
+                    cache_tags_flat[(cache_idx+1)*TAG_WIDTH-1:cache_idx*TAG_WIDTH] <= rd_tag;
+                    cache_data_flat[(cache_idx+1)*DATA_WIDTH-1:cache_idx*DATA_WIDTH] <= mem[search_idx];
                     
                     // Update replacement policy state
                     if (LRU_POLICY) begin

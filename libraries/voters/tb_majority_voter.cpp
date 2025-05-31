@@ -26,9 +26,11 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     test_inputs[4] = 0xBB;
     
     // Set the inputs in the Verilator model
+    uint64_t packed_inputs = 0;
     for (int i = 0; i < NUM_INPUTS; i++) {
-        voter->inputs[i] = test_inputs[i];
+        packed_inputs |= ((uint64_t)test_inputs[i]) << (i * INPUT_WIDTH);
     }
+    voter->inputs_flat = packed_inputs;
     
     // Evaluate the model
     voter->eval();
@@ -56,9 +58,11 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     test_inputs[4] = 0x55;
     
     // Set the inputs in the Verilator model
+    packed_inputs = 0;
     for (int i = 0; i < NUM_INPUTS; i++) {
-        voter->inputs[i] = test_inputs[i];
+        packed_inputs |= ((uint64_t)test_inputs[i]) << (i * INPUT_WIDTH);
     }
+    voter->inputs_flat = packed_inputs;
     
     // Evaluate the model
     voter->eval();
@@ -86,9 +90,11 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     test_inputs[4] = 0xCC;
     
     // Set the inputs in the Verilator model
+    packed_inputs = 0;
     for (int i = 0; i < NUM_INPUTS; i++) {
-        voter->inputs[i] = test_inputs[i];
+        packed_inputs |= ((uint64_t)test_inputs[i]) << (i * INPUT_WIDTH);
     }
+    voter->inputs_flat = packed_inputs;
     
     // Evaluate the model
     voter->eval();
@@ -116,9 +122,11 @@ void check_operation(std::unique_ptr<Vmajority_voter>& voter, VerilatedVcdC* tfp
     test_inputs[4] = 0x99;
     
     // Set the inputs in the Verilator model
+    packed_inputs = 0;
     for (int i = 0; i < NUM_INPUTS; i++) {
-        voter->inputs[i] = test_inputs[i];
+        packed_inputs |= ((uint64_t)test_inputs[i]) << (i * INPUT_WIDTH);
     }
+    voter->inputs_flat = packed_inputs;
     
     // Evaluate the model
     voter->eval();

@@ -92,7 +92,7 @@ module parameterized_i2c_master #(
             // Reset all registers
             state           <= IDLE;
             phase           <= SCL_LOW;
-            divider_counter <= DIVIDER_WIDTH'(CLOCK_DIVIDER - 1);
+            divider_counter <= (CLOCK_DIVIDER - 1);
             bit_counter_debug <= 3'd7;               // MSB first
             shift_reg_debug   <= 8'h00;
             scl_internal    <= 1'b1;            // SCL released (idle high)
@@ -112,7 +112,7 @@ module parameterized_i2c_master #(
                 divider_counter <= divider_counter - 1'b1;
             end else begin
                 // Reset divider counter for next phase
-                divider_counter <= DIVIDER_WIDTH'(CLOCK_DIVIDER - 1);
+                divider_counter <= (CLOCK_DIVIDER - 1);
                 
                 // Handle phase sequencing
                 case (phase)

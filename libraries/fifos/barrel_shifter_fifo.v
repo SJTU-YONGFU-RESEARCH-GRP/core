@@ -70,29 +70,24 @@ module barrel_shifter_fifo #(
         end else begin
             // Rotation operation (highest priority)
             if (rotate_en && current_count > 0 && rotate_amount > 0 && rotate_amount < current_count) begin
-                // Set debug rotation flag
                 debug_rotation_active_reg <= 1;
-                
-                // Perform rotation using direct non-blocking assignments from old data_regs
-                if (rotate_direction == 0) begin  // Left rotation
-                    // Rotate left by rotate_amount
-                    for (i = 0; i < current_count - rotate_amount; i = i + 1) begin
-                        data_regs[i] <= data_regs[(rd_ptr + rotate_amount + i) % DEPTH];
-                    end
-                    for (i = 0; i < rotate_amount; i = i + 1) begin
-                        data_regs[current_count - rotate_amount + i] <= data_regs[(rd_ptr + i) % DEPTH];
-                    end
-                end else begin  // Right rotation
-                    // Rotate right by rotate_amount
-                    for (i = rotate_amount; i < current_count; i = i + 1) begin
-                        data_regs[i] <= data_regs[(rd_ptr + i - rotate_amount) % DEPTH];
-                    end
-                    for (i = 0; i < rotate_amount; i = i + 1) begin
-                        data_regs[i] <= data_regs[(rd_ptr + current_count - rotate_amount + i) % DEPTH];
+                for (i = 0; i < DEPTH; i = i + 1) begin
+                    if (i < current_count) begin
+                        if (rotate_direction == 0) begin // Left rotation
+                            if (i < current_count - rotate_amount) begin
+                                data_regs[i] <= data_regs[(rd_ptr + rotate_amount + i) % DEPTH];
+                            end else if (i < current_count) begin
+                                data_regs[i] <= data_regs[(rd_ptr + i - (current_count - rotate_amount)) % DEPTH];
+                            end
+                        end else begin // Right rotation
+                            if (i >= rotate_amount && i < current_count) begin
+                                data_regs[i] <= data_regs[(rd_ptr + i - rotate_amount) % DEPTH];
+                            end else if (i < rotate_amount && i < current_count) begin
+                                data_regs[i] <= data_regs[(rd_ptr + current_count - rotate_amount + i) % DEPTH];
+                            end
+                        end
                     end
                 end
-                
-                // Reset pointers after rotation
                 rd_ptr <= 0;
                 wr_ptr <= current_count;
             end

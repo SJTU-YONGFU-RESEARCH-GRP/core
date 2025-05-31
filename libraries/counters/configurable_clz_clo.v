@@ -10,22 +10,24 @@ module configurable_clz_clo #(
 );
 
     integer i;
+    reg found;
 
     always @(*) begin
         // Set default values
-        count_out = COUNT_WIDTH'(DATA_WIDTH);
+        count_out = DATA_WIDTH;
         all_zeros = (data_in == {DATA_WIDTH{1'b0}});
         all_ones = (data_in == {DATA_WIDTH{1'b1}});
+        found = 0;
         
         // For count leading zeros
         if (count_ones == 1'b0) begin
             if (all_zeros) begin
-                count_out = COUNT_WIDTH'(DATA_WIDTH);
+                count_out = DATA_WIDTH;
             end else begin
                 for (i = DATA_WIDTH-1; i >= 0; i = i - 1) begin
-                    if (data_in[i] == 1'b1) begin
-                        count_out = COUNT_WIDTH'(DATA_WIDTH - 1 - i);
-                        break;
+                    if (!found && data_in[i] == 1'b1) begin
+                        count_out = DATA_WIDTH - 1 - i;
+                        found = 1;
                     end
                 end
             end
@@ -33,12 +35,13 @@ module configurable_clz_clo #(
         // For count leading ones
         else begin
             if (all_ones) begin
-                count_out = COUNT_WIDTH'(DATA_WIDTH);
+                count_out = DATA_WIDTH;
             end else begin
+                found = 0;
                 for (i = DATA_WIDTH-1; i >= 0; i = i - 1) begin
-                    if (data_in[i] == 1'b0) begin
-                        count_out = COUNT_WIDTH'(DATA_WIDTH - 1 - i);
-                        break;
+                    if (!found && data_in[i] == 1'b0) begin
+                        count_out = DATA_WIDTH - 1 - i;
+                        found = 1;
                     end
                 end
             end

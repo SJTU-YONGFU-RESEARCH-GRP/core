@@ -16,16 +16,16 @@ The dataset contains 138 Verilog modules across 24 different categories, providi
 ## Code Metrics
 
 ### Average Metrics per Module
-- Lines of Code: 112.57
+- Lines of Code: 112.51
 - Parameters: 2.75
-- Ports: 11.20
+- Ports: 11.21
 
 ### Module Complexity Distribution
 
 ![Complexity Distribution](plots/complexity_distribution.png)
 
-- Simple (0-50 lines): 39
-- Medium (51-200 lines): 80
+- Simple (0-50 lines): 38
+- Medium (51-200 lines): 81
 - Complex (>200 lines): 19
 
 ## Design Patterns
@@ -70,148 +70,196 @@ The dataset contains 138 Verilog modules across 24 different categories, providi
 
 ## Synthesis Statistics (Yosys)
 
-The following table summarizes the gate (cell) count for each module as reported by Yosys synthesis:
+The following table summarizes the gate (cell) count, wire count, memory countfor each module as reported by Yosys synthesis:
 
-| Module | Gate/Cell Count |
-|--------|-----------------|
-| configurable_brent_kung_adder | 160 |
-| configurable_carry_lookahead_adder | 168 |
-| configurable_carry_select_adder | 913 |
-| configurable_carry_skip_adder | 226 |
-| configurable_conditional_sum_adder | 500 |
-| configurable_kogge_stone_adder | 549 |
-| alu | 353 |
-| configurable_comparator | 109 |
-| arbiter | N/A |
-| arbiter_rr | N/A |
-| fair_priority_arbiter | N/A |
-| matrix_arbiter | N/A |
-| bsg_async_credit_counter | 32 |
-| clock_domain_crossing | 79 |
-| clock_domain_crossing_fifo | 1758 |
-| handshake_synchronizer | 78 |
-| multi_flop_synchronizer | 2 |
-| binary_to_gray | 3 |
-| configurable_priority_encoder | 27 |
-| gray_to_binary | 3 |
-| hamming_code | 57 |
-| parameterized_crc_generator | 50 |
-| parameterized_scrambler | 13 |
-| priority_encoder | 27 |
-| ahb_lite_master | 518 |
-| basic_spi_master | 156 |
-| final_spi_master | 162 |
-| fixed_spi_master | 157 |
-| parameterized_deserializer | 87 |
-| parameterized_i2c_master | N/A |
-| parameterized_serdes | 107 |
-| parameterized_spi_master | 180 |
-| parameterized_uart_rx | 598 |
-| parameterized_uart_tx | 109 |
-| simple_spi_master | 166 |
-| spi_master | 161 |
-| cordic | 846 |
-| cordic_core | 4045 |
-| sine_cosine_generator | 277 |
-| configurable_clz_clo | N/A |
-| gray_counter | 36 |
-| johnson_counter | 9 |
-| leading_zero_counter | N/A |
-| loadable_updown_counter | 77 |
-| parameterized_decade_counter | 18 |
-| parameterized_gray_counter | 12 |
-| parameterized_johnson_counter | 5 |
-| parameterized_johnson_updown_counter | 10 |
-| parameterized_loadable_counter | 33 |
-| parameterized_onehot_counter | 15 |
-| parameterized_ring_counter | 4 |
-| parameterized_self_correcting_counter | 23 |
-| parameterized_sync_reset_counter | 36 |
-| parameterized_updown_counter | 35 |
-| logic_analyzer | 104318 |
-| performance_counter | 1504 |
-| aes_core | N/A |
-| true_random_generator | 424 |
-| async_fifo | 504 |
-| barrel_shifter_fifo | N/A |
-| bidirectional_fifo | 747 |
-| cache_fifo | N/A |
-| circular_buffer_fifo | 644 |
-| configurable_param_fifo | 400 |
-| configurable_sync_fifo | N/A |
-| credit_based_fifo | 555 |
-| dual_clock_fifo | 466 |
-| elastic_buffer | 270 |
-| fifo | 488 |
-| fwft_fifo | 388 |
-| memory_mapped_fifo | 1945 |
-| multi_ported_fifo | N/A |
-| parameterized_priority_queue | N/A |
-| pipelined_fifo | N/A |
-| showahead_fifo | 499 |
-| skid_buffer | 46 |
-| smart_fifo | 1268 |
-| sync_fifo | 380 |
-| configurable_fir_filter | N/A |
-| fir_filter | 296 |
-| sequence_detector_fsm | 61 |
-| axi_lite_master | 204 |
-| axi_stream_interface | 0 |
-| pcie_endpoint | 405 |
-| wishbone_master | 229 |
-| dma_controller | 2059 |
-| gpio_controller | N/A |
-| fixed_point_sqrt | 197 |
-| floating_point_adder | 2195 |
-| non_restoring_divider | N/A |
-| ddr_controller | 1586 |
-| dual_port_ram | 609 |
-| memory_controller | 25734 |
-| parameterized_cam | 574 |
-| booth_multiplier | 450 |
-| configurable_mult | 652 |
-| radix4_booth_multiplier | 462 |
-| configurable_mesh_router | N/A |
-| crossbar_switch | 128 |
-| mesh_router | N/A |
-| network_interface | 211 |
-| network_interface_cdc | 284 |
-| clock_divider | 1632 |
-| clock_gating | 3 |
-| parameterized_clock_gating | N/A |
-| parameterized_freq_divider | 3918 |
-| power_domain_controller | 201 |
-| barrel_rotator | 194 |
-| barrel_shifter | 827 |
-| bidirectional_shift_register | 26 |
-| dual_edge_register | N/A |
-| lfsr | 20 |
-| onehot_decoder_register | 46 |
-| parameterized_barrel_rotator | 528 |
-| parameterized_rotation_sipo | 1 |
-| piso_register | 16 |
-| register_file | 3191 |
-| scan_register | 32 |
-| shadow_register | 129 |
-| shift_register_left | 17 |
-| shift_register_right | 17 |
-| sipo_register | N/A |
-| siso_register | 8 |
-| sync_preset_register | 27 |
-| toggle_register | 25 |
-| universal_shift_register | 59 |
-| configurable_lfsr | 32 |
-| configurable_prng | 69 |
-| digital_thermometer_controller | 104 |
-| multi_phase_pwm_controller | 552 |
-| parameterized_dds | N/A |
-| parameterized_fft | 10629 |
-| parameterized_pwm | 232 |
-| pulse_width_detector | 90 |
-| pwm_generator | 119 |
-| bist_controller | 496 |
-| jtag_controller | 206 |
-| majority_voter | N/A |
+| Module | Gate/Cell Count | Wire Count | Memory Count |
+|--------|-----------------|------------|--------------|
+| configurable_brent_kung_adder | 160 | 133 | 0 |
+| configurable_carry_lookahead_adder | 104 | 129 | 0 |
+| configurable_carry_select_adder | 88 | 1362 | 0 |
+| configurable_carry_skip_adder | 226 | 231 | 0 |
+| configurable_conditional_sum_adder | 68 | 541 | 0 |
+| configurable_kogge_stone_adder | 549 | 522 | 0 |
+| alu | 353 | 344 | 0 |
+| configurable_comparator | 109 | 115 | 0 |
+| arbiter | 19 | 16 | 0 |
+| arbiter_rr | 82 | 78 | 0 |
+| fair_priority_arbiter | 147 | 148 | 0 |
+| matrix_arbiter | 175 | 203 | 0 |
+| bsg_async_credit_counter | 15 | 38 | 0 |
+| clock_domain_crossing | 79 | 23 | 0 |
+| clock_domain_crossing_fifo | 1758 | 1171 | 0 |
+| handshake_synchronizer | 78 | 25 | 0 |
+| multi_flop_synchronizer | 2 | 6 | 0 |
+| binary_to_gray | 3 | 2 | 0 |
+| configurable_priority_encoder | 27 | 27 | 0 |
+| gray_to_binary | 3 | 3 | 0 |
+| hamming_code | 57 | 55 | 0 |
+| parameterized_crc_generator | 50 | 40 | 0 |
+| parameterized_scrambler | 13 | 12 | 0 |
+| priority_encoder | 27 | 27 | 0 |
+| ahb_lite_master | 518 | 378 | 0 |
+| basic_spi_master | 156 | 127 | 0 |
+| final_spi_master | 162 | 126 | 0 |
+| fixed_spi_master | 157 | 128 | 0 |
+| parameterized_deserializer | 87 | 72 | 0 |
+| parameterized_i2c_master | 413 | 382 | 0 |
+| parameterized_serdes | 107 | 89 | 0 |
+| parameterized_spi_master | 180 | 147 | 0 |
+| parameterized_uart_rx | 598 | 518 | 0 |
+| parameterized_uart_tx | 109 | 89 | 0 |
+| simple_spi_master | 166 | 137 | 0 |
+| spi_master | 161 | 125 | 0 |
+| cordic | 846 | 709 | 0 |
+| cordic_core | 4045 | 4044 | 0 |
+| sine_cosine_generator | 277 | 241 | 0 |
+| configurable_clz_clo | 490 | 487 | 0 |
+| gray_counter | 36 | 33 | 0 |
+| johnson_counter | 9 | 11 | 0 |
+| leading_zero_counter | 165 | 161 | 0 |
+| loadable_updown_counter | 77 | 76 | 0 |
+| parameterized_decade_counter | 18 | 15 | 0 |
+| parameterized_gray_counter | 12 | 10 | 0 |
+| parameterized_johnson_counter | 5 | 6 | 0 |
+| parameterized_johnson_updown_counter | 10 | 12 | 0 |
+| parameterized_loadable_counter | 33 | 25 | 0 |
+| parameterized_onehot_counter | 15 | 12 | 0 |
+| parameterized_ring_counter | 4 | 5 | 0 |
+| parameterized_self_correcting_counter | 23 | 22 | 0 |
+| parameterized_sync_reset_counter | 36 | 33 | 0 |
+| parameterized_updown_counter | 35 | 38 | 0 |
+| logic_analyzer | 104318 | 72474 | 0 |
+| performance_counter | 1504 | 964 | 0 |
+| aes_core | N/A | N/A | N/A |
+| true_random_generator | 424 | 265 | 0 |
+| async_fifo | 504 | 334 | 0 |
+| barrel_shifter_fifo | 4367 | 4249 | 0 |
+| bidirectional_fifo | 747 | 469 | 0 |
+| cache_fifo | N/A | N/A | N/A |
+| circular_buffer_fifo | 644 | 500 | 0 |
+| configurable_param_fifo | 400 | 262 | 0 |
+| configurable_sync_fifo | N/A | N/A | N/A |
+| credit_based_fifo | 555 | 410 | 0 |
+| dual_clock_fifo | 466 | 316 | 0 |
+| elastic_buffer | 270 | 186 | 0 |
+| fifo | 488 | 353 | 0 |
+| fwft_fifo | 388 | 245 | 0 |
+| memory_mapped_fifo | 1945 | 1322 | 0 |
+| multi_ported_fifo | N/A | N/A | N/A |
+| parameterized_priority_queue | N/A | N/A | N/A |
+| pipelined_fifo | N/A | N/A | N/A |
+| showahead_fifo | 499 | 368 | 0 |
+| skid_buffer | 46 | 32 | 0 |
+| smart_fifo | 1268 | 670 | 0 |
+| sync_fifo | 380 | 236 | 0 |
+| configurable_fir_filter | N/A | N/A | N/A |
+| fir_filter | 296 | 239 | 0 |
+| sequence_detector_fsm | 61 | 54 | 0 |
+| axi_lite_master | 204 | 88 | 0 |
+| axi_stream_interface | 0 | 20 | 0 |
+| pcie_endpoint | 405 | 380 | 0 |
+| wishbone_master | 229 | 141 | 0 |
+| dma_controller | 2059 | 1793 | 0 |
+| gpio_controller | N/A | N/A | N/A |
+| fixed_point_sqrt | 197 | 193 | 0 |
+| floating_point_adder | 2195 | 1952 | 0 |
+| non_restoring_divider | N/A | N/A | N/A |
+| ddr_controller | 1586 | 1329 | 0 |
+| dual_port_ram | 609 | 476 | 0 |
+| memory_controller | 25734 | 17729 | 0 |
+| parameterized_cam | 574 | 452 | 0 |
+| booth_multiplier | 450 | 431 | 0 |
+| configurable_mult | 652 | 641 | 0 |
+| radix4_booth_multiplier | 462 | 427 | 0 |
+| configurable_mesh_router | N/A | N/A | N/A |
+| crossbar_switch | 128 | 73 | 0 |
+| mesh_router | N/A | N/A | N/A |
+| network_interface | 211 | 128 | 0 |
+| network_interface_cdc | 284 | 139 | 0 |
+| clock_divider | 1632 | 1620 | 0 |
+| clock_gating | 3 | 6 | 0 |
+| parameterized_clock_gating | N/A | N/A | N/A |
+| parameterized_freq_divider | 3918 | 3893 | 0 |
+| power_domain_controller | 201 | 169 | 0 |
+| barrel_rotator | 194 | 190 | 0 |
+| barrel_shifter | 827 | 801 | 0 |
+| bidirectional_shift_register | 26 | 27 | 0 |
+| dual_edge_register | N/A | N/A | N/A |
+| lfsr | 20 | 13 | 0 |
+| onehot_decoder_register | 46 | 20 | 0 |
+| parameterized_barrel_rotator | 528 | 503 | 0 |
+| parameterized_rotation_sipo | 1 | 7 | 0 |
+| piso_register | 16 | 7 | 0 |
+| register_file | 3191 | 2146 | 0 |
+| scan_register | 32 | 10 | 0 |
+| shadow_register | 129 | 14 | 0 |
+| shift_register_left | 17 | 10 | 0 |
+| shift_register_right | 17 | 10 | 0 |
+| sipo_register | N/A | N/A | N/A |
+| siso_register | 8 | 6 | 0 |
+| sync_preset_register | 27 | 19 | 0 |
+| toggle_register | 25 | 17 | 0 |
+| universal_shift_register | 59 | 58 | 0 |
+| configurable_lfsr | 32 | 27 | 0 |
+| configurable_prng | 69 | 48 | 0 |
+| digital_thermometer_controller | 104 | 88 | 0 |
+| multi_phase_pwm_controller | 552 | 559 | 0 |
+| parameterized_dds | N/A | N/A | N/A |
+| parameterized_fft | 10629 | 9866 | 0 |
+| parameterized_pwm | 232 | 216 | 0 |
+| pulse_width_detector | 90 | 80 | 0 |
+| pwm_generator | 119 | 103 | 0 |
+| bist_controller | 496 | 423 | 0 |
+| jtag_controller | 206 | 105 | 0 |
+| majority_voter | 90 | 88 | 0 |
+
+- **Average Gate/Cell Count:** 1562.82
+- **Average Wire Count:** 1178.85
+- **Average Memory Count:** 0.00
+
+### Most Common Cell Types (All Modules)
+
+| Cell Type | Total Count |
+|-----------|------------|
+| $_ANDNOT_ | 58334 |
+| $_OR_ | 54697 |
+| $_DFFE_PP_ | 44413 |
+| $_MUX_ | 11197 |
+| $_XOR_ | 5376 |
+| $_DFFE_PN0P_ | 3177 |
+| $_NOT_ | 3011 |
+| $_NAND_ | 2249 |
+| $_NOR_ | 2067 |
+| $_ORNOT_ | 2031 |
+| $_XNOR_ | 1764 |
+| $_AND_ | 1689 |
+| $_SDFFCE_PN0P_ | 1088 |
+| $_DFF_PN0_ | 657 |
+| $_SDFFE_PN0P_ | 89 |
+| $_DFFE_PN1P_ | 66 |
+| $_SDFFE_PN1P_ | 52 |
+| $_DFFE_PN0N_ | 47 |
+| $_SDFFE_PN0N_ | 32 |
+| $_DFFE_NN0P_ | 32 |
+| $_DFFE_PP0P_ | 30 |
+| $_DFF_P_ | 20 |
+| $_SDFFE_PP0P_ | 19 |
+| $_DFF_PN1_ | 18 |
+| $paramod\cond_sum_rca\WIDTH=s32'00000000000000000000000000000100 | 16 |
+| $paramod\csa_ripple_carry_adder\WIDTH=s32'00000000000000000000000000001000 | 15 |
+| $_SDFF_PN0_ | 11 |
+| $paramod\cla_group\GROUP_SIZE=s32'00000000000000000000000000000100 | 8 |
+| $_DFF_PP0_ | 7 |
+| $_DFFE_NN0N_ | 4 |
+| $_DFFE_PN1N_ | 3 |
+| $_SDFFE_PP1P_ | 1 |
+| $paramod$449c3f1eeb85a776fe1f701efe117aa04ebada70\bsg_async_ptr_gray | 1 |
+| $_DLATCH_N_ | 1 |
+| $_SDFF_PP0_ | 1 |
+| $_SDFF_PP1_ | 1 |
+| $_SDFF_PN1_ | 1 |
+| $_DFF_NN0_ | 1 |
+| $_DFFE_NN1N_ | 1 |
 
 
 #### Synthesis Plots
@@ -220,7 +268,22 @@ The following table summarizes the gate (cell) count for each module as reported
 - ![Wire Count Histogram](plots/wire_count_histogram.png)
 - ![Memory Count Histogram](plots/memory_count_histogram.png)
 - ![Top Cell Types](plots/cell_type_histogram.png)
-\n## Conclusion\n\nThis dataset provides a diverse collection of Verilog modules that represent various aspects of digital design:\n\n1. **Design Complexity**: The dataset includes 39 simple (0-50 lines), 80 medium (51-200 lines), and 19 complex (>200 lines) modules, offering a varied set for analysis and research purposes.\n\n2. **Design Patterns**: Common Verilog constructs such as if_else (90.6%), for_loop (80.4%), case (40.6%) are frequently used (5 distinct patterns observed), indicating that the dataset reflects typical coding practices.\n\n3. **Parameterization**: An average of 2.75 parameters per module suggests that many designs are configurable and promote reusability.\n\n4. **Interface Complexity**: With an average of 11.20 ports per module, the designs demonstrate a range of interface complexities suitable for diverse applications.\n\n5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of 1645.76 cells for 114 successfully synthesized modules with cell data) provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.\n\nThis dataset is well-suited for research in areas such as:
+
+## Conclusion
+
+This dataset provides a diverse collection of Verilog modules that represent various aspects of digital design:
+
+1. **Design Complexity**: The dataset includes 38 simple (0-50 lines), 81 medium (51-200 lines), and 19 complex (>200 lines) modules, offering a varied set for analysis and research purposes.
+
+2. **Design Patterns**: Common Verilog constructs such as if_else (90.6%), for_loop (80.4%), case (40.6%) are frequently used (5 distinct patterns observed), indicating that the dataset reflects typical coding practices.
+
+3. **Parameterization**: An average of 2.75 parameters per module suggests that many designs are configurable and promote reusability.
+
+4. **Interface Complexity**: With an average of 11.21 ports per module, the designs demonstrate a range of interface complexities suitable for diverse applications.
+
+5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of 1562.82 cells for 123 successfully synthesized modules with cell data) provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.
+
+This dataset is well-suited for research in areas such as:
 - RTL design patterns and best practices
 - Code complexity analysis and prediction
 - Design automation, synthesis, and optimization techniques

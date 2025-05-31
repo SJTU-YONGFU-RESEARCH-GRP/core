@@ -26,13 +26,14 @@ module fair_priority_arbiter #(
     endgenerate
     
     // Function to calculate next round-robin index
+    integer inc_i; // Declare outside the function
     function [$clog2(NUM_REQUESTERS)-1:0] next_index;
         input [$clog2(NUM_REQUESTERS)-1:0] current_idx;
         input integer offset;
         begin
             next_index = current_idx;
             // Simple increment logic with wrap-around
-            for (integer inc_i = 0; inc_i < offset; inc_i = inc_i + 1) begin
+            for (inc_i = 0; inc_i < offset; inc_i = inc_i + 1) begin
                 if (next_index == (NUM_REQUESTERS[$clog2(NUM_REQUESTERS)-1:0] - 1'b1))
                     next_index = {$clog2(NUM_REQUESTERS){1'b0}};
                 else
@@ -42,6 +43,11 @@ module fair_priority_arbiter #(
     endfunction
     
     // Main arbitration logic
+    integer loop_j; // Declare outside the always block
+    reg [PRIORITY_WIDTH-1:0] highest_priority;
+    reg [$clog2(NUM_REQUESTERS)-1:0] highest_idx;
+    reg found;
+    reg [$clog2(NUM_REQUESTERS)-1:0] current_idx;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             grant <= {NUM_REQUESTERS{1'b0}};
@@ -54,12 +60,6 @@ module fair_priority_arbiter #(
             valid <= 1'b0;
             
             if (|request) begin  // If any request is active
-                // Variables to track the highest priority request
-                reg [PRIORITY_WIDTH-1:0] highest_priority;
-                reg [$clog2(NUM_REQUESTERS)-1:0] highest_idx;
-                reg found;
-                reg [$clog2(NUM_REQUESTERS)-1:0] current_idx;
-                
                 // Initialize with minimum priority
                 highest_priority = {PRIORITY_WIDTH{1'b0}};
                 highest_idx = {$clog2(NUM_REQUESTERS){1'b0}};
@@ -68,7 +68,7 @@ module fair_priority_arbiter #(
                 // First pass: look for requests with higher priority starting from position after last granted
                 current_idx = next_index(last_grant_idx, 1);
                 
-                for (integer loop_j = 0; loop_j < NUM_REQUESTERS; loop_j = loop_j + 1) begin
+                for (loop_j = 0; loop_j < NUM_REQUESTERS; loop_j = loop_j + 1) begin
                     if (request[current_idx] && 
                         (priority_values[current_idx] > highest_priority || !found)) begin
                         highest_priority = priority_values[current_idx];

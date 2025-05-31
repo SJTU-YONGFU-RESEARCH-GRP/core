@@ -42,6 +42,7 @@ module matrix_arbiter #(
     reg [NUM_REQUESTORS-1:0] winner;
     reg [31:0] start_idx;  // Moved outside always block
     reg found;             // Moved outside always block
+    reg found_prev_grant;
     
     // Simplified arbitration logic that actually works
     always @(*) begin
@@ -79,10 +80,11 @@ module matrix_arbiter #(
             if (winner == {NUM_REQUESTORS{1'b0}}) begin
                 // Find the last granted requestor
                 start_idx = 0;  // Default if no previous grant
+                found_prev_grant = 1'b0;
                 for (i = NUM_REQUESTORS-1; i >= 0; i = i - 1) begin
-                    if (prev_grant[i]) begin
+                    if (!found_prev_grant && prev_grant[i]) begin
                         start_idx = (i + 1) % NUM_REQUESTORS;
-                        break;
+                        found_prev_grant = 1'b1;
                     end
                 end
                 
@@ -90,10 +92,9 @@ module matrix_arbiter #(
                 found = 1'b0;  // Initialize found flag
                 for (i = 0; i < NUM_REQUESTORS; i = i + 1) begin
                     j = (start_idx + i) % NUM_REQUESTORS;
-                    if (req[j]) begin
+                    if (!found && req[j]) begin
                         winner[j] = 1'b1;
                         found = 1'b1;
-                        break;
                     end
                 end
                 
@@ -102,7 +103,7 @@ module matrix_arbiter #(
                     for (i = 0; i < NUM_REQUESTORS; i = i + 1) begin
                         if (req[i]) begin
                             winner[i] = 1'b1;
-                            break;
+                            // No need for break, as only the first match will be set
                         end
                     end
                 end

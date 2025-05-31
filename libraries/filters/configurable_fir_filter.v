@@ -81,7 +81,7 @@ module configurable_fir_filter #(
         endcase
         
         // Print coefficients for verification
-        for (int i = 0; i < NUM_TAPS; i++) begin
+        for (integer i = 0; i < NUM_TAPS; i = i + 1) begin
             $display("Coefficient[%0d] = %0h", i, coeff_array[i]);
         end
     end
