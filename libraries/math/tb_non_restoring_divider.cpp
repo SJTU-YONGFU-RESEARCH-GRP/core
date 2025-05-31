@@ -83,24 +83,39 @@ int main(int argc, char** argv) {
     dut->trace(vcd, 5);
     vcd->open("waveform.vcd");
     
-    bool all_tests_passed = true;
-    
+    int total_tests = 0;
+    int passed_tests = 0;
+
     // Basic test cases
-    all_tests_passed &= test_division(dut, vcd, 12, 3);    // 12/3 = 4 rem 0
-    all_tests_passed &= test_division(dut, vcd, 13, 5);    // 13/5 = 2 rem 3
-    all_tests_passed &= test_division(dut, vcd, 200, 15);  // 200/15 = 13 rem 5
-    all_tests_passed &= test_division(dut, vcd, 7, 9);     // 7/9 = 0 rem 7
-    
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 12, 3);
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 13, 5);
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 200, 15);
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 7, 9);
+
     // Edge cases
-    all_tests_passed &= test_division(dut, vcd, 0, 5);     // 0/5 = 0 rem 0
-    all_tests_passed &= test_division(dut, vcd, 255, 1);   // 255/1 = 255 rem 0
-    all_tests_passed &= test_division(dut, vcd, 1, 1);     // 1/1 = 1 rem 0
-    all_tests_passed &= test_division(dut, vcd, 254, 255); // 254/255 = 0 rem 254
-    
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 0, 5);
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 255, 1);
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 1, 1);
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 254, 255);
+
     // Division by zero
-    all_tests_passed &= test_division(dut, vcd, 42, 0);    // 42/0 = error
-    
-    if (all_tests_passed) {
+    total_tests++;
+    passed_tests += test_division(dut, vcd, 42, 0);
+
+    // Summarized test summary
+    std::cout << "\n==== Test Summary ====\n";
+    std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
+    std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
+
+    if (passed_tests == total_tests) {
         std::cout << "\nAll division tests PASSED!" << std::endl;
     } else {
         std::cout << "\nSome division tests FAILED!" << std::endl;
@@ -110,5 +125,5 @@ int main(int argc, char** argv) {
     delete dut;
     delete vcd;
     
-    return all_tests_passed ? 0 : 1;
+    return passed_tests == total_tests ? 0 : 1;
 }

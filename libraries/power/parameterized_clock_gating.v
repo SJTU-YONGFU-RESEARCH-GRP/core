@@ -38,15 +38,12 @@ module parameterized_clock_gating #(
         if (LATCH_BASED != 0) begin : gen_latch_based
             // Latch-based clock gating (preferred for ASIC)
             // The latch captures enable_final when clk_in is low
-            /* verilator lint_off COMBDLY */
-            always @* begin
-                if (!clk_in) begin
+            /* verilator lint_off LATCH */
+            always @(enable_final or test_mode or clk_in) begin
+                if (!clk_in)
                     enable_latch = enable_final | test_mode;
-                end else begin
-                    enable_latch = enable_latch;
-                end
             end
-            /* verilator lint_on COMBDLY */
+            /* verilator lint_on LATCH */
             
             // Gate the clock
             assign clk_out = clk_in & enable_latch;

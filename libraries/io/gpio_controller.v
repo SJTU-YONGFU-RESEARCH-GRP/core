@@ -32,6 +32,9 @@ module gpio_controller #(
     // Interrupt handling
     reg [PIN_COUNT-1:0] int_status_reg;
     
+    // Loop variable for interrupt logic
+    integer j;
+    
     // Generate tri-state buffers for bidirectional pins
     genvar i;
     generate
@@ -69,7 +72,7 @@ module gpio_controller #(
         if (!rst_n) begin
             int_status_reg <= 0;
         end else begin
-            for (integer j = 0; j < PIN_COUNT; j = j + 1) begin
+            for (j = 0; j < PIN_COUNT; j = j + 1) begin
                 // Clear interrupts when requested
                 if (int_clear[j]) begin
                     int_status_reg[j] <= 1'b0;

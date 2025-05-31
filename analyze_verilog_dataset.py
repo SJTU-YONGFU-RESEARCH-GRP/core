@@ -186,9 +186,11 @@ class VerilogAnalyzer:
         # --- Yosys-based plots ---
         synth_stats, cell_type_totals, wire_counts, memory_counts, cell_counts, area_counts = self.gather_synthesis_stats()
         # Histogram of cell counts
-        if cell_counts:
+        cell_counts_nonzero = [c for c in cell_counts if c > 0]
+        if cell_counts_nonzero:
             plt.figure(figsize=(10, 6))
-            n, bins, patches = plt.hist(cell_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
+            bins = np.logspace(np.log10(min(cell_counts_nonzero)), np.log10(max(cell_counts_nonzero)), 50)
+            n, bins, patches = plt.hist(cell_counts_nonzero, bins=bins, color='#007bff', edgecolor='black', alpha=0.8)
             plt.title('Distribution of Cell Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Cell Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
@@ -207,9 +209,11 @@ class VerilogAnalyzer:
             plt.savefig('plots/cell_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
         # Histogram of wire counts
-        if wire_counts:
+        wire_counts_nonzero = [w for w in wire_counts if w > 0]
+        if wire_counts_nonzero:
             plt.figure(figsize=(10, 6))
-            n, bins, patches = plt.hist(wire_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
+            bins = np.logspace(np.log10(min(wire_counts_nonzero)), np.log10(max(wire_counts_nonzero)), 50)
+            n, bins, patches = plt.hist(wire_counts_nonzero, bins=bins, color='#007bff', edgecolor='black', alpha=0.8)
             plt.title('Distribution of Wire Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Wire Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')

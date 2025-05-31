@@ -57,7 +57,7 @@ module non_restoring_divider #(
                             // Initialize registers for division
                             quot <= 0;
                             rem <= 0;
-                            iter <= COUNTER_WIDTH'(WIDTH);  // Explicit width cast
+                            iter <= WIDTH[$clog2(WIDTH+1)-1:0];  // Verilog-2005 compatible: assign lower bits
                             
                             state <= DIVIDE;
                         end
