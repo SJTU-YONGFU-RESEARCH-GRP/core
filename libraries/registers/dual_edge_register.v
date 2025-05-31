@@ -1,4 +1,4 @@
-// Dual-edge triggered register using a two-process approach that's compatible with Verilator
+// Dual-edge triggered register using two registers and a mux for synthesis compatibility
 module dual_edge_register #(
     parameter WIDTH = 8
 )(
@@ -6,25 +6,26 @@ module dual_edge_register #(
     input wire rst_n,                   // Active low reset
     input wire enable,                  // Enable signal
     input wire [WIDTH-1:0] data_in,     // Data input
-    output reg [WIDTH-1:0] data_out     // Data output
+    output wire [WIDTH-1:0] data_out    // Data output
 );
-    // Edge detection registers
-    reg clk_prev;
-    
-    // Capture data on each edge - single process implementation
-    always @(posedge clk or negedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            data_out <= {WIDTH{1'b0}};
-            clk_prev <= 1'b0;
-        end else begin
-            // First record the previous clock value for edge detection
-            clk_prev <= clk;
-            
-            // If enable is asserted and there was a clock transition, capture data
-            if (enable && (clk != clk_prev)) begin
-                data_out <= data_in;
-            end
-        end
+    reg [WIDTH-1:0] posedge_reg, negedge_reg;
+
+    // Sample on posedge
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            posedge_reg <= {WIDTH{1'b0}};
+        else if (enable)
+            posedge_reg <= data_in;
     end
 
+    // Sample on negedge
+    always @(negedge clk or negedge rst_n) begin
+        if (!rst_n)
+            negedge_reg <= {WIDTH{1'b0}};
+        else if (enable)
+            negedge_reg <= data_in;
+    end
+
+    // Output is zero when rst_n is low, otherwise mux between posedge and negedge reg
+    assign data_out = (!rst_n) ? {WIDTH{1'b0}} : (clk ? posedge_reg : negedge_reg);
 endmodule 

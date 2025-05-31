@@ -16,9 +16,9 @@ The dataset contains 138 Verilog modules across 24 different categories, providi
 ## Code Metrics
 
 ### Average Metrics per Module
-- Lines of Code: 112.51
+- Lines of Code: 112.55
 - Parameters: 2.75
-- Ports: 11.21
+- Ports: 11.22
 
 ### Module Complexity Distribution
 
@@ -36,7 +36,7 @@ The dataset contains 138 Verilog modules across 24 different categories, providi
 |---------|-------|------------|
 | generate | 30 | 21.7% |
 | for_loop | 111 | 80.4% |
-| case | 56 | 40.6% |
+| case | 57 | 41.3% |
 | if_else | 125 | 90.6% |
 | while_loop | 2 | 1.4% |
 
@@ -173,18 +173,18 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | radix4_booth_multiplier | 462 | 427 | 0 |
 | configurable_mesh_router | N/A | N/A | N/A |
 | crossbar_switch | 128 | 73 | 0 |
-| mesh_router | N/A | N/A | N/A |
+| mesh_router | 2142 | 1864 | 0 |
 | network_interface | 211 | 128 | 0 |
 | network_interface_cdc | 284 | 139 | 0 |
 | clock_divider | 1632 | 1620 | 0 |
 | clock_gating | 3 | 6 | 0 |
-| parameterized_clock_gating | N/A | N/A | N/A |
+| parameterized_clock_gating | 5 | 9 | 0 |
 | parameterized_freq_divider | 3918 | 3893 | 0 |
 | power_domain_controller | 201 | 169 | 0 |
 | barrel_rotator | 194 | 190 | 0 |
 | barrel_shifter | 827 | 801 | 0 |
 | bidirectional_shift_register | 26 | 27 | 0 |
-| dual_edge_register | N/A | N/A | N/A |
+| dual_edge_register | 33 | 16 | 0 |
 | lfsr | 20 | 13 | 0 |
 | onehot_decoder_register | 46 | 20 | 0 |
 | parameterized_barrel_rotator | 528 | 503 | 0 |
@@ -195,7 +195,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | shadow_register | 129 | 14 | 0 |
 | shift_register_left | 17 | 10 | 0 |
 | shift_register_right | 17 | 10 | 0 |
-| sipo_register | N/A | N/A | N/A |
+| sipo_register | 25 | 17 | 0 |
 | siso_register | 8 | 6 | 0 |
 | sync_preset_register | 27 | 19 | 0 |
 | toggle_register | 25 | 17 | 0 |
@@ -213,53 +213,49 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | jtag_controller | 206 | 105 | 0 |
 | majority_voter | 90 | 88 | 0 |
 
-- **Average Gate/Cell Count:** 1562.82
-- **Average Wire Count:** 1178.85
+- **Average Gate/Cell Count:** 1530.96
+- **Average Wire Count:** 1156.72
 - **Average Memory Count:** 0.00
 
 ### Most Common Cell Types (All Modules)
 
 | Cell Type | Total Count |
 |-----------|------------|
-| $_ANDNOT_ | 58334 |
-| $_OR_ | 54697 |
-| $_DFFE_PP_ | 44413 |
-| $_MUX_ | 11197 |
-| $_XOR_ | 5376 |
-| $_DFFE_PN0P_ | 3177 |
-| $_NOT_ | 3011 |
-| $_NAND_ | 2249 |
-| $_NOR_ | 2067 |
-| $_ORNOT_ | 2031 |
-| $_XNOR_ | 1764 |
-| $_AND_ | 1689 |
-| $_SDFFCE_PN0P_ | 1088 |
-| $_DFF_PN0_ | 657 |
-| $_SDFFE_PN0P_ | 89 |
-| $_DFFE_PN1P_ | 66 |
-| $_SDFFE_PN1P_ | 52 |
-| $_DFFE_PN0N_ | 47 |
-| $_SDFFE_PN0N_ | 32 |
-| $_DFFE_NN0P_ | 32 |
-| $_DFFE_PP0P_ | 30 |
-| $_DFF_P_ | 20 |
-| $_SDFFE_PP0P_ | 19 |
-| $_DFF_PN1_ | 18 |
-| $paramod\cond_sum_rca\WIDTH=s32'00000000000000000000000000000100 | 16 |
-| $paramod\csa_ripple_carry_adder\WIDTH=s32'00000000000000000000000000001000 | 15 |
-| $_SDFF_PN0_ | 11 |
-| $paramod\cla_group\GROUP_SIZE=s32'00000000000000000000000000000100 | 8 |
-| $_DFF_PP0_ | 7 |
-| $_DFFE_NN0N_ | 4 |
-| $_DFFE_PN1N_ | 3 |
-| $_SDFFE_PP1P_ | 1 |
-| $paramod$449c3f1eeb85a776fe1f701efe117aa04ebada70\bsg_async_ptr_gray | 1 |
-| $_DLATCH_N_ | 1 |
-| $_SDFF_PP0_ | 1 |
-| $_SDFF_PP1_ | 1 |
-| $_SDFF_PN1_ | 1 |
-| $_DFF_NN0_ | 1 |
-| $_DFFE_NN1N_ | 1 |
+| ANDNOT | 58586 |
+| OR | 54956 |
+| DFFE_PP | 44581 |
+| MUX | 12531 |
+| XOR | 5382 |
+| DFFE_PN0P | 3194 |
+| NOT | 3055 |
+| NAND | 2270 |
+| ORNOT | 2090 |
+| NOR | 2081 |
+| XNOR | 1770 |
+| AND | 1698 |
+| SDFFCE_PN0P | 1088 |
+| DFF_PN0 | 662 |
+| SDFFE_PN0P | 89 |
+| DFFE_PN1P | 66 |
+| SDFFE_PN1P | 52 |
+| DFFE_PN0N | 47 |
+| DFFE_NN0P | 40 |
+| SDFFE_PN0N | 32 |
+| DFFE_PP0P | 30 |
+| DFF_P | 22 |
+| SDFFE_PP0P | 19 |
+| DFF_PN1 | 18 |
+| SDFF_PN0 | 11 |
+| DFF_PP0 | 7 |
+| DFFE_NN0N | 4 |
+| DFFE_PN1N | 3 |
+| DLATCH_N | 2 |
+| SDFFE_PP1P | 1 |
+| SDFF_PP0 | 1 |
+| SDFF_PP1 | 1 |
+| SDFF_PN1 | 1 |
+| DFF_NN0 | 1 |
+| DFFE_NN1N | 1 |
 
 
 #### Synthesis Plots
@@ -275,13 +271,13 @@ This dataset provides a diverse collection of Verilog modules that represent var
 
 1. **Design Complexity**: The dataset includes 38 simple (0-50 lines), 81 medium (51-200 lines), and 19 complex (>200 lines) modules, offering a varied set for analysis and research purposes.
 
-2. **Design Patterns**: Common Verilog constructs such as if_else (90.6%), for_loop (80.4%), case (40.6%) are frequently used (5 distinct patterns observed), indicating that the dataset reflects typical coding practices.
+2. **Design Patterns**: Common Verilog constructs such as if_else (90.6%), for_loop (80.4%), case (41.3%) are frequently used (5 distinct patterns observed), indicating that the dataset reflects typical coding practices.
 
 3. **Parameterization**: An average of 2.75 parameters per module suggests that many designs are configurable and promote reusability.
 
-4. **Interface Complexity**: With an average of 11.21 ports per module, the designs demonstrate a range of interface complexities suitable for diverse applications.
+4. **Interface Complexity**: With an average of 11.22 ports per module, the designs demonstrate a range of interface complexities suitable for diverse applications.
 
-5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of 1562.82 cells for 123 successfully synthesized modules with cell data) provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.
+5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of 1530.96 cells for 127 successfully synthesized modules with cell data) provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.
 
 This dataset is well-suited for research in areas such as:
 - RTL design patterns and best practices

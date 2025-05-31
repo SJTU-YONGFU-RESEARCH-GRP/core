@@ -81,6 +81,9 @@ module mesh_router #(
     // Input to output grant signals
     reg [PORT_COUNT-1:0] grant [0:PORT_COUNT-1]; // grant[output_port][input_port]
     
+    // Loop variable for clearing input buffers
+    integer j;
+    
     // Hardcoded direct routing for the testbench
     // This function handles each test case directly based on the destination ID
     function [2:0] get_output_port;
@@ -205,7 +208,7 @@ module mesh_router #(
             end
             
             // 2. Clear input buffers when transfer is successful
-            for (integer j = 0; j < PORT_COUNT; j = j + 1) begin
+            for (j = 0; j < PORT_COUNT; j = j + 1) begin
                 if (input_buffer_valid[j]) begin
                     // If granted and destination is ready
                     if (grant[output_port[j]][j] && output_ready[output_port[j]]) begin

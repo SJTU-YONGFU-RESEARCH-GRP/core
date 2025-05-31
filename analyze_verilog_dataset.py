@@ -129,13 +129,20 @@ class VerilogAnalyzer:
         categories = list(self.stats['modules_by_category'].keys())
         counts = list(self.stats['modules_by_category'].values())
         plt.figure(figsize=(12, 6))
-        bars = plt.bar(categories, counts, width=0.6, color='#007bff'); # Blue
+        bars = plt.bar(categories, counts, width=0.6, color='#007bff')  # Blue
         plt.xticks(rotation=45, ha='right', fontweight='bold')
         plt.yticks(fontweight='bold')
         plt.title('Module Distribution by Category', pad=20, fontsize=14, fontweight='bold')
         plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
-        #plt.grid(True, linestyle='--', alpha=0.7, color='black')
         plt.tight_layout()
+        # Annotate bar values
+        for bar in bars:
+            height = bar.get_height()
+            plt.annotate(f'{height}',
+                         xy=(bar.get_x() + bar.get_width() / 2, height),
+                         xytext=(0, 3),  # 3 points vertical offset
+                         textcoords="offset points",
+                         ha='center', va='bottom', fontsize=8, fontweight='bold')
         plt.savefig('plots/module_distribution.png', dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -148,8 +155,15 @@ class VerilogAnalyzer:
         plt.yticks(fontweight='bold')
         plt.title('Design Pattern Usage', pad=20, fontsize=14, fontweight='bold')
         plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
-        #plt.grid(True, linestyle='--', alpha=0.7, color='black')
         plt.tight_layout()
+        # Annotate bar values
+        for bar in bars:
+            height = bar.get_height()
+            plt.annotate(f'{height}',
+                         xy=(bar.get_x() + bar.get_width() / 2, height),
+                         xytext=(0, 3),
+                         textcoords="offset points",
+                         ha='center', va='bottom', fontsize=8, fontweight='bold')
         plt.savefig('plots/design_patterns.png', dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -174,45 +188,90 @@ class VerilogAnalyzer:
         # Histogram of cell counts
         if cell_counts:
             plt.figure(figsize=(10, 6))
-            plt.hist(cell_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
+            n, bins, patches = plt.hist(cell_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
             plt.title('Distribution of Cell Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Cell Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
+            plt.xscale('log')
+            plt.yscale('log')
             plt.tight_layout()
+            # Annotate histogram bars
+            for i in range(len(patches)):
+                height = n[i]
+                if height > 0:
+                    plt.annotate(f'{int(height)}',
+                                 xy=(patches[i].get_x() + patches[i].get_width() / 2, height),
+                                 xytext=(0, 3),
+                                 textcoords="offset points",
+                                 ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/cell_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
         # Histogram of wire counts
         if wire_counts:
             plt.figure(figsize=(10, 6))
-            plt.hist(wire_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
+            n, bins, patches = plt.hist(wire_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
             plt.title('Distribution of Wire Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Wire Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
+            plt.xscale('log')
+            plt.yscale('log')
             plt.tight_layout()
+            # Annotate histogram bars
+            for i in range(len(patches)):
+                height = n[i]
+                if height > 0:
+                    plt.annotate(f'{int(height)}',
+                                 xy=(patches[i].get_x() + patches[i].get_width() / 2, height),
+                                 xytext=(0, 3),
+                                 textcoords="offset points",
+                                 ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/wire_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
         # Histogram of memory counts
         if memory_counts:
             plt.figure(figsize=(10, 6))
-            plt.hist(memory_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
+            n, bins, patches = plt.hist(memory_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
             plt.title('Distribution of Memory Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Memory Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
             plt.tight_layout()
+            # Annotate histogram bars
+            for i in range(len(patches)):
+                height = n[i]
+                if height > 0:
+                    plt.annotate(f'{int(height)}',
+                                 xy=(patches[i].get_x() + patches[i].get_width() / 2, height),
+                                 xytext=(0, 3),
+                                 textcoords="offset points",
+                                 ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/memory_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
         # Bar chart of most common cell types
         if cell_type_totals:
-            sorted_cells = sorted(cell_type_totals.items(), key=lambda x: x[1], reverse=True)[:20]
+            # Filter out paramod cell types for plotting
+            filtered_cells = [
+                (re.sub(r'[^a-zA-Z0-9]+', '_', re.sub(r'^\$_?', '', c)).strip('_'), v)
+                for c, v in cell_type_totals.items()
+                if not re.sub(r'[^a-zA-Z0-9]+', '_', re.sub(r'^\$_?', '', c)).strip('_').lower().startswith('paramod')
+            ]
+            sorted_cells = sorted(filtered_cells, key=lambda x: x[1], reverse=True)[:20]
             labels = [c[0] for c in sorted_cells]
             counts = [c[1] for c in sorted_cells]
             plt.figure(figsize=(12, 6))
-            plt.bar(labels, counts, color='#007bff')
+            bars = plt.bar(labels, counts, color='#007bff')
             plt.xticks(rotation=45, ha='right', fontweight='bold')
             plt.yticks(fontweight='bold')
             plt.title('Top 20 Most Common Cell Types (All Modules)', pad=20, fontsize=14, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
             plt.tight_layout()
+            # Annotate bar values
+            for bar in bars:
+                height = bar.get_height()
+                plt.annotate(f'{height}',
+                             xy=(bar.get_x() + bar.get_width() / 2, height),
+                             xytext=(0, 3),
+                             textcoords="offset points",
+                             ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/cell_type_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
 
@@ -449,7 +508,14 @@ The following table summarizes the gate (cell) count{}for each module as reporte
             md_content += "\n### Most Common Cell Types (All Modules)\n\n"
             md_content += "| Cell Type | Total Count |\n|-----------|------------|\n"
             for cell, count in sorted(cell_type_totals.items(), key=lambda x: x[1], reverse=True):
-                md_content += f"| {cell} | {count} |\n"
+                # Remove $ and $_, replace non-alphanumeric with _
+                clean_cell = re.sub(r'^\$_?', '', cell)
+                clean_cell = re.sub(r'[^a-zA-Z0-9]+', '_', clean_cell)
+                clean_cell = clean_cell.strip('_')
+                # Exclude parameterized module cells after cleaning
+                if clean_cell.lower().startswith('paramod'):
+                    continue
+                md_content += f"| {clean_cell} | {count} |\n"
         
         # Add synthesis plots
         md_content += """

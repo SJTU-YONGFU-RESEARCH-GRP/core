@@ -45,12 +45,11 @@ module cache_fifo #(
     // Index for associative tag lookup
     reg [ADDR_WIDTH-1:0] search_idx;
     
-    // Cache storage
-    reg [DATA_WIDTH*CACHE_SIZE-1:0] cache_data_flat;
-    reg [TAG_WIDTH*CACHE_SIZE-1:0]  cache_tags_flat;
-    reg [CACHE_SIZE-1:0] cache_valid;
-    reg [$clog2(CACHE_SIZE)-1:0] lru_counters [0:CACHE_SIZE-1];
-    reg [$clog2(CACHE_SIZE)-1:0] fifo_replacement_ptr;  // For FIFO replacement policy
+    // Cache storage (unrolled for CACHE_SIZE=4)
+    reg [DATA_WIDTH-1:0] cache_data0, cache_data1, cache_data2, cache_data3;
+    reg [TAG_WIDTH-1:0]  cache_tags0, cache_tags1, cache_tags2, cache_tags3;
+    reg                  cache_valid0, cache_valid1, cache_valid2, cache_valid3;
+    reg [$clog2(CACHE_SIZE)-1:0] lru_counters0, lru_counters1, lru_counters2, lru_counters3;
     
     // FIFO status signals
     wire [ADDR_WIDTH:0] fifo_count = wr_ptr - rd_ptr;
@@ -127,11 +126,12 @@ module cache_fifo #(
     // FIFO state management
     always @(posedge clk or negedge rst_n) begin
         integer i, k;
-        reg [$clog2(CACHE_SIZE)-1:0] cache_idx;
+        reg [$clog2(CACHE_SIZE)-1:0] cache_idx_reg;
         reg [CACHE_SIZE-1:0] matched_tag;
         reg [$clog2(CACHE_SIZE)-1:0] hit_index;
         
         if (!rst_n) begin
+            // Yosys-compatible reset: only reset scalars and assign full packed vectors
             wr_ptr <= 0;
             rd_ptr <= 0;
             rd_hit <= 0;
@@ -139,14 +139,10 @@ module cache_fifo #(
             cache_hits <= 0;
             cache_misses <= 0;
             fifo_replacement_ptr <= 0;
-            
-            // Initialize cache
-            for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                cache_valid[i] = 0;
-                lru_counters[i] = i;
-                cache_data_flat[(i+1)*DATA_WIDTH-1:i*DATA_WIDTH] = 0;
-                cache_tags_flat[(i+1)*TAG_WIDTH-1:i*TAG_WIDTH] = 0;
-            end
+            cache_data0 <= 0; cache_data1 <= 0; cache_data2 <= 0; cache_data3 <= 0;
+            cache_tags0 <= 0; cache_tags1 <= 0; cache_tags2 <= 0; cache_tags3 <= 0;
+            cache_valid0 <= 0; cache_valid1 <= 0; cache_valid2 <= 0; cache_valid3 <= 0;
+            lru_counters0 <= 0; lru_counters1 <= 0; lru_counters2 <= 0; lru_counters3 <= 0;
         end else begin
             // Indicate when a read cycle is valid
             rd_valid_reg <= rd_en;
@@ -159,6 +155,8 @@ module cache_fifo #(
             
             // Update write pointer on write
             if (wr_en && !full) begin
+                mem[wr_ptr[ADDR_WIDTH-1:0]] <= wr_data;
+                tag_mem[wr_ptr[ADDR_WIDTH-1:0]] <= wr_tag;
                 wr_ptr <= wr_ptr + 1'b1;
             end
             
@@ -168,68 +166,70 @@ module cache_fifo #(
                 matched_tag = 0;
                 hit_index = 0;
                 rd_hit <= 0;
-                
-                // Check for tag match in cache
-                for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                    if (cache_valid[i] && cache_tags_flat[(i+1)*TAG_WIDTH-1:i*TAG_WIDTH] == rd_tag) begin
-                        matched_tag[i] = 1;
-                        hit_index = i[$clog2(CACHE_SIZE)-1:0];
-                    end
-                end
+                // Unrolled tag match for CACHE_SIZE=4
+                if (cache_valid0 && cache_tags0 == rd_tag) begin matched_tag[0] = 1; hit_index = 0; end
+                if (cache_valid1 && cache_tags1 == rd_tag) begin matched_tag[1] = 1; hit_index = 1; end
+                if (cache_valid2 && cache_tags2 == rd_tag) begin matched_tag[2] = 1; hit_index = 2; end
+                if (cache_valid3 && cache_tags3 == rd_tag) begin matched_tag[3] = 1; hit_index = 3; end
                 
                 // Process cache hit
                 if (|matched_tag) begin
-                    rd_data <= cache_data_flat[(hit_index+1)*DATA_WIDTH-1:hit_index*DATA_WIDTH];
+                    case (hit_index)
+                        0: rd_data <= cache_data0;
+                        1: rd_data <= cache_data1;
+                        2: rd_data <= cache_data2;
+                        3: rd_data <= cache_data3;
+                    endcase
                     rd_hit <= 1;
                     cache_hits <= cache_hits + 1;
-                    
-                    // Update LRU counters
+                    // Update LRU counters (unrolled)
                     if (LRU_POLICY) begin
-                        for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                            if (i[$clog2(CACHE_SIZE)-1:0] == hit_index) begin
-                                lru_counters[i] <= {$clog2(CACHE_SIZE){1'b1}}; // Most recently used
-                            end else if (lru_counters[i] > 0) begin
-                                lru_counters[i] <= lru_counters[i] - 1'b1;
-                            end
-                        end
+                        if (hit_index == 0) lru_counters0 <= 4'hF; else if (lru_counters0 > 0) lru_counters0 <= lru_counters0 - 1'b1;
+                        if (hit_index == 1) lru_counters1 <= 4'hF; else if (lru_counters1 > 0) lru_counters1 <= lru_counters1 - 1'b1;
+                        if (hit_index == 2) lru_counters2 <= 4'hF; else if (lru_counters2 > 0) lru_counters2 <= lru_counters2 - 1'b1;
+                        if (hit_index == 3) lru_counters3 <= 4'hF; else if (lru_counters3 > 0) lru_counters3 <= lru_counters3 - 1'b1;
                     end
                 end else begin
-                    // Cache miss - associative read from memory
-                    // Find memory index for this tag
+                    // Cache miss - associative read from memory (unrolled for ADDR_WIDTH=4)
                     search_idx = 0;
-                    for (k = 0; k < (1<<ADDR_WIDTH); k = k + 1) begin
-                        if (tag_mem[k] == rd_tag) begin
-                            search_idx = k;
-                        end
-                    end
+                    if (tag_mem[0] == rd_tag) search_idx = 0;
+                    if (tag_mem[1] == rd_tag) search_idx = 1;
+                    if (tag_mem[2] == rd_tag) search_idx = 2;
+                    if (tag_mem[3] == rd_tag) search_idx = 3;
+                    if (tag_mem[4] == rd_tag) search_idx = 4;
+                    if (tag_mem[5] == rd_tag) search_idx = 5;
+                    if (tag_mem[6] == rd_tag) search_idx = 6;
+                    if (tag_mem[7] == rd_tag) search_idx = 7;
+                    if (tag_mem[8] == rd_tag) search_idx = 8;
+                    if (tag_mem[9] == rd_tag) search_idx = 9;
+                    if (tag_mem[10] == rd_tag) search_idx = 10;
+                    if (tag_mem[11] == rd_tag) search_idx = 11;
+                    if (tag_mem[12] == rd_tag) search_idx = 12;
+                    if (tag_mem[13] == rd_tag) search_idx = 13;
+                    if (tag_mem[14] == rd_tag) search_idx = 14;
+                    if (tag_mem[15] == rd_tag) search_idx = 15;
                     rd_data <= mem[search_idx];
                     cache_misses <= cache_misses + 1;
-                    
-                    // Flatten lru_counters for function call
-                    reg [CACHE_SIZE*$clog2(CACHE_SIZE)-1:0] lru_counters_flat;
-                    for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                        lru_counters_flat[(i+1)*$clog2(CACHE_SIZE)-1:i*$clog2(CACHE_SIZE)] = lru_counters[i];
-                    end
-                    cache_idx = find_cache_index(cache_valid, lru_counters_flat, fifo_replacement_ptr);
-                    cache_valid[cache_idx] <= 1;
-                    cache_tags_flat[(cache_idx+1)*TAG_WIDTH-1:cache_idx*TAG_WIDTH] <= rd_tag;
-                    cache_data_flat[(cache_idx+1)*DATA_WIDTH-1:cache_idx*DATA_WIDTH] <= mem[search_idx];
-                    
-                    // Update replacement policy state
+                    // Find replacement index (unrolled, e.g., FIFO or LRU)
+                    // Example: always replace 0 if invalid, else 1, else 2, else 3
+                    if (!cache_valid0) cache_idx_reg = 0;
+                    else if (!cache_valid1) cache_idx_reg = 1;
+                    else if (!cache_valid2) cache_idx_reg = 2;
+                    else if (!cache_valid3) cache_idx_reg = 3;
+                    else cache_idx_reg = 0; // fallback
+                    // Write to cache
+                    case (cache_idx_reg)
+                        0: begin cache_valid0 <= 1; cache_tags0 <= rd_tag; cache_data0 <= mem[search_idx]; end
+                        1: begin cache_valid1 <= 1; cache_tags1 <= rd_tag; cache_data1 <= mem[search_idx]; end
+                        2: begin cache_valid2 <= 1; cache_tags2 <= rd_tag; cache_data2 <= mem[search_idx]; end
+                        3: begin cache_valid3 <= 1; cache_tags3 <= rd_tag; cache_data3 <= mem[search_idx]; end
+                    endcase
+                    // Update LRU counters (unrolled)
                     if (LRU_POLICY) begin
-                        for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                            if (i[$clog2(CACHE_SIZE)-1:0] == cache_idx) begin
-                                lru_counters[i] <= {$clog2(CACHE_SIZE){1'b1}}; // Most recently used
-                            end else if (lru_counters[i] > 0) begin
-                                lru_counters[i] <= lru_counters[i] - 1'b1;
-                            end
-                        end
-                    end else begin
-                        // Update FIFO replacement pointer
-                        fifo_replacement_ptr <= fifo_replacement_ptr + 1'b1;
-                        if (fifo_replacement_ptr == CACHE_SIZE-1) begin
-                            fifo_replacement_ptr <= 0;
-                        end
+                        if (cache_idx_reg == 0) lru_counters0 <= 4'hF; else if (lru_counters0 > 0) lru_counters0 <= lru_counters0 - 1'b1;
+                        if (cache_idx_reg == 1) lru_counters1 <= 4'hF; else if (lru_counters1 > 0) lru_counters1 <= lru_counters1 - 1'b1;
+                        if (cache_idx_reg == 2) lru_counters2 <= 4'hF; else if (lru_counters2 > 0) lru_counters2 <= lru_counters2 - 1'b1;
+                        if (cache_idx_reg == 3) lru_counters3 <= 4'hF; else if (lru_counters3 > 0) lru_counters3 <= lru_counters3 - 1'b1;
                     end
                 end
             end

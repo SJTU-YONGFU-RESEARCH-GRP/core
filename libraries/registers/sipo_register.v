@@ -18,6 +18,9 @@ module sipo_register #(
     // Parity calculation
     reg parity_bit;
     
+    // Temporary register for next shift value (for parity calculation)
+    reg [WIDTH-1:0] next_shift_reg;
+    
     // Assign outputs
     assign parallel_out = shift_reg;
     assign parity_out = (PARITY_ENABLE) ? parity_bit : 1'b0;
@@ -54,8 +57,7 @@ module sipo_register #(
         end 
         else if (PARITY_ENABLE && enable) begin
             // Calculate next shift register value
-            reg [WIDTH-1:0] next_shift_reg;
-            next_shift_reg = {shift_reg[WIDTH-2:0], serial_in};
+            next_shift_reg <= {shift_reg[WIDTH-2:0], serial_in};
             
             // Count ones in the next shift register value
             if (count_ones(next_shift_reg) % 2 == 0) begin
