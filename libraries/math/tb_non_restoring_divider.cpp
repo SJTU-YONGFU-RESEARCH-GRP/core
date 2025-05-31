@@ -114,13 +114,6 @@ int main(int argc, char** argv) {
     std::cout << "\n==== Test Summary ====\n";
     std::cout << "Result: " << (passed_tests == total_tests ? "Pass" : "Fail") << std::endl;
     std::cout << "Tests: " << passed_tests << " of " << total_tests << std::endl;
-
-    if (passed_tests == total_tests) {
-        std::cout << "\nAll division tests PASSED!" << std::endl;
-    } else {
-        std::cout << "\nSome division tests FAILED!" << std::endl;
-    }
-    
     vcd->close();
     delete dut;
     delete vcd;

@@ -107,6 +107,10 @@ module configurable_mesh_router #(
     reg [DATA_WIDTH-1:0] data_o [0:NUM_PORTS-1];
     reg [ADDR_WIDTH-1:0] addr_o [0:NUM_PORTS-1];
     
+    // Loop variables for output data assignment
+    integer j;
+    integer k;
+    
     // Extract destination addresses from head of each FIFO
     generate
         for (genvar i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_heads
@@ -211,6 +215,9 @@ module configurable_mesh_router #(
         end
     endgenerate
     
+    // Loop variable for arbitration logic
+    integer k;
+    
     // Round-robin arbitration for each output port
     generate
         for (genvar j = 0; j < NUM_PORTS; j = j + 1) begin : gen_rr_arb
@@ -233,7 +240,7 @@ module configurable_mesh_router #(
                 output_grant[j] = 5'b00000;
                 
                 // Round-robin priority (fixed integer width)
-                for (integer k = 0; k < NUM_PORTS; k = k + 1) begin
+                for (k = 0; k < NUM_PORTS; k = k + 1) begin
                     // Fix width expansion issue by matching types
                     reg [$clog2(NUM_PORTS)-1:0] idx;
                     idx = (arb_ptr[j] + $clog2(NUM_PORTS)'(k)) % $clog2(NUM_PORTS)'(NUM_PORTS);
@@ -293,12 +300,12 @@ module configurable_mesh_router #(
     
     // Output data assignment - fixed to properly drive outputs when a grant is given
     always @(*) begin
-        for (integer j = 0; j < NUM_PORTS; j = j + 1) begin
+        for (j = 0; j < NUM_PORTS; j = j + 1) begin
             valid_o[j] = 1'b0;
             data_o[j] = {DATA_WIDTH{1'b0}};
             addr_o[j] = {ADDR_WIDTH{1'b0}};
             
-            for (integer k = 0; k < NUM_PORTS; k = k + 1) begin
+            for (k = 0; k < NUM_PORTS; k = k + 1) begin
                 if (output_grant[j][k] && !fifo_empty[k] && ready_i[j]) begin
                     valid_o[j] = 1'b1;
                     data_o[j] = payload[k];
