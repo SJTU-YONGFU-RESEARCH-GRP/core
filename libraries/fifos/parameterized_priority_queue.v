@@ -91,16 +91,18 @@ module parameterized_priority_queue #(
                 if (i_enqueue && !o_full) begin
                     // Find insertion point based on priority
                     insert_idx = count;
-                    for (i = 0; i < count; i = i + 1) begin
-                        if (HIGH_PRIORITY_FIRST) begin
-                            if (i_priority > queue_priority[i]) begin
-                                insert_idx = i;
-                                i = count; // Break the loop
-                            end
-                        end else begin
-                            if (i_priority < queue_priority[i]) begin
-                                insert_idx = i;
-                                i = count; // Break the loop
+                    for (i = 0; i < QUEUE_DEPTH; i = i + 1) begin
+                        if (i < count) begin
+                            if (HIGH_PRIORITY_FIRST) begin
+                                if (i_priority > queue_priority[i]) begin
+                                    insert_idx = i;
+                                    i = QUEUE_DEPTH; // break
+                                end
+                            end else begin
+                                if (i_priority < queue_priority[i]) begin
+                                    insert_idx = i;
+                                    i = QUEUE_DEPTH; // break
+                                end
                             end
                         end
                     end

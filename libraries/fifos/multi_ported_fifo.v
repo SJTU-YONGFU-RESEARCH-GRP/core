@@ -60,9 +60,10 @@ module multi_ported_fifo #(
     // Count active write and read requests
     reg [ADDR_WIDTH:0] wr_count;
     reg [ADDR_WIDTH:0] rd_count;
+    integer i;
+    integer wp;
     
     always @(*) begin
-        integer i;
         wr_count = 0;
         rd_count = 0;
         
@@ -114,7 +115,6 @@ module multi_ported_fifo #(
     
     // Write operation with proper wrap-around
     always @(posedge clk) begin
-        integer wp;
         reg [ADDR_WIDTH-1:0] current_wr_addr;
         reg [ADDR_WIDTH:0] write_count;
         
@@ -132,7 +132,6 @@ module multi_ported_fifo #(
     
     // FIFO state management
     always @(posedge clk or negedge rst_n) begin
-        integer i;
         reg [ADDR_WIDTH-1:0] current_rd_addr;
         reg [ADDR_WIDTH:0] read_count;
         

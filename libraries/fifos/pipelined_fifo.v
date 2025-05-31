@@ -29,6 +29,9 @@ module pipelined_fifo #(
     // Memory array for data storage
     reg [DATA_WIDTH-1:0] mem [(1<<ADDR_WIDTH)-1:0];
     
+    // Declare loop variable for Verilog compatibility
+    integer i;
+    
     // Write pipeline registers
     reg [ADDR_WIDTH:0] wr_ptr;       // Main write pointer
     reg [ADDR_WIDTH:0] wr_ptr_pipe [PIPELINE_STAGES-1:0]; // Pipelined pointers
@@ -63,7 +66,7 @@ module pipelined_fifo #(
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             wr_ptr <= 0;
-            for (integer i = 0; i < PIPELINE_STAGES; i = i + 1) begin
+            for (i = 0; i < PIPELINE_STAGES; i = i + 1) begin
                 wr_ptr_pipe[i] <= 0;
                 wr_data_pipe[i] <= 0;
                 wr_en_pipe[i] <= 0;
@@ -75,7 +78,7 @@ module pipelined_fifo #(
             wr_data_pipe[0] <= wr_data;
             
             // Propagate through write pipeline stages
-            for (integer i = 1; i < PIPELINE_STAGES; i = i + 1) begin
+            for (i = 1; i < PIPELINE_STAGES; i = i + 1) begin
                 wr_en_pipe[i] <= wr_en_pipe[i-1];
                 wr_ptr_pipe[i] <= wr_ptr_pipe[i-1];
                 wr_data_pipe[i] <= wr_data_pipe[i-1];
@@ -92,7 +95,7 @@ module pipelined_fifo #(
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             rd_ptr <= 0;
-            for (integer i = 0; i < PIPELINE_STAGES; i = i + 1) begin
+            for (i = 0; i < PIPELINE_STAGES; i = i + 1) begin
                 rd_ptr_pipe[i] <= 0;
                 rd_data_pipe[i] <= 0;
                 rd_en_pipe[i] <= 0;
@@ -104,7 +107,7 @@ module pipelined_fifo #(
             rd_ptr_pipe[0] <= rd_ptr;
             
             // Propagate through read pipeline stages
-            for (integer i = 1; i < PIPELINE_STAGES; i = i + 1) begin
+            for (i = 1; i < PIPELINE_STAGES; i = i + 1) begin
                 rd_en_pipe[i] <= rd_en_pipe[i-1];
                 rd_ptr_pipe[i] <= rd_ptr_pipe[i-1];
                 rd_data_valid[i] <= rd_data_valid[i-1];
@@ -134,7 +137,7 @@ module pipelined_fifo #(
             rd_data_pipe[0] <= mem[rd_ptr_pipe[0][ADDR_WIDTH-1:0]];
             
             // Propagate through pipeline stages
-            for (integer i = 1; i < PIPELINE_STAGES; i = i + 1) begin
+            for (i = 1; i < PIPELINE_STAGES; i = i + 1) begin
                 rd_data_pipe[i] <= rd_data_pipe[i-1];
             end
         end

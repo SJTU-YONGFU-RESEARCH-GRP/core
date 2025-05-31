@@ -111,9 +111,12 @@ module configurable_mesh_router #(
     integer j;
     integer k;
     
+    // genvar for all generate loops
+    genvar i;
+    
     // Extract destination addresses from head of each FIFO
     generate
-        for (genvar i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_heads
+        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_heads
             assign fifo_head[i] = input_fifo[i][read_ptr[i]];
             assign dest_addr[i] = fifo_head[i][PACKET_WIDTH-1:DATA_WIDTH];
             assign payload[i] = fifo_head[i][DATA_WIDTH-1:0];
@@ -172,7 +175,7 @@ module configurable_mesh_router #(
     
     // FIFO status
     generate
-        for (genvar i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_status
+        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_status
             assign fifo_empty[i] = (fifo_count[i] == 0);
             assign fifo_full[i] = (fifo_count[i] == FIFO_DEPTH);
             assign ready_o[i] = ~fifo_full[i];
@@ -181,7 +184,7 @@ module configurable_mesh_router #(
     
     // Route computation using XY routing
     generate
-        for (genvar i = 0; i < NUM_PORTS; i = i + 1) begin : gen_route_comp
+        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_route_comp
             // Extract X and Y coordinates from the address
             // Fixed format to ensure correct bit extraction
             wire [X_ADDR_WIDTH-1:0] dest_x;
@@ -215,21 +218,18 @@ module configurable_mesh_router #(
         end
     endgenerate
     
-    // Loop variable for arbitration logic
-    integer k;
-    
     // Round-robin arbitration for each output port
     generate
-        for (genvar j = 0; j < NUM_PORTS; j = j + 1) begin : gen_rr_arb
+        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_rr_arb
             always @(posedge clk or negedge rst_n) begin
                 if (!rst_n) begin
-                    arb_ptr[j] <= 0;
+                    arb_ptr[i] <= 0;
                 end else begin
                     // Move arbitration pointer if a grant was given
-                    if (|output_grant[j]) begin
-                        arb_ptr[j] <= arb_ptr[j] + 1;
-                        if (arb_ptr[j] == NUM_PORTS-1) begin
-                            arb_ptr[j] <= 0;
+                    if (|output_grant[i]) begin
+                        arb_ptr[i] <= arb_ptr[i] + 1;
+                        if (arb_ptr[i] == NUM_PORTS-1) begin
+                            arb_ptr[i] <= 0;
                         end
                     end
                 end
@@ -237,15 +237,15 @@ module configurable_mesh_router #(
             
             // Arbitration logic
             always @(*) begin
-                output_grant[j] = 5'b00000;
+                output_grant[i] = 5'b00000;
                 
                 // Round-robin priority (fixed integer width)
                 for (k = 0; k < NUM_PORTS; k = k + 1) begin
                     // Fix width expansion issue by matching types
                     reg [$clog2(NUM_PORTS)-1:0] idx;
-                    idx = (arb_ptr[j] + $clog2(NUM_PORTS)'(k)) % $clog2(NUM_PORTS)'(NUM_PORTS);
-                    if (output_request[idx][j]) begin
-                        output_grant[j][idx] = 1'b1;
+                    idx = (arb_ptr[i] + k) % NUM_PORTS;
+                    if (output_request[idx][i]) begin
+                        output_grant[i][idx] = 1'b1;
                         break;
                     end
                 end
@@ -255,7 +255,7 @@ module configurable_mesh_router #(
     
     // FIFO read/write control and data transfer
     generate
-        for (genvar i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_ctrl
+        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_ctrl
             // FIFO write on valid input and not full
             always @(posedge clk or negedge rst_n) begin
                 if (!rst_n) begin
@@ -264,7 +264,7 @@ module configurable_mesh_router #(
                     write_ptr[i] <= 0;
                     
                     // Initialize FIFOs to prevent X propagation
-                    for (integer j = 0; j < FIFO_DEPTH; j = j + 1) begin
+                    for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
                         input_fifo[i][j] <= 0;
                     end
                 end else begin
@@ -272,7 +272,7 @@ module configurable_mesh_router #(
                     if (valid_i[i] && !fifo_full[i]) begin
                         input_fifo[i][write_ptr[i]] <= packet_i[i];
                         // Fixed width comparison for FIFO_DEPTH-1
-                        if (write_ptr[i] == $clog2(FIFO_DEPTH)'(FIFO_DEPTH-1)) begin
+                        if (write_ptr[i] == (FIFO_DEPTH-1)[$clog2(FIFO_DEPTH)-1:0]) begin
                             write_ptr[i] <= 0;
                         end else begin
                             write_ptr[i] <= write_ptr[i] + 1;
@@ -286,7 +286,7 @@ module configurable_mesh_router #(
                           output_grant[3][i], output_grant[4][i]} && !fifo_empty[i] && 
                           ready_i[route_port[i]]) begin
                         // Fixed width comparison for FIFO_DEPTH-1
-                        if (read_ptr[i] == $clog2(FIFO_DEPTH)'(FIFO_DEPTH-1)) begin
+                        if (read_ptr[i] == (FIFO_DEPTH-1)[$clog2(FIFO_DEPTH)-1:0]) begin
                             read_ptr[i] <= 0;
                         end else begin
                             read_ptr[i] <= read_ptr[i] + 1;
