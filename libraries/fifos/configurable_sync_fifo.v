@@ -41,7 +41,7 @@ module configurable_sync_fifo #(
             wr_ptr <= 0;
         end else if (wr_en && !full) begin
             memory[wr_ptr] <= data_in;
-            wr_ptr <= (wr_ptr == ADDR_WIDTH'(DEPTH-1)) ? 0 : wr_ptr + 1;
+            wr_ptr <= (wr_ptr == (DEPTH-1)) ? 0 : wr_ptr + 1;
         end
     end
     
@@ -52,7 +52,7 @@ module configurable_sync_fifo #(
             data_out <= 0;
         end else if (rd_en && !empty) begin
             data_out <= memory[rd_ptr];
-            rd_ptr <= (rd_ptr == ADDR_WIDTH'(DEPTH-1)) ? 0 : rd_ptr + 1;
+            rd_ptr <= (rd_ptr == (DEPTH-1)) ? 0 : rd_ptr + 1;
         end
     end
     

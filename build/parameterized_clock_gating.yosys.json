@@ -1,0 +1,194 @@
+{
+  "creator": "Yosys 0.53+81 (git sha1 86282027c, g++ 11.4.0-1ubuntu1~22.04 -fPIC -O3)",
+  "modules": {
+    "parameterized_clock_gating": {
+      "attributes": {
+        "top": "00000000000000000000000000000001",
+        "src": "libraries/power/parameterized_clock_gating.v:1.1-56.10"
+      },
+      "parameter_default_values": {
+        "ENABLE_ACTIVE_LOW": "00000000000000000000000000000000",
+        "LATCH_BASED": "00000000000000000000000000000001",
+        "STAGES": "00000000000000000000000000000010"
+      },
+      "ports": {
+        "clk_in": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "enable": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "test_mode": {
+          "direction": "input",
+          "bits": [ 4 ]
+        },
+        "clk_out": {
+          "direction": "output",
+          "bits": [ 5 ]
+        }
+      },
+      "cells": {
+        "$abc$103$auto$blifparse.cc:396:parse_blif$104": {
+          "hide_name": 1,
+          "type": "$_OR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 4 ],
+            "B": [ 6 ],
+            "Y": [ 7 ]
+          }
+        },
+        "$abc$103$auto$blifparse.cc:396:parse_blif$105": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 8 ],
+            "B": [ 2 ],
+            "Y": [ 5 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$100": {
+          "hide_name": 1,
+          "type": "$_DLATCH_N_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:42.13-45.16"
+          },
+          "port_directions": {
+            "D": "input",
+            "E": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "D": [ 7 ],
+            "E": [ 2 ],
+            "Q": [ 8 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$101": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:26.13-28.16"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 3 ],
+            "Q": [ 9 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$102": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:26.13-28.16"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 9 ],
+            "Q": [ 6 ]
+          }
+        }
+      },
+      "netnames": {
+        "$0\\enable_latch[0:0]": {
+          "hide_name": 1,
+          "bits": [ 7 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:42.13-45.16"
+          }
+        },
+        "clk_in": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:6.17-6.23"
+          }
+        },
+        "clk_out": {
+          "hide_name": 0,
+          "bits": [ 5 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:9.17-9.24"
+          }
+        },
+        "enable": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:7.17-7.23"
+          }
+        },
+        "enable_final": {
+          "hide_name": 0,
+          "bits": [ 6 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:14.10-14.22"
+          }
+        },
+        "enable_latch": {
+          "hide_name": 0,
+          "bits": [ 8 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:15.10-15.22"
+          }
+        },
+        "enable_synced": {
+          "hide_name": 0,
+          "bits": [ 6 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:13.10-13.23"
+          }
+        },
+        "gen_sync.enable_sync_reg": {
+          "hide_name": 0,
+          "bits": [ 9, 6 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:24.30-24.45"
+          }
+        },
+        "test_mode": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "libraries/power/parameterized_clock_gating.v:8.17-8.26"
+          }
+        }
+      }
+    }
+  }
+}

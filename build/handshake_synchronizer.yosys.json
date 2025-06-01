@@ -1,0 +1,1985 @@
+{
+  "creator": "Yosys 0.53+81 (git sha1 86282027c, g++ 11.4.0-1ubuntu1~22.04 -fPIC -O3)",
+  "modules": {
+    "handshake_synchronizer": {
+      "attributes": {
+        "dynports": "00000000000000000000000000000001",
+        "top": "00000000000000000000000000000001",
+        "src": "libraries/cdc/handshake_synchronizer.v:1.1-91.10"
+      },
+      "parameter_default_values": {
+        "DATA_WIDTH": "00000000000000000000000000100000",
+        "SYNC_STAGES": "00000000000000000000000000000010"
+      },
+      "ports": {
+        "src_clk": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "src_rst_n": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "src_data": {
+          "direction": "input",
+          "bits": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ]
+        },
+        "src_valid": {
+          "direction": "input",
+          "bits": [ 36 ]
+        },
+        "src_ready": {
+          "direction": "output",
+          "bits": [ 37 ]
+        },
+        "dst_clk": {
+          "direction": "input",
+          "bits": [ 38 ]
+        },
+        "dst_rst_n": {
+          "direction": "input",
+          "bits": [ 39 ]
+        },
+        "dst_data": {
+          "direction": "output",
+          "bits": [ 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ]
+        },
+        "dst_valid": {
+          "direction": "output",
+          "bits": [ 72 ]
+        },
+        "dst_ready": {
+          "direction": "input",
+          "bits": [ 73 ]
+        }
+      },
+      "cells": {
+        "$abc$248$auto$blifparse.cc:396:parse_blif$249": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 73 ],
+            "B": [ 72 ],
+            "Y": [ 74 ]
+          }
+        },
+        "$abc$248$auto$blifparse.cc:396:parse_blif$250": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 75 ],
+            "B": [ 76 ],
+            "Y": [ 77 ]
+          }
+        },
+        "$abc$248$auto$blifparse.cc:396:parse_blif$251": {
+          "hide_name": 1,
+          "type": "$_ANDNOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 77 ],
+            "B": [ 72 ],
+            "Y": [ 78 ]
+          }
+        },
+        "$abc$248$auto$blifparse.cc:396:parse_blif$252": {
+          "hide_name": 1,
+          "type": "$_MUX_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 77 ],
+            "B": [ 73 ],
+            "S": [ 72 ],
+            "Y": [ 79 ]
+          }
+        },
+        "$abc$248$auto$blifparse.cc:396:parse_blif$253": {
+          "hide_name": 1,
+          "type": "$_XNOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 80 ],
+            "B": [ 81 ],
+            "Y": [ 37 ]
+          }
+        },
+        "$abc$248$auto$blifparse.cc:396:parse_blif$254": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 37 ],
+            "B": [ 36 ],
+            "Y": [ 82 ]
+          }
+        },
+        "$abc$248$auto$blifparse.cc:396:parse_blif$255": {
+          "hide_name": 1,
+          "type": "$_NOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 81 ],
+            "Y": [ 83 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$172": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 76 ],
+            "E": [ 74 ],
+            "Q": [ 75 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$173": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 78 ],
+            "E": [ 79 ],
+            "Q": [ 72 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$176": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 84 ],
+            "E": [ 78 ],
+            "Q": [ 40 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$177": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 85 ],
+            "E": [ 78 ],
+            "Q": [ 41 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$178": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 86 ],
+            "E": [ 78 ],
+            "Q": [ 42 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$179": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 87 ],
+            "E": [ 78 ],
+            "Q": [ 43 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$180": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 88 ],
+            "E": [ 78 ],
+            "Q": [ 44 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$181": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 89 ],
+            "E": [ 78 ],
+            "Q": [ 45 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$182": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 90 ],
+            "E": [ 78 ],
+            "Q": [ 46 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$183": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 91 ],
+            "E": [ 78 ],
+            "Q": [ 47 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$184": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 92 ],
+            "E": [ 78 ],
+            "Q": [ 48 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$185": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 93 ],
+            "E": [ 78 ],
+            "Q": [ 49 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$186": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 94 ],
+            "E": [ 78 ],
+            "Q": [ 50 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$187": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 95 ],
+            "E": [ 78 ],
+            "Q": [ 51 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$188": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 96 ],
+            "E": [ 78 ],
+            "Q": [ 52 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$189": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 97 ],
+            "E": [ 78 ],
+            "Q": [ 53 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$190": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 98 ],
+            "E": [ 78 ],
+            "Q": [ 54 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$191": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 99 ],
+            "E": [ 78 ],
+            "Q": [ 55 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$192": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 100 ],
+            "E": [ 78 ],
+            "Q": [ 56 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$193": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 101 ],
+            "E": [ 78 ],
+            "Q": [ 57 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$194": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 102 ],
+            "E": [ 78 ],
+            "Q": [ 58 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$195": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 103 ],
+            "E": [ 78 ],
+            "Q": [ 59 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$196": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 104 ],
+            "E": [ 78 ],
+            "Q": [ 60 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$197": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 105 ],
+            "E": [ 78 ],
+            "Q": [ 61 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$198": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 106 ],
+            "E": [ 78 ],
+            "Q": [ 62 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$199": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 107 ],
+            "E": [ 78 ],
+            "Q": [ 63 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$200": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 108 ],
+            "E": [ 78 ],
+            "Q": [ 64 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$201": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 109 ],
+            "E": [ 78 ],
+            "Q": [ 65 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$202": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 110 ],
+            "E": [ 78 ],
+            "Q": [ 66 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$203": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 111 ],
+            "E": [ 78 ],
+            "Q": [ 67 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$204": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 112 ],
+            "E": [ 78 ],
+            "Q": [ 68 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$205": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 113 ],
+            "E": [ 78 ],
+            "Q": [ 69 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$206": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 114 ],
+            "E": [ 78 ],
+            "Q": [ 70 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$207": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 115 ],
+            "E": [ 78 ],
+            "Q": [ 71 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$208": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 83 ],
+            "E": [ 82 ],
+            "Q": [ 81 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$212": {
+          "hide_name": 1,
+          "type": "$_DFF_PN0_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:41.5-46.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 75 ],
+            "Q": [ 116 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$213": {
+          "hide_name": 1,
+          "type": "$_DFF_PN0_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:41.5-46.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 116 ],
+            "Q": [ 80 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$214": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 4 ],
+            "E": [ 82 ],
+            "Q": [ 84 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$215": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 5 ],
+            "E": [ 82 ],
+            "Q": [ 85 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$216": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 6 ],
+            "E": [ 82 ],
+            "Q": [ 86 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$217": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 7 ],
+            "E": [ 82 ],
+            "Q": [ 87 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$218": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 8 ],
+            "E": [ 82 ],
+            "Q": [ 88 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$219": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 9 ],
+            "E": [ 82 ],
+            "Q": [ 89 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$220": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 10 ],
+            "E": [ 82 ],
+            "Q": [ 90 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$221": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 11 ],
+            "E": [ 82 ],
+            "Q": [ 91 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$222": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 12 ],
+            "E": [ 82 ],
+            "Q": [ 92 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$223": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 13 ],
+            "E": [ 82 ],
+            "Q": [ 93 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$224": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 14 ],
+            "E": [ 82 ],
+            "Q": [ 94 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$225": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 15 ],
+            "E": [ 82 ],
+            "Q": [ 95 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$226": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 16 ],
+            "E": [ 82 ],
+            "Q": [ 96 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$227": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 17 ],
+            "E": [ 82 ],
+            "Q": [ 97 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$228": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 18 ],
+            "E": [ 82 ],
+            "Q": [ 98 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$229": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 19 ],
+            "E": [ 82 ],
+            "Q": [ 99 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$230": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 20 ],
+            "E": [ 82 ],
+            "Q": [ 100 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$231": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 21 ],
+            "E": [ 82 ],
+            "Q": [ 101 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$232": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 22 ],
+            "E": [ 82 ],
+            "Q": [ 102 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$233": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 23 ],
+            "E": [ 82 ],
+            "Q": [ 103 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$234": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 24 ],
+            "E": [ 82 ],
+            "Q": [ 104 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$235": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 25 ],
+            "E": [ 82 ],
+            "Q": [ 105 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$236": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 26 ],
+            "E": [ 82 ],
+            "Q": [ 106 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$237": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 27 ],
+            "E": [ 82 ],
+            "Q": [ 107 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$238": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 28 ],
+            "E": [ 82 ],
+            "Q": [ 108 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$239": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 29 ],
+            "E": [ 82 ],
+            "Q": [ 109 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$240": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 30 ],
+            "E": [ 82 ],
+            "Q": [ 110 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$241": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 31 ],
+            "E": [ 82 ],
+            "Q": [ 111 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$242": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 32 ],
+            "E": [ 82 ],
+            "Q": [ 112 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$243": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 33 ],
+            "E": [ 82 ],
+            "Q": [ 113 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$244": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 34 ],
+            "E": [ 82 ],
+            "Q": [ 114 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$245": {
+          "hide_name": 1,
+          "type": "$_DFFE_PN0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:50.5-60.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 35 ],
+            "E": [ 82 ],
+            "Q": [ 115 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$246": {
+          "hide_name": 1,
+          "type": "$_DFF_PN0_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:31.5-36.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 81 ],
+            "Q": [ 117 ],
+            "R": [ 39 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$247": {
+          "hide_name": 1,
+          "type": "$_DFF_PN0_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:31.5-36.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 38 ],
+            "D": [ 117 ],
+            "Q": [ 76 ],
+            "R": [ 39 ]
+          }
+        }
+      },
+      "netnames": {
+        "$0\\dst_valid_reg[0:0]": {
+          "hide_name": 1,
+          "bits": [ 78 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:69.5-85.8"
+          }
+        },
+        "$abc$248$auto$opt_dff.cc:194:make_patterns_logic$72": {
+          "hide_name": 1,
+          "bits": [ 79 ],
+          "attributes": {
+          }
+        },
+        "$abc$248$auto$opt_dff.cc:219:make_patterns_logic$77": {
+          "hide_name": 1,
+          "bits": [ 74 ],
+          "attributes": {
+          }
+        },
+        "$abc$248$logic_and$libraries/cdc/handshake_synchronizer.v:55$7_Y": {
+          "hide_name": 1,
+          "bits": [ 82 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:55.17-55.39"
+          }
+        },
+        "$abc$248$new_n15": {
+          "hide_name": 1,
+          "bits": [ 77 ],
+          "attributes": {
+          }
+        },
+        "$abc$248$not$libraries/cdc/handshake_synchronizer.v:56$8_Y": {
+          "hide_name": 1,
+          "bits": [ 83 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:56.28-56.36"
+          }
+        },
+        "ack_sync": {
+          "hide_name": 0,
+          "bits": [ 116, 80 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:40.27-40.35"
+          }
+        },
+        "data_reg": {
+          "hide_name": 0,
+          "bits": [ 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:23.26-23.34"
+          }
+        },
+        "dst_ack": {
+          "hide_name": 0,
+          "bits": [ 75 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:27.9-27.16"
+          }
+        },
+        "dst_clk": {
+          "hide_name": 0,
+          "bits": [ 38 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:13.35-13.42"
+          }
+        },
+        "dst_data": {
+          "hide_name": 0,
+          "bits": [ 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:15.35-15.43"
+          }
+        },
+        "dst_data_reg": {
+          "hide_name": 0,
+          "bits": [ 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:67.26-67.38"
+          }
+        },
+        "dst_ready": {
+          "hide_name": 0,
+          "bits": [ 73 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:17.35-17.44"
+          }
+        },
+        "dst_req": {
+          "hide_name": 0,
+          "bits": [ 76 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:26.10-26.17"
+          }
+        },
+        "dst_rst_n": {
+          "hide_name": 0,
+          "bits": [ 39 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:14.35-14.44"
+          }
+        },
+        "dst_valid": {
+          "hide_name": 0,
+          "bits": [ 72 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:16.35-16.44"
+          }
+        },
+        "dst_valid_reg": {
+          "hide_name": 0,
+          "bits": [ 72 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:66.9-66.22"
+          }
+        },
+        "req_sync": {
+          "hide_name": 0,
+          "bits": [ 117, 76 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:30.27-30.35"
+          }
+        },
+        "src_ack": {
+          "hide_name": 0,
+          "bits": [ 80 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:22.10-22.17"
+          }
+        },
+        "src_clk": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:6.35-6.42"
+          }
+        },
+        "src_data": {
+          "hide_name": 0,
+          "bits": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:8.35-8.43"
+          }
+        },
+        "src_ready": {
+          "hide_name": 0,
+          "bits": [ 37 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:10.35-10.44"
+          }
+        },
+        "src_req": {
+          "hide_name": 0,
+          "bits": [ 81 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:21.9-21.16"
+          }
+        },
+        "src_rst_n": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:7.35-7.44"
+          }
+        },
+        "src_valid": {
+          "hide_name": 0,
+          "bits": [ 36 ],
+          "attributes": {
+            "src": "libraries/cdc/handshake_synchronizer.v:9.35-9.44"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "creator": "Yosys 0.53+81 (git sha1 86282027c, g++ 11.4.0-1ubuntu1~22.04 -fPIC -O3)",
+  "modules": {
+    "axi_stream_interface": {
+      "attributes": {
+        "dynports": "00000000000000000000000000000001",
+        "top": "00000000000000000000000000000001",
+        "src": "libraries/interfaces/axi_stream_interface.v:1.1-45.10"
+      },
+      "parameter_default_values": {
+        "DATA_WIDTH": "00000000000000000000000000100000",
+        "DEST_WIDTH": "00000000000000000000000000000001",
+        "ID_WIDTH": "00000000000000000000000000000001",
+        "USER_WIDTH": "00000000000000000000000000000001"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "rst_n": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "m_tdata": {
+          "direction": "output",
+          "bits": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ]
+        },
+        "m_tvalid": {
+          "direction": "output",
+          "bits": [ 36 ]
+        },
+        "m_tready": {
+          "direction": "input",
+          "bits": [ 37 ]
+        },
+        "m_tlast": {
+          "direction": "output",
+          "bits": [ 38 ]
+        },
+        "m_tstrb": {
+          "direction": "output",
+          "bits": [ 39, 40, 41, 42 ]
+        },
+        "m_tkeep": {
+          "direction": "output",
+          "bits": [ 43, 44, 45, 46 ]
+        },
+        "m_tuser": {
+          "direction": "output",
+          "bits": [ 47 ]
+        },
+        "m_tdest": {
+          "direction": "output",
+          "bits": [ 48 ]
+        },
+        "m_tid": {
+          "direction": "output",
+          "bits": [ 49 ]
+        },
+        "s_tdata": {
+          "direction": "input",
+          "bits": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ]
+        },
+        "s_tvalid": {
+          "direction": "input",
+          "bits": [ 36 ]
+        },
+        "s_tready": {
+          "direction": "output",
+          "bits": [ 37 ]
+        },
+        "s_tlast": {
+          "direction": "input",
+          "bits": [ 38 ]
+        },
+        "s_tstrb": {
+          "direction": "input",
+          "bits": [ 39, 40, 41, 42 ]
+        },
+        "s_tkeep": {
+          "direction": "input",
+          "bits": [ 43, 44, 45, 46 ]
+        },
+        "s_tuser": {
+          "direction": "input",
+          "bits": [ 47 ]
+        },
+        "s_tdest": {
+          "direction": "input",
+          "bits": [ 48 ]
+        },
+        "s_tid": {
+          "direction": "input",
+          "bits": [ 49 ]
+        }
+      },
+      "cells": {
+      },
+      "netnames": {
+        "clk": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:8.37-8.40"
+          }
+        },
+        "m_tdata": {
+          "hide_name": 0,
+          "bits": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:12.37-12.44"
+          }
+        },
+        "m_tdest": {
+          "hide_name": 0,
+          "bits": [ 48 ],
+          "attributes": {
+            "single_bit_vector": "00000000000000000000000000000001",
+            "src": "libraries/interfaces/axi_stream_interface.v:19.37-19.44"
+          }
+        },
+        "m_tid": {
+          "hide_name": 0,
+          "bits": [ 49 ],
+          "attributes": {
+            "single_bit_vector": "00000000000000000000000000000001",
+            "src": "libraries/interfaces/axi_stream_interface.v:20.37-20.42"
+          }
+        },
+        "m_tkeep": {
+          "hide_name": 0,
+          "bits": [ 43, 44, 45, 46 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:17.37-17.44"
+          }
+        },
+        "m_tlast": {
+          "hide_name": 0,
+          "bits": [ 38 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:15.37-15.44"
+          }
+        },
+        "m_tready": {
+          "hide_name": 0,
+          "bits": [ 37 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:14.37-14.45"
+          }
+        },
+        "m_tstrb": {
+          "hide_name": 0,
+          "bits": [ 39, 40, 41, 42 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:16.37-16.44"
+          }
+        },
+        "m_tuser": {
+          "hide_name": 0,
+          "bits": [ 47 ],
+          "attributes": {
+            "single_bit_vector": "00000000000000000000000000000001",
+            "src": "libraries/interfaces/axi_stream_interface.v:18.37-18.44"
+          }
+        },
+        "m_tvalid": {
+          "hide_name": 0,
+          "bits": [ 36 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:13.37-13.45"
+          }
+        },
+        "rst_n": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:9.37-9.42"
+          }
+        },
+        "s_tdata": {
+          "hide_name": 0,
+          "bits": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:23.37-23.44"
+          }
+        },
+        "s_tdest": {
+          "hide_name": 0,
+          "bits": [ 48 ],
+          "attributes": {
+            "single_bit_vector": "00000000000000000000000000000001",
+            "src": "libraries/interfaces/axi_stream_interface.v:30.37-30.44"
+          }
+        },
+        "s_tid": {
+          "hide_name": 0,
+          "bits": [ 49 ],
+          "attributes": {
+            "single_bit_vector": "00000000000000000000000000000001",
+            "src": "libraries/interfaces/axi_stream_interface.v:31.37-31.42"
+          }
+        },
+        "s_tkeep": {
+          "hide_name": 0,
+          "bits": [ 43, 44, 45, 46 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:28.37-28.44"
+          }
+        },
+        "s_tlast": {
+          "hide_name": 0,
+          "bits": [ 38 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:26.37-26.44"
+          }
+        },
+        "s_tready": {
+          "hide_name": 0,
+          "bits": [ 37 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:25.37-25.45"
+          }
+        },
+        "s_tstrb": {
+          "hide_name": 0,
+          "bits": [ 39, 40, 41, 42 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:27.37-27.44"
+          }
+        },
+        "s_tuser": {
+          "hide_name": 0,
+          "bits": [ 47 ],
+          "attributes": {
+            "single_bit_vector": "00000000000000000000000000000001",
+            "src": "libraries/interfaces/axi_stream_interface.v:29.37-29.44"
+          }
+        },
+        "s_tvalid": {
+          "hide_name": 0,
+          "bits": [ 36 ],
+          "attributes": {
+            "src": "libraries/interfaces/axi_stream_interface.v:24.37-24.45"
+          }
+        }
+      }
+    }
+  }
+}

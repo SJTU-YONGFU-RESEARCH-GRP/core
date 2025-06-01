@@ -1,0 +1,1013 @@
+{
+  "creator": "Yosys 0.53+81 (git sha1 86282027c, g++ 11.4.0-1ubuntu1~22.04 -fPIC -O3)",
+  "modules": {
+    "$paramod$449c3f1eeb85a776fe1f701efe117aa04ebada70\\bsg_async_ptr_gray": {
+      "attributes": {
+        "dynports": "00000000000000000000000000000001",
+        "hdlname": "bsg_async_ptr_gray",
+        "src": "libraries/cdc/bsg_async_credit_counter.v:87.1-183.10"
+      },
+      "parameter_default_values": {
+        "lg_size_p": "00000000000000000000000000000011",
+        "use_async_reset_p": "00000000000000000000000000000000",
+        "use_negedge_for_launch_p": "00000000000000000000000000000000"
+      },
+      "ports": {
+        "w_clk_i": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "w_reset_i": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "w_inc_i": {
+          "direction": "input",
+          "bits": [ 4 ]
+        },
+        "r_clk_i": {
+          "direction": "input",
+          "bits": [ 5 ]
+        },
+        "w_ptr_binary_r_o": {
+          "direction": "output",
+          "bits": [ 6, 7, 8 ]
+        },
+        "w_ptr_gray_r_o": {
+          "direction": "output",
+          "bits": [ 9, 10, 8 ]
+        },
+        "w_ptr_gray_r_rsync_o": {
+          "direction": "output",
+          "bits": [ 11, 12, 13 ]
+        }
+      },
+      "cells": {
+        "$abc$233$auto$blifparse.cc:396:parse_blif$234": {
+          "hide_name": 1,
+          "type": "$_NAND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 6 ],
+            "B": [ 4 ],
+            "Y": [ 14 ]
+          }
+        },
+        "$abc$233$auto$blifparse.cc:396:parse_blif$235": {
+          "hide_name": 1,
+          "type": "$_XNOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 14 ],
+            "B": [ 7 ],
+            "Y": [ 15 ]
+          }
+        },
+        "$abc$233$auto$blifparse.cc:396:parse_blif$236": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 6 ],
+            "B": [ 4 ],
+            "Y": [ 16 ]
+          }
+        },
+        "$abc$233$auto$blifparse.cc:396:parse_blif$237": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 16 ],
+            "B": [ 15 ],
+            "Y": [ 17 ]
+          }
+        },
+        "$abc$233$auto$blifparse.cc:396:parse_blif$238": {
+          "hide_name": 1,
+          "type": "$_ANDNOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7 ],
+            "B": [ 14 ],
+            "Y": [ 18 ]
+          }
+        },
+        "$abc$233$auto$blifparse.cc:396:parse_blif$239": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 18 ],
+            "B": [ 8 ],
+            "Y": [ 19 ]
+          }
+        },
+        "$abc$233$auto$blifparse.cc:396:parse_blif$240": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 19 ],
+            "B": [ 15 ],
+            "Y": [ 20 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$195": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:117.17-127.20"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 17 ],
+            "E": [ 4 ],
+            "Q": [ 9 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$196": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:117.17-127.20"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 20 ],
+            "E": [ 4 ],
+            "Q": [ 10 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$197": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:117.17-127.20"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 19 ],
+            "E": [ 4 ],
+            "Q": [ 8 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$198": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:117.17-127.20"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 16 ],
+            "E": [ 4 ],
+            "Q": [ 6 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$199": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:117.17-127.20"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 15 ],
+            "E": [ 4 ],
+            "Q": [ 7 ],
+            "R": [ 3 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$201": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:174.5-177.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 9 ],
+            "Q": [ 21 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$202": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:174.5-177.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 10 ],
+            "Q": [ 22 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$203": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:174.5-177.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 8 ],
+            "Q": [ 23 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$204": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:174.5-177.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 21 ],
+            "Q": [ 11 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$205": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:174.5-177.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 22 ],
+            "Q": [ 12 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$206": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:174.5-177.8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 23 ],
+            "Q": [ 13 ]
+          }
+        }
+      },
+      "netnames": {
+        "$abc$233$new_n10": {
+          "hide_name": 1,
+          "bits": [ 14 ],
+          "attributes": {
+          }
+        },
+        "$abc$233$new_n14": {
+          "hide_name": 1,
+          "bits": [ 18 ],
+          "attributes": {
+          }
+        },
+        "r_clk_i": {
+          "hide_name": 0,
+          "bits": [ 5 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:95.16-95.23"
+          }
+        },
+        "w_clk_i": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:92.16-92.23"
+          }
+        },
+        "w_inc_i": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:94.16-94.23"
+          }
+        },
+        "w_ptr_binary_r_o": {
+          "hide_name": 0,
+          "bits": [ 6, 7, 8 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:96.33-96.49"
+          }
+        },
+        "w_ptr_gray_n": {
+          "hide_name": 0,
+          "bits": [ 17, 20, 19 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:103.26-103.38"
+          }
+        },
+        "w_ptr_gray_r": {
+          "hide_name": 0,
+          "bits": [ 9, 10, 8 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:104.25-104.37"
+          }
+        },
+        "w_ptr_gray_r_o": {
+          "hide_name": 0,
+          "bits": [ 9, 10, 8 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:97.33-97.47"
+          }
+        },
+        "w_ptr_gray_r_rsync_o": {
+          "hide_name": 0,
+          "bits": [ 11, 12, 13 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:98.33-98.53"
+          }
+        },
+        "w_ptr_gray_r_rsync_r[0]": {
+          "hide_name": 0,
+          "bits": [ 21, 22, 23 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:172.25-172.45"
+          }
+        },
+        "w_ptr_gray_r_rsync_r[1]": {
+          "hide_name": 0,
+          "bits": [ 11, 12, 13 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:172.25-172.45"
+          }
+        },
+        "w_ptr_n": {
+          "hide_name": 0,
+          "bits": [ 16, 15, 19 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:102.26-102.33"
+          }
+        },
+        "w_ptr_r": {
+          "hide_name": 0,
+          "bits": [ 6, 7, 8 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:101.25-101.32"
+          }
+        },
+        "w_reset_i": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:93.16-93.25"
+          }
+        }
+      }
+    },
+    "bsg_async_credit_counter": {
+      "attributes": {
+        "dynports": "00000000000000000000000000000001",
+        "top": "00000000000000000000000000000001",
+        "src": "libraries/cdc/bsg_async_credit_counter.v:186.1-279.10"
+      },
+      "parameter_default_values": {
+        "check_excess_credits_p": "00000000000000000000000000000001",
+        "count_negedge_p": "00000000000000000000000000000000",
+        "extra_margin_p": "00000000000000000000000000000000",
+        "lg_credit_to_token_decimation_p": "00000000000000000000000000000000",
+        "max_tokens_p": "00000000000000000000000000000100",
+        "start_full_p": "00000000000000000000000000000001",
+        "use_async_w_reset_p": "00000000000000000000000000000000"
+      },
+      "ports": {
+        "w_clk_i": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "w_inc_token_i": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "w_reset_i": {
+          "direction": "input",
+          "bits": [ 4 ]
+        },
+        "r_clk_i": {
+          "direction": "input",
+          "bits": [ 5 ]
+        },
+        "r_reset_i": {
+          "direction": "input",
+          "bits": [ 6 ]
+        },
+        "r_dec_credit_i": {
+          "direction": "input",
+          "bits": [ 7 ]
+        },
+        "r_infinite_credits_i": {
+          "direction": "input",
+          "bits": [ 8 ]
+        },
+        "r_credits_avail_o": {
+          "direction": "output",
+          "bits": [ 9 ]
+        }
+      },
+      "cells": {
+        "$abc$241$auto$blifparse.cc:396:parse_blif$242": {
+          "hide_name": 1,
+          "type": "$_NOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 10 ],
+            "Y": [ 11 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$243": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 12 ],
+            "B": [ 10 ],
+            "Y": [ 13 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$244": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 13 ],
+            "B": [ 14 ],
+            "Y": [ 15 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$245": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 12 ],
+            "B": [ 16 ],
+            "Y": [ 17 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$246": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 17 ],
+            "B": [ 18 ],
+            "Y": [ 19 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$247": {
+          "hide_name": 1,
+          "type": "$_OR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 19 ],
+            "B": [ 15 ],
+            "Y": [ 20 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$248": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 21 ],
+            "B": [ 16 ],
+            "Y": [ 22 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$249": {
+          "hide_name": 1,
+          "type": "$_OR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 22 ],
+            "B": [ 20 ],
+            "Y": [ 23 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$250": {
+          "hide_name": 1,
+          "type": "$_OR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 23 ],
+            "B": [ 8 ],
+            "Y": [ 9 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$251": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 12 ],
+            "B": [ 10 ],
+            "Y": [ 24 ]
+          }
+        },
+        "$abc$241$auto$blifparse.cc:396:parse_blif$252": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 24 ],
+            "B": [ 16 ],
+            "Y": [ 25 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$145": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:214.5-219.47"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 11 ],
+            "E": [ 7 ],
+            "Q": [ 10 ],
+            "R": [ 6 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$146": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP0P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:214.5-219.47"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 13 ],
+            "E": [ 7 ],
+            "Q": [ 12 ],
+            "R": [ 6 ]
+          }
+        },
+        "$auto$ff.cc:266:slice$147": {
+          "hide_name": 1,
+          "type": "$_SDFFE_PP1P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:214.5-219.47"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output",
+            "R": "input"
+          },
+          "connections": {
+            "C": [ 5 ],
+            "D": [ 25 ],
+            "E": [ 7 ],
+            "Q": [ 16 ],
+            "R": [ 6 ]
+          }
+        },
+        "bapg": {
+          "hide_name": 0,
+          "type": "$paramod$449c3f1eeb85a776fe1f701efe117aa04ebada70\\bsg_async_ptr_gray",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:226.7-234.6"
+          },
+          "port_directions": {
+            "r_clk_i": "input",
+            "w_clk_i": "input",
+            "w_inc_i": "input",
+            "w_ptr_binary_r_o": "output",
+            "w_ptr_gray_r_o": "output",
+            "w_ptr_gray_r_rsync_o": "output",
+            "w_reset_i": "input"
+          },
+          "connections": {
+            "r_clk_i": [ 5 ],
+            "w_clk_i": [ 2 ],
+            "w_inc_i": [ 3 ],
+            "w_ptr_binary_r_o": [ ],
+            "w_ptr_gray_r_o": [ 26, 27, 28 ],
+            "w_ptr_gray_r_rsync_o": [ 14, 18, 21 ],
+            "w_reset_i": [ 4 ]
+          }
+        }
+      },
+      "netnames": {
+        "$abc$241$new_n14": {
+          "hide_name": 1,
+          "bits": [ 15 ],
+          "attributes": {
+          }
+        },
+        "$abc$241$new_n15": {
+          "hide_name": 1,
+          "bits": [ 17 ],
+          "attributes": {
+          }
+        },
+        "$abc$241$new_n16": {
+          "hide_name": 1,
+          "bits": [ 19 ],
+          "attributes": {
+          }
+        },
+        "$abc$241$new_n17": {
+          "hide_name": 1,
+          "bits": [ 20 ],
+          "attributes": {
+          }
+        },
+        "$abc$241$new_n18": {
+          "hide_name": 1,
+          "bits": [ 22 ],
+          "attributes": {
+          }
+        },
+        "$abc$241$new_n19": {
+          "hide_name": 1,
+          "bits": [ 23 ],
+          "attributes": {
+          }
+        },
+        "$abc$241$new_n21": {
+          "hide_name": 1,
+          "bits": [ 24 ],
+          "attributes": {
+          }
+        },
+        "$auto$alumacc.cc:495:replace_alu$57.X": {
+          "hide_name": 1,
+          "bits": [ 11, 12, 16 ],
+          "attributes": {
+            "force_downto": "00000000000000000000000000000001",
+            "src": "libraries/cdc/bsg_async_credit_counter.v:219.28-219.46|/usr/local/bin/../share/yosys/techmap.v:270.23-270.24"
+          }
+        },
+        "$auto$alumacc.cc:495:replace_alu$57.Y": {
+          "hide_name": 1,
+          "bits": [ 11, 13, 25 ],
+          "attributes": {
+            "force_downto": "00000000000000000000000000000001",
+            "src": "libraries/cdc/bsg_async_credit_counter.v:219.28-219.46|/usr/local/bin/../share/yosys/techmap.v:270.26-270.27"
+          }
+        },
+        "r_clk_i": {
+          "hide_name": 0,
+          "bits": [ 5 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:198.16-198.23"
+          }
+        },
+        "r_counter_r": {
+          "hide_name": 0,
+          "bits": [ 10, 12, 16 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:209.34-209.45"
+          }
+        },
+        "r_counter_r_hi_bits": {
+          "hide_name": 0,
+          "bits": [ 10, 12, 16 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:237.35-237.54"
+          }
+        },
+        "r_counter_r_hi_bits_gray": {
+          "hide_name": 0,
+          "bits": [ 13, 29, 16 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:252.35-252.59",
+            "unused_bits": "1 "
+          }
+        },
+        "r_counter_r_lo_bits_nonzero": {
+          "hide_name": 0,
+          "bits": [ "0" ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:238.10-238.37"
+          }
+        },
+        "r_credits_avail_o": {
+          "hide_name": 0,
+          "bits": [ 9 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:202.17-202.34"
+          }
+        },
+        "r_dec_credit_i": {
+          "hide_name": 0,
+          "bits": [ 7 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:200.16-200.30"
+          }
+        },
+        "r_infinite_credits_i": {
+          "hide_name": 0,
+          "bits": [ 8 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:201.16-201.36"
+          }
+        },
+        "r_reset_i": {
+          "hide_name": 0,
+          "bits": [ 6 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:199.16-199.25"
+          }
+        },
+        "w_clk_i": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:195.16-195.23"
+          }
+        },
+        "w_counter_gray_r": {
+          "hide_name": 0,
+          "bits": [ 26, 27, 28 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:210.35-210.51",
+            "unused_bits": "0 1 2"
+          }
+        },
+        "w_counter_gray_r_rsync": {
+          "hide_name": 0,
+          "bits": [ 14, 18, 21 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:210.53-210.75"
+          }
+        },
+        "w_inc_token_i": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:196.16-196.29"
+          }
+        },
+        "w_reset_i": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "libraries/cdc/bsg_async_credit_counter.v:197.16-197.25"
+          }
+        }
+      }
+    }
+  }
+}

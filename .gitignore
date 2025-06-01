@@ -3,7 +3,7 @@
 
 # Verilator build directory
 obj_dir/
-build
+venv
 
 # Editor backup files
 *~

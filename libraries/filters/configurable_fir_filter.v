@@ -40,6 +40,7 @@ module configurable_fir_filter #(
     reg signed [COEFF_WIDTH-1:0] coeff_array [0:NUM_TAPS-1];
     
     // Print parameter value using display statement
+    integer i;  // Move declaration outside
     initial begin
         $display("FILTER_TYPE parameter value: %0d", FILTER_TYPE);
         
@@ -81,12 +82,10 @@ module configurable_fir_filter #(
         endcase
         
         // Print coefficients for verification
-        for (integer i = 0; i < NUM_TAPS; i = i + 1) begin
+        for (i = 0; i < NUM_TAPS; i = i + 1) begin
             $display("Coefficient[%0d] = %0h", i, coeff_array[i]);
         end
     end
-    
-    integer i;
     
     // Extract individual coefficients from the array
     function signed [COEFF_WIDTH-1:0] get_coeff;
@@ -116,7 +115,7 @@ module configurable_fir_filter #(
             output_value = MIN_NEG;
         end else begin
             // Normal case - arithmetic shift right for proper scaling
-            output_value = DATA_WIDTH'(sum_temp >>> COEFF_WIDTH);
+            output_value = sum_temp >>> COEFF_WIDTH;
         end
     end
     

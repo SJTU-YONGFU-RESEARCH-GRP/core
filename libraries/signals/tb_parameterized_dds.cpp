@@ -16,6 +16,7 @@
 #define SIM_TIME 1000
 #define SAMPLE_FREQ 1000000    // 1 MHz clock
 #define OUTPUT_FREQ 10000      // 10 kHz output frequency
+#define MAX_INIT_WAIT 5000     // Increased timeout for LUT initialization
 
 int main(int argc, char** argv) {
     // Initialize Verilator
@@ -63,13 +64,33 @@ int main(int argc, char** argv) {
     dut->fcw = fcw;
     dut->phase_offset = 0;
     
-    // Run simulation for a while to stabilize
-    for(int i = 0; i < 50; i++) {
+    // Wait for LUT initialization
+    int init_wait_count = 0;
+    std::cout << "Waiting for LUT initialization..." << std::endl;
+    while (!dut->lut_initialized && init_wait_count < MAX_INIT_WAIT) {
         dut->clk = !dut->clk;
         dut->eval();
         tfp->dump(sim_time);
         sim_time += CLK_PERIOD/2;
+        init_wait_count++;
+        
+        // Print progress every 100 cycles
+        if (init_wait_count % 100 == 0) {
+            std::cout << "Initialization in progress: " << init_wait_count << " cycles" << std::endl;
+        }
+        
+        // Add a small delay between clock edges to ensure proper evaluation
+        if (init_wait_count % 2 == 0) {
+            dut->eval();
+        }
     }
+    
+    if (!dut->lut_initialized) {
+        std::cerr << "ERROR: LUT initialization timed out after " << init_wait_count << " cycles!" << std::endl;
+        return 1;
+    }
+    
+    std::cout << "LUT initialization completed after " << init_wait_count << " cycles" << std::endl;
     
     // Run simulation
     std::cout << "Starting DDS simulation with:" << std::endl;
@@ -107,9 +128,11 @@ int main(int argc, char** argv) {
         // Check if outputs change over time
         if (dut->sine_out != prev_sine) {
             sine_changed = true;
+            std::cout << "Sample " << i << ": Sine changed from " << prev_sine << " to " << dut->sine_out << std::endl;
         }
         if (dut->cosine_out != prev_cosine) {
             cosine_changed = true;
+            std::cout << "Sample " << i << ": Cosine changed from " << prev_cosine << " to " << dut->cosine_out << std::endl;
         }
         
         // Record values for next iteration

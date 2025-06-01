@@ -80,32 +80,98 @@ module configurable_mesh_router #(
     localparam PACKET_WIDTH = DATA_WIDTH + ADDR_WIDTH;
     
     // Input FIFOs
-    reg  [PACKET_WIDTH-1:0] input_fifo [0:NUM_PORTS-1][0:FIFO_DEPTH-1];
-    reg  [$clog2(FIFO_DEPTH)+1:0] fifo_count [0:NUM_PORTS-1];
-    reg  [$clog2(FIFO_DEPTH)-1:0] read_ptr [0:NUM_PORTS-1];
-    reg  [$clog2(FIFO_DEPTH)-1:0] write_ptr [0:NUM_PORTS-1];
+    reg  [PACKET_WIDTH-1:0] input_fifo_0 [0:FIFO_DEPTH-1];
+    reg  [PACKET_WIDTH-1:0] input_fifo_1 [0:FIFO_DEPTH-1];
+    reg  [PACKET_WIDTH-1:0] input_fifo_2 [0:FIFO_DEPTH-1];
+    reg  [PACKET_WIDTH-1:0] input_fifo_3 [0:FIFO_DEPTH-1];
+    reg  [PACKET_WIDTH-1:0] input_fifo_4 [0:FIFO_DEPTH-1];
+    reg  [$clog2(FIFO_DEPTH)+1:0] fifo_count_0;
+    reg  [$clog2(FIFO_DEPTH)+1:0] fifo_count_1;
+    reg  [$clog2(FIFO_DEPTH)+1:0] fifo_count_2;
+    reg  [$clog2(FIFO_DEPTH)+1:0] fifo_count_3;
+    reg  [$clog2(FIFO_DEPTH)+1:0] fifo_count_4;
+    reg  [$clog2(FIFO_DEPTH)-1:0] read_ptr_0;
+    reg  [$clog2(FIFO_DEPTH)-1:0] read_ptr_1;
+    reg  [$clog2(FIFO_DEPTH)-1:0] read_ptr_2;
+    reg  [$clog2(FIFO_DEPTH)-1:0] read_ptr_3;
+    reg  [$clog2(FIFO_DEPTH)-1:0] read_ptr_4;
+    reg  [$clog2(FIFO_DEPTH)-1:0] write_ptr_0;
+    reg  [$clog2(FIFO_DEPTH)-1:0] write_ptr_1;
+    reg  [$clog2(FIFO_DEPTH)-1:0] write_ptr_2;
+    reg  [$clog2(FIFO_DEPTH)-1:0] write_ptr_3;
+    reg  [$clog2(FIFO_DEPTH)-1:0] write_ptr_4;
     
     // FIFO status signals
     wire [NUM_PORTS-1:0] fifo_empty;
     wire [NUM_PORTS-1:0] fifo_full;
     
     // Output arbitration
-    reg  [NUM_PORTS-1:0] output_grant [0:NUM_PORTS-1];
-    wire [NUM_PORTS-1:0] output_request [0:NUM_PORTS-1];
-    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr [0:NUM_PORTS-1];
+    reg  [NUM_PORTS-1:0] output_grant_0;
+    reg  [NUM_PORTS-1:0] output_grant_1;
+    reg  [NUM_PORTS-1:0] output_grant_2;
+    reg  [NUM_PORTS-1:0] output_grant_3;
+    reg  [NUM_PORTS-1:0] output_grant_4;
+    wire [NUM_PORTS-1:0] output_request_0;
+    wire [NUM_PORTS-1:0] output_request_1;
+    wire [NUM_PORTS-1:0] output_request_2;
+    wire [NUM_PORTS-1:0] output_request_3;
+    wire [NUM_PORTS-1:0] output_request_4;
+    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr_0;
+    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr_1;
+    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr_2;
+    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr_3;
+    reg  [$clog2(NUM_PORTS)-1:0] arb_ptr_4;
+    
+    // Arbitration flags
+    reg found_grant_0;
+    reg found_grant_1;
+    reg found_grant_2;
+    reg found_grant_3;
+    reg found_grant_4;
+    
+    // Arbitration indices
+    reg [$clog2(NUM_PORTS)-1:0] arb_idx_0;
+    reg [$clog2(NUM_PORTS)-1:0] arb_idx_1;
+    reg [$clog2(NUM_PORTS)-1:0] arb_idx_2;
+    reg [$clog2(NUM_PORTS)-1:0] arb_idx_3;
+    reg [$clog2(NUM_PORTS)-1:0] arb_idx_4;
     
     // Packet data at FIFO heads
-    wire [PACKET_WIDTH-1:0] fifo_head [0:NUM_PORTS-1];
-    wire [ADDR_WIDTH-1:0] dest_addr [0:NUM_PORTS-1];
-    wire [DATA_WIDTH-1:0] payload [0:NUM_PORTS-1];
+    wire [PACKET_WIDTH-1:0] fifo_head_0;
+    wire [PACKET_WIDTH-1:0] fifo_head_1;
+    wire [PACKET_WIDTH-1:0] fifo_head_2;
+    wire [PACKET_WIDTH-1:0] fifo_head_3;
+    wire [PACKET_WIDTH-1:0] fifo_head_4;
+    wire [ADDR_WIDTH-1:0] dest_addr_0;
+    wire [ADDR_WIDTH-1:0] dest_addr_1;
+    wire [ADDR_WIDTH-1:0] dest_addr_2;
+    wire [ADDR_WIDTH-1:0] dest_addr_3;
+    wire [ADDR_WIDTH-1:0] dest_addr_4;
+    wire [DATA_WIDTH-1:0] payload_0;
+    wire [DATA_WIDTH-1:0] payload_1;
+    wire [DATA_WIDTH-1:0] payload_2;
+    wire [DATA_WIDTH-1:0] payload_3;
+    wire [DATA_WIDTH-1:0] payload_4;
     
-    // Route computation results (changed from wire to reg)
-    reg [2:0] route_port [0:NUM_PORTS-1];
+    // Route computation results
+    reg [2:0] route_port_0;
+    reg [2:0] route_port_1;
+    reg [2:0] route_port_2;
+    reg [2:0] route_port_3;
+    reg [2:0] route_port_4;
     
-    // Output data registers (changed from wire to reg)
+    // Output data registers
     reg [NUM_PORTS-1:0] valid_o;
-    reg [DATA_WIDTH-1:0] data_o [0:NUM_PORTS-1];
-    reg [ADDR_WIDTH-1:0] addr_o [0:NUM_PORTS-1];
+    reg [DATA_WIDTH-1:0] data_o_0;
+    reg [DATA_WIDTH-1:0] data_o_1;
+    reg [DATA_WIDTH-1:0] data_o_2;
+    reg [DATA_WIDTH-1:0] data_o_3;
+    reg [DATA_WIDTH-1:0] data_o_4;
+    reg [ADDR_WIDTH-1:0] addr_o_0;
+    reg [ADDR_WIDTH-1:0] addr_o_1;
+    reg [ADDR_WIDTH-1:0] addr_o_2;
+    reg [ADDR_WIDTH-1:0] addr_o_3;
+    reg [ADDR_WIDTH-1:0] addr_o_4;
     
     // Loop variables for output data assignment
     integer j;
@@ -117,9 +183,21 @@ module configurable_mesh_router #(
     // Extract destination addresses from head of each FIFO
     generate
         for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_heads
-            assign fifo_head[i] = input_fifo[i][read_ptr[i]];
-            assign dest_addr[i] = fifo_head[i][PACKET_WIDTH-1:DATA_WIDTH];
-            assign payload[i] = fifo_head[i][DATA_WIDTH-1:0];
+            assign fifo_head_0 = input_fifo_0[read_ptr_0];
+            assign fifo_head_1 = input_fifo_1[read_ptr_1];
+            assign fifo_head_2 = input_fifo_2[read_ptr_2];
+            assign fifo_head_3 = input_fifo_3[read_ptr_3];
+            assign fifo_head_4 = input_fifo_4[read_ptr_4];
+            assign dest_addr_0 = fifo_head_0[PACKET_WIDTH-1:DATA_WIDTH];
+            assign dest_addr_1 = fifo_head_1[PACKET_WIDTH-1:DATA_WIDTH];
+            assign dest_addr_2 = fifo_head_2[PACKET_WIDTH-1:DATA_WIDTH];
+            assign dest_addr_3 = fifo_head_3[PACKET_WIDTH-1:DATA_WIDTH];
+            assign dest_addr_4 = fifo_head_4[PACKET_WIDTH-1:DATA_WIDTH];
+            assign payload_0 = fifo_head_0[DATA_WIDTH-1:0];
+            assign payload_1 = fifo_head_1[DATA_WIDTH-1:0];
+            assign payload_2 = fifo_head_2[DATA_WIDTH-1:0];
+            assign payload_3 = fifo_head_3[DATA_WIDTH-1:0];
+            assign payload_4 = fifo_head_4[DATA_WIDTH-1:0];
         end
     endgenerate
     
@@ -155,17 +233,17 @@ module configurable_mesh_router #(
     assign west_valid_o  = valid_o[WEST];
     assign local_valid_o = valid_o[LOCAL];
     
-    assign north_data_o = data_o[NORTH];
-    assign east_data_o  = data_o[EAST];
-    assign south_data_o = data_o[SOUTH];
-    assign west_data_o  = data_o[WEST];
-    assign local_data_o = data_o[LOCAL];
+    assign north_data_o = data_o_0;
+    assign east_data_o  = data_o_1;
+    assign south_data_o = data_o_2;
+    assign west_data_o  = data_o_3;
+    assign local_data_o = data_o_4;
     
-    assign north_addr_o = addr_o[NORTH];
-    assign east_addr_o  = addr_o[EAST];
-    assign south_addr_o = addr_o[SOUTH];
-    assign west_addr_o  = addr_o[WEST];
-    assign local_addr_o = addr_o[LOCAL];
+    assign north_addr_o = addr_o_0;
+    assign east_addr_o  = addr_o_1;
+    assign south_addr_o = addr_o_2;
+    assign west_addr_o  = addr_o_3;
+    assign local_addr_o = addr_o_4;
     
     assign ready_i[NORTH] = north_ready_i;
     assign ready_i[EAST]  = east_ready_i;
@@ -174,144 +252,577 @@ module configurable_mesh_router #(
     assign ready_i[LOCAL] = local_ready_i;
     
     // FIFO status
-    generate
-        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_status
-            assign fifo_empty[i] = (fifo_count[i] == 0);
-            assign fifo_full[i] = (fifo_count[i] == FIFO_DEPTH);
-            assign ready_o[i] = ~fifo_full[i];
-        end
-    endgenerate
+    assign fifo_empty[0] = (fifo_count_0 == 0);
+    assign fifo_empty[1] = (fifo_count_1 == 0);
+    assign fifo_empty[2] = (fifo_count_2 == 0);
+    assign fifo_empty[3] = (fifo_count_3 == 0);
+    assign fifo_empty[4] = (fifo_count_4 == 0);
     
-    // Route computation using XY routing
-    generate
-        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_route_comp
-            // Extract X and Y coordinates from the address
-            // Fixed format to ensure correct bit extraction
-            wire [X_ADDR_WIDTH-1:0] dest_x;
-            wire [Y_ADDR_WIDTH-1:0] dest_y;
-            
-            assign dest_x = dest_addr[i][ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH];
-            assign dest_y = dest_addr[i][ADDR_WIDTH-X_ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH-Y_ADDR_WIDTH];
-            
-            // XY routing logic (fixed to use blocking assignments in always @*)
-            always @(*) begin
-                if (dest_x == local_x_addr && dest_y == local_y_addr) begin
-                    // Packet reached destination
-                    route_port[i] = LOCAL;
-                end else if (dest_x > local_x_addr) begin
-                    // Route East first
-                    route_port[i] = EAST;
-                end else if (dest_x < local_x_addr) begin
-                    // Route West first
-                    route_port[i] = WEST;
-                end else if (dest_y > local_y_addr) begin
-                    // If X is done, route South
-                    route_port[i] = SOUTH;
-                end else begin
-                    // Route North
-                    route_port[i] = NORTH;
-                end
-            end
-            
-            // Request generation
-            assign output_request[i] = fifo_empty[i] ? 5'b00000 : (1 << route_port[i]);
+    assign fifo_full[0] = (fifo_count_0 == FIFO_DEPTH);
+    assign fifo_full[1] = (fifo_count_1 == FIFO_DEPTH);
+    assign fifo_full[2] = (fifo_count_2 == FIFO_DEPTH);
+    assign fifo_full[3] = (fifo_count_3 == FIFO_DEPTH);
+    assign fifo_full[4] = (fifo_count_4 == FIFO_DEPTH);
+    
+    assign ready_o[0] = ~fifo_full[0];
+    assign ready_o[1] = ~fifo_full[1];
+    assign ready_o[2] = ~fifo_full[2];
+    assign ready_o[3] = ~fifo_full[3];
+    assign ready_o[4] = ~fifo_full[4];
+    
+    // Route computation for each port
+    // Port 0 (North)
+    wire [X_ADDR_WIDTH-1:0] dest_x_0;
+    wire [Y_ADDR_WIDTH-1:0] dest_y_0;
+    assign dest_x_0 = dest_addr_0[ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH];
+    assign dest_y_0 = dest_addr_0[ADDR_WIDTH-X_ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH-Y_ADDR_WIDTH];
+    
+    always @(*) begin
+        if (dest_x_0 == local_x_addr && dest_y_0 == local_y_addr) begin
+            route_port_0 = LOCAL;
+        end else if (dest_x_0 > local_x_addr) begin
+            route_port_0 = EAST;
+        end else if (dest_x_0 < local_x_addr) begin
+            route_port_0 = WEST;
+        end else if (dest_y_0 > local_y_addr) begin
+            route_port_0 = SOUTH;
+        end else begin
+            route_port_0 = NORTH;
         end
-    endgenerate
+    end
+    assign output_request_0 = fifo_empty[0] ? 5'b00000 : (1 << route_port_0);
+    
+    // Port 1 (East)
+    wire [X_ADDR_WIDTH-1:0] dest_x_1;
+    wire [Y_ADDR_WIDTH-1:0] dest_y_1;
+    assign dest_x_1 = dest_addr_1[ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH];
+    assign dest_y_1 = dest_addr_1[ADDR_WIDTH-X_ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH-Y_ADDR_WIDTH];
+    
+    always @(*) begin
+        if (dest_x_1 == local_x_addr && dest_y_1 == local_y_addr) begin
+            route_port_1 = LOCAL;
+        end else if (dest_x_1 > local_x_addr) begin
+            route_port_1 = EAST;
+        end else if (dest_x_1 < local_x_addr) begin
+            route_port_1 = WEST;
+        end else if (dest_y_1 > local_y_addr) begin
+            route_port_1 = SOUTH;
+        end else begin
+            route_port_1 = NORTH;
+        end
+    end
+    assign output_request_1 = fifo_empty[1] ? 5'b00000 : (1 << route_port_1);
+    
+    // Port 2 (South)
+    wire [X_ADDR_WIDTH-1:0] dest_x_2;
+    wire [Y_ADDR_WIDTH-1:0] dest_y_2;
+    assign dest_x_2 = dest_addr_2[ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH];
+    assign dest_y_2 = dest_addr_2[ADDR_WIDTH-X_ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH-Y_ADDR_WIDTH];
+    
+    always @(*) begin
+        if (dest_x_2 == local_x_addr && dest_y_2 == local_y_addr) begin
+            route_port_2 = LOCAL;
+        end else if (dest_x_2 > local_x_addr) begin
+            route_port_2 = EAST;
+        end else if (dest_x_2 < local_x_addr) begin
+            route_port_2 = WEST;
+        end else if (dest_y_2 > local_y_addr) begin
+            route_port_2 = SOUTH;
+        end else begin
+            route_port_2 = NORTH;
+        end
+    end
+    assign output_request_2 = fifo_empty[2] ? 5'b00000 : (1 << route_port_2);
+    
+    // Port 3 (West)
+    wire [X_ADDR_WIDTH-1:0] dest_x_3;
+    wire [Y_ADDR_WIDTH-1:0] dest_y_3;
+    assign dest_x_3 = dest_addr_3[ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH];
+    assign dest_y_3 = dest_addr_3[ADDR_WIDTH-X_ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH-Y_ADDR_WIDTH];
+    
+    always @(*) begin
+        if (dest_x_3 == local_x_addr && dest_y_3 == local_y_addr) begin
+            route_port_3 = LOCAL;
+        end else if (dest_x_3 > local_x_addr) begin
+            route_port_3 = EAST;
+        end else if (dest_x_3 < local_x_addr) begin
+            route_port_3 = WEST;
+        end else if (dest_y_3 > local_y_addr) begin
+            route_port_3 = SOUTH;
+        end else begin
+            route_port_3 = NORTH;
+        end
+    end
+    assign output_request_3 = fifo_empty[3] ? 5'b00000 : (1 << route_port_3);
+    
+    // Port 4 (Local)
+    wire [X_ADDR_WIDTH-1:0] dest_x_4;
+    wire [Y_ADDR_WIDTH-1:0] dest_y_4;
+    assign dest_x_4 = dest_addr_4[ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH];
+    assign dest_y_4 = dest_addr_4[ADDR_WIDTH-X_ADDR_WIDTH-1:ADDR_WIDTH-X_ADDR_WIDTH-Y_ADDR_WIDTH];
+    
+    always @(*) begin
+        if (dest_x_4 == local_x_addr && dest_y_4 == local_y_addr) begin
+            route_port_4 = LOCAL;
+        end else if (dest_x_4 > local_x_addr) begin
+            route_port_4 = EAST;
+        end else if (dest_x_4 < local_x_addr) begin
+            route_port_4 = WEST;
+        end else if (dest_y_4 > local_y_addr) begin
+            route_port_4 = SOUTH;
+        end else begin
+            route_port_4 = NORTH;
+        end
+    end
+    assign output_request_4 = fifo_empty[4] ? 5'b00000 : (1 << route_port_4);
     
     // Round-robin arbitration for each output port
-    generate
-        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_rr_arb
-            always @(posedge clk or negedge rst_n) begin
-                if (!rst_n) begin
-                    arb_ptr[i] <= 0;
-                end else begin
-                    // Move arbitration pointer if a grant was given
-                    if (|output_grant[i]) begin
-                        arb_ptr[i] <= arb_ptr[i] + 1;
-                        if (arb_ptr[i] == NUM_PORTS-1) begin
-                            arb_ptr[i] <= 0;
-                        end
-                    end
-                end
-            end
-            
-            // Arbitration logic
-            always @(*) begin
-                output_grant[i] = 5'b00000;
-                
-                // Round-robin priority (fixed integer width)
-                for (k = 0; k < NUM_PORTS; k = k + 1) begin
-                    // Fix width expansion issue by matching types
-                    reg [$clog2(NUM_PORTS)-1:0] idx;
-                    idx = (arb_ptr[i] + k) % NUM_PORTS;
-                    if (output_request[idx][i]) begin
-                        output_grant[i][idx] = 1'b1;
-                        break;
-                    end
+    // Port 0 (North)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            arb_ptr_0 <= 0;
+        end else begin
+            if (|output_grant_0) begin
+                arb_ptr_0 <= arb_ptr_0 + 1;
+                if (arb_ptr_0 == NUM_PORTS-1) begin
+                    arb_ptr_0 <= 0;
                 end
             end
         end
-    endgenerate
+    end
     
-    // FIFO read/write control and data transfer
-    generate
-        for (i = 0; i < NUM_PORTS; i = i + 1) begin : gen_fifo_ctrl
-            // FIFO write on valid input and not full
-            always @(posedge clk or negedge rst_n) begin
-                if (!rst_n) begin
-                    fifo_count[i] <= 0;
-                    read_ptr[i] <= 0;
-                    write_ptr[i] <= 0;
-                    
-                    // Initialize FIFOs to prevent X propagation
-                    for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
-                        input_fifo[i][j] <= 0;
-                    end
-                end else begin
-                    // Write to FIFO - only change write_ptr and fifo_count if actually writing
-                    if (valid_i[i] && !fifo_full[i]) begin
-                        input_fifo[i][write_ptr[i]] <= packet_i[i];
-                        // Fixed width comparison for FIFO_DEPTH-1
-                        if (write_ptr[i] == (FIFO_DEPTH-1)[$clog2(FIFO_DEPTH)-1:0]) begin
-                            write_ptr[i] <= 0;
-                        end else begin
-                            write_ptr[i] <= write_ptr[i] + 1;
-                        end
-                        fifo_count[i] <= fifo_count[i] + 1;
-                    end
-                    
-                    // Read from FIFO if granted and output is ready
-                    // Only change read_ptr and fifo_count if actually reading
-                    if (|{output_grant[0][i], output_grant[1][i], output_grant[2][i], 
-                          output_grant[3][i], output_grant[4][i]} && !fifo_empty[i] && 
-                          ready_i[route_port[i]]) begin
-                        // Fixed width comparison for FIFO_DEPTH-1
-                        if (read_ptr[i] == (FIFO_DEPTH-1)[$clog2(FIFO_DEPTH)-1:0]) begin
-                            read_ptr[i] <= 0;
-                        end else begin
-                            read_ptr[i] <= read_ptr[i] + 1;
-                        end
-                        fifo_count[i] <= fifo_count[i] - 1;
-                    end
-                end
-            end
-        end
-    endgenerate
-    
-    // Output data assignment - fixed to properly drive outputs when a grant is given
     always @(*) begin
-        for (j = 0; j < NUM_PORTS; j = j + 1) begin
-            valid_o[j] = 1'b0;
-            data_o[j] = {DATA_WIDTH{1'b0}};
-            addr_o[j] = {ADDR_WIDTH{1'b0}};
-            
-            for (k = 0; k < NUM_PORTS; k = k + 1) begin
-                if (output_grant[j][k] && !fifo_empty[k] && ready_i[j]) begin
-                    valid_o[j] = 1'b1;
-                    data_o[j] = payload[k];
-                    addr_o[j] = dest_addr[k];
+        output_grant_0 = 5'b00000;
+        found_grant_0 = 1'b0;
+        for (k = 0; k < NUM_PORTS; k = k + 1) begin
+            arb_idx_0 = (arb_ptr_0 + k) % NUM_PORTS;
+            if (!found_grant_0 && output_request_0[arb_idx_0]) begin
+                output_grant_0[arb_idx_0] = 1'b1;
+                found_grant_0 = 1'b1;
+            end
+        end
+    end
+    
+    // Port 1 (East)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            arb_ptr_1 <= 0;
+        end else begin
+            if (|output_grant_1) begin
+                arb_ptr_1 <= arb_ptr_1 + 1;
+                if (arb_ptr_1 == NUM_PORTS-1) begin
+                    arb_ptr_1 <= 0;
                 end
             end
+        end
+    end
+    
+    always @(*) begin
+        output_grant_1 = 5'b00000;
+        found_grant_1 = 1'b0;
+        for (k = 0; k < NUM_PORTS; k = k + 1) begin
+            arb_idx_1 = (arb_ptr_1 + k) % NUM_PORTS;
+            if (!found_grant_1 && output_request_1[arb_idx_1]) begin
+                output_grant_1[arb_idx_1] = 1'b1;
+                found_grant_1 = 1'b1;
+            end
+        end
+    end
+    
+    // Port 2 (South)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            arb_ptr_2 <= 0;
+        end else begin
+            if (|output_grant_2) begin
+                arb_ptr_2 <= arb_ptr_2 + 1;
+                if (arb_ptr_2 == NUM_PORTS-1) begin
+                    arb_ptr_2 <= 0;
+                end
+            end
+        end
+    end
+    
+    always @(*) begin
+        output_grant_2 = 5'b00000;
+        found_grant_2 = 1'b0;
+        for (k = 0; k < NUM_PORTS; k = k + 1) begin
+            arb_idx_2 = (arb_ptr_2 + k) % NUM_PORTS;
+            if (!found_grant_2 && output_request_2[arb_idx_2]) begin
+                output_grant_2[arb_idx_2] = 1'b1;
+                found_grant_2 = 1'b1;
+            end
+        end
+    end
+    
+    // Port 3 (West)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            arb_ptr_3 <= 0;
+        end else begin
+            if (|output_grant_3) begin
+                arb_ptr_3 <= arb_ptr_3 + 1;
+                if (arb_ptr_3 == NUM_PORTS-1) begin
+                    arb_ptr_3 <= 0;
+                end
+            end
+        end
+    end
+    
+    always @(*) begin
+        output_grant_3 = 5'b00000;
+        found_grant_3 = 1'b0;
+        for (k = 0; k < NUM_PORTS; k = k + 1) begin
+            arb_idx_3 = (arb_ptr_3 + k) % NUM_PORTS;
+            if (!found_grant_3 && output_request_3[arb_idx_3]) begin
+                output_grant_3[arb_idx_3] = 1'b1;
+                found_grant_3 = 1'b1;
+            end
+        end
+    end
+    
+    // Port 4 (Local)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            arb_ptr_4 <= 0;
+        end else begin
+            if (|output_grant_4) begin
+                arb_ptr_4 <= arb_ptr_4 + 1;
+                if (arb_ptr_4 == NUM_PORTS-1) begin
+                    arb_ptr_4 <= 0;
+                end
+            end
+        end
+    end
+    
+    always @(*) begin
+        output_grant_4 = 5'b00000;
+        found_grant_4 = 1'b0;
+        for (k = 0; k < NUM_PORTS; k = k + 1) begin
+            arb_idx_4 = (arb_ptr_4 + k) % NUM_PORTS;
+            if (!found_grant_4 && output_request_4[arb_idx_4]) begin
+                output_grant_4[arb_idx_4] = 1'b1;
+                found_grant_4 = 1'b1;
+            end
+        end
+    end
+    
+    // FIFO control for each port
+    // Port 0 (North)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            fifo_count_0 <= 0;
+            read_ptr_0 <= 0;
+            write_ptr_0 <= 0;
+            for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
+                input_fifo_0[j] <= 0;
+            end
+        end else begin
+            if (valid_i[0] && !fifo_full[0]) begin
+                input_fifo_0[write_ptr_0] <= packet_i[0];
+                if (write_ptr_0 == (FIFO_DEPTH-1)) begin
+                    write_ptr_0 <= 0;
+                end else begin
+                    write_ptr_0 <= write_ptr_0 + 1;
+                end
+                fifo_count_0 <= fifo_count_0 + 1;
+            end
+            
+            if (|{output_grant_0[0], output_grant_1[0], output_grant_2[0], 
+                 output_grant_3[0], output_grant_4[0]} && !fifo_empty[0] && 
+                 ready_i[route_port_0]) begin
+                if (read_ptr_0 == (FIFO_DEPTH-1)) begin
+                    read_ptr_0 <= 0;
+                end else begin
+                    read_ptr_0 <= read_ptr_0 + 1;
+                end
+                fifo_count_0 <= fifo_count_0 - 1;
+            end
+        end
+    end
+    
+    // Port 1 (East)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            fifo_count_1 <= 0;
+            read_ptr_1 <= 0;
+            write_ptr_1 <= 0;
+            for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
+                input_fifo_1[j] <= 0;
+            end
+        end else begin
+            if (valid_i[1] && !fifo_full[1]) begin
+                input_fifo_1[write_ptr_1] <= packet_i[1];
+                if (write_ptr_1 == (FIFO_DEPTH-1)) begin
+                    write_ptr_1 <= 0;
+                end else begin
+                    write_ptr_1 <= write_ptr_1 + 1;
+                end
+                fifo_count_1 <= fifo_count_1 + 1;
+            end
+            
+            if (|{output_grant_0[1], output_grant_1[1], output_grant_2[1], 
+                 output_grant_3[1], output_grant_4[1]} && !fifo_empty[1] && 
+                 ready_i[route_port_1]) begin
+                if (read_ptr_1 == (FIFO_DEPTH-1)) begin
+                    read_ptr_1 <= 0;
+                end else begin
+                    read_ptr_1 <= read_ptr_1 + 1;
+                end
+                fifo_count_1 <= fifo_count_1 - 1;
+            end
+        end
+    end
+    
+    // Port 2 (South)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            fifo_count_2 <= 0;
+            read_ptr_2 <= 0;
+            write_ptr_2 <= 0;
+            for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
+                input_fifo_2[j] <= 0;
+            end
+        end else begin
+            if (valid_i[2] && !fifo_full[2]) begin
+                input_fifo_2[write_ptr_2] <= packet_i[2];
+                if (write_ptr_2 == (FIFO_DEPTH-1)) begin
+                    write_ptr_2 <= 0;
+                end else begin
+                    write_ptr_2 <= write_ptr_2 + 1;
+                end
+                fifo_count_2 <= fifo_count_2 + 1;
+            end
+            
+            if (|{output_grant_0[2], output_grant_1[2], output_grant_2[2], 
+                 output_grant_3[2], output_grant_4[2]} && !fifo_empty[2] && 
+                 ready_i[route_port_2]) begin
+                if (read_ptr_2 == (FIFO_DEPTH-1)) begin
+                    read_ptr_2 <= 0;
+                end else begin
+                    read_ptr_2 <= read_ptr_2 + 1;
+                end
+                fifo_count_2 <= fifo_count_2 - 1;
+            end
+        end
+    end
+    
+    // Port 3 (West)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            fifo_count_3 <= 0;
+            read_ptr_3 <= 0;
+            write_ptr_3 <= 0;
+            for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
+                input_fifo_3[j] <= 0;
+            end
+        end else begin
+            if (valid_i[3] && !fifo_full[3]) begin
+                input_fifo_3[write_ptr_3] <= packet_i[3];
+                if (write_ptr_3 == (FIFO_DEPTH-1)) begin
+                    write_ptr_3 <= 0;
+                end else begin
+                    write_ptr_3 <= write_ptr_3 + 1;
+                end
+                fifo_count_3 <= fifo_count_3 + 1;
+            end
+            
+            if (|{output_grant_0[3], output_grant_1[3], output_grant_2[3], 
+                 output_grant_3[3], output_grant_4[3]} && !fifo_empty[3] && 
+                 ready_i[route_port_3]) begin
+                if (read_ptr_3 == (FIFO_DEPTH-1)) begin
+                    read_ptr_3 <= 0;
+                end else begin
+                    read_ptr_3 <= read_ptr_3 + 1;
+                end
+                fifo_count_3 <= fifo_count_3 - 1;
+            end
+        end
+    end
+    
+    // Port 4 (Local)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            fifo_count_4 <= 0;
+            read_ptr_4 <= 0;
+            write_ptr_4 <= 0;
+            for (j = 0; j < FIFO_DEPTH; j = j + 1) begin
+                input_fifo_4[j] <= 0;
+            end
+        end else begin
+            if (valid_i[4] && !fifo_full[4]) begin
+                input_fifo_4[write_ptr_4] <= packet_i[4];
+                if (write_ptr_4 == (FIFO_DEPTH-1)) begin
+                    write_ptr_4 <= 0;
+                end else begin
+                    write_ptr_4 <= write_ptr_4 + 1;
+                end
+                fifo_count_4 <= fifo_count_4 + 1;
+            end
+            
+            if (|{output_grant_0[4], output_grant_1[4], output_grant_2[4], 
+                 output_grant_3[4], output_grant_4[4]} && !fifo_empty[4] && 
+                 ready_i[route_port_4]) begin
+                if (read_ptr_4 == (FIFO_DEPTH-1)) begin
+                    read_ptr_4 <= 0;
+                end else begin
+                    read_ptr_4 <= read_ptr_4 + 1;
+                end
+                fifo_count_4 <= fifo_count_4 - 1;
+            end
+        end
+    end
+    
+    // Output data assignment
+    always @(*) begin
+        // North port
+        valid_o[0] = 1'b0;
+        data_o_0 = {DATA_WIDTH{1'b0}};
+        addr_o_0 = {ADDR_WIDTH{1'b0}};
+        if (output_grant_0[0] && !fifo_empty[0] && ready_i[0]) begin
+            valid_o[0] = 1'b1;
+            data_o_0 = payload_0;
+            addr_o_0 = dest_addr_0;
+        end
+        if (output_grant_1[0] && !fifo_empty[1] && ready_i[0]) begin
+            valid_o[0] = 1'b1;
+            data_o_0 = payload_1;
+            addr_o_0 = dest_addr_1;
+        end
+        if (output_grant_2[0] && !fifo_empty[2] && ready_i[0]) begin
+            valid_o[0] = 1'b1;
+            data_o_0 = payload_2;
+            addr_o_0 = dest_addr_2;
+        end
+        if (output_grant_3[0] && !fifo_empty[3] && ready_i[0]) begin
+            valid_o[0] = 1'b1;
+            data_o_0 = payload_3;
+            addr_o_0 = dest_addr_3;
+        end
+        if (output_grant_4[0] && !fifo_empty[4] && ready_i[0]) begin
+            valid_o[0] = 1'b1;
+            data_o_0 = payload_4;
+            addr_o_0 = dest_addr_4;
+        end
+        
+        // East port
+        valid_o[1] = 1'b0;
+        data_o_1 = {DATA_WIDTH{1'b0}};
+        addr_o_1 = {ADDR_WIDTH{1'b0}};
+        if (output_grant_0[1] && !fifo_empty[0] && ready_i[1]) begin
+            valid_o[1] = 1'b1;
+            data_o_1 = payload_0;
+            addr_o_1 = dest_addr_0;
+        end
+        if (output_grant_1[1] && !fifo_empty[1] && ready_i[1]) begin
+            valid_o[1] = 1'b1;
+            data_o_1 = payload_1;
+            addr_o_1 = dest_addr_1;
+        end
+        if (output_grant_2[1] && !fifo_empty[2] && ready_i[1]) begin
+            valid_o[1] = 1'b1;
+            data_o_1 = payload_2;
+            addr_o_1 = dest_addr_2;
+        end
+        if (output_grant_3[1] && !fifo_empty[3] && ready_i[1]) begin
+            valid_o[1] = 1'b1;
+            data_o_1 = payload_3;
+            addr_o_1 = dest_addr_3;
+        end
+        if (output_grant_4[1] && !fifo_empty[4] && ready_i[1]) begin
+            valid_o[1] = 1'b1;
+            data_o_1 = payload_4;
+            addr_o_1 = dest_addr_4;
+        end
+        
+        // South port
+        valid_o[2] = 1'b0;
+        data_o_2 = {DATA_WIDTH{1'b0}};
+        addr_o_2 = {ADDR_WIDTH{1'b0}};
+        if (output_grant_0[2] && !fifo_empty[0] && ready_i[2]) begin
+            valid_o[2] = 1'b1;
+            data_o_2 = payload_0;
+            addr_o_2 = dest_addr_0;
+        end
+        if (output_grant_1[2] && !fifo_empty[1] && ready_i[2]) begin
+            valid_o[2] = 1'b1;
+            data_o_2 = payload_1;
+            addr_o_2 = dest_addr_1;
+        end
+        if (output_grant_2[2] && !fifo_empty[2] && ready_i[2]) begin
+            valid_o[2] = 1'b1;
+            data_o_2 = payload_2;
+            addr_o_2 = dest_addr_2;
+        end
+        if (output_grant_3[2] && !fifo_empty[3] && ready_i[2]) begin
+            valid_o[2] = 1'b1;
+            data_o_2 = payload_3;
+            addr_o_2 = dest_addr_3;
+        end
+        if (output_grant_4[2] && !fifo_empty[4] && ready_i[2]) begin
+            valid_o[2] = 1'b1;
+            data_o_2 = payload_4;
+            addr_o_2 = dest_addr_4;
+        end
+        
+        // West port
+        valid_o[3] = 1'b0;
+        data_o_3 = {DATA_WIDTH{1'b0}};
+        addr_o_3 = {ADDR_WIDTH{1'b0}};
+        if (output_grant_0[3] && !fifo_empty[0] && ready_i[3]) begin
+            valid_o[3] = 1'b1;
+            data_o_3 = payload_0;
+            addr_o_3 = dest_addr_0;
+        end
+        if (output_grant_1[3] && !fifo_empty[1] && ready_i[3]) begin
+            valid_o[3] = 1'b1;
+            data_o_3 = payload_1;
+            addr_o_3 = dest_addr_1;
+        end
+        if (output_grant_2[3] && !fifo_empty[2] && ready_i[3]) begin
+            valid_o[3] = 1'b1;
+            data_o_3 = payload_2;
+            addr_o_3 = dest_addr_2;
+        end
+        if (output_grant_3[3] && !fifo_empty[3] && ready_i[3]) begin
+            valid_o[3] = 1'b1;
+            data_o_3 = payload_3;
+            addr_o_3 = dest_addr_3;
+        end
+        if (output_grant_4[3] && !fifo_empty[4] && ready_i[3]) begin
+            valid_o[3] = 1'b1;
+            data_o_3 = payload_4;
+            addr_o_3 = dest_addr_4;
+        end
+        
+        // Local port
+        valid_o[4] = 1'b0;
+        data_o_4 = {DATA_WIDTH{1'b0}};
+        addr_o_4 = {ADDR_WIDTH{1'b0}};
+        if (output_grant_0[4] && !fifo_empty[0] && ready_i[4]) begin
+            valid_o[4] = 1'b1;
+            data_o_4 = payload_0;
+            addr_o_4 = dest_addr_0;
+        end
+        if (output_grant_1[4] && !fifo_empty[1] && ready_i[4]) begin
+            valid_o[4] = 1'b1;
+            data_o_4 = payload_1;
+            addr_o_4 = dest_addr_1;
+        end
+        if (output_grant_2[4] && !fifo_empty[2] && ready_i[4]) begin
+            valid_o[4] = 1'b1;
+            data_o_4 = payload_2;
+            addr_o_4 = dest_addr_2;
+        end
+        if (output_grant_3[4] && !fifo_empty[3] && ready_i[4]) begin
+            valid_o[4] = 1'b1;
+            data_o_4 = payload_3;
+            addr_o_4 = dest_addr_3;
+        end
+        if (output_grant_4[4] && !fifo_empty[4] && ready_i[4]) begin
+            valid_o[4] = 1'b1;
+            data_o_4 = payload_4;
+            addr_o_4 = dest_addr_4;
         end
     end
 

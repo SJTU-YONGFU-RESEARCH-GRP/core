@@ -44,12 +44,19 @@ module cache_fifo #(
     reg [ADDR_WIDTH:0] rd_ptr;
     // Index for associative tag lookup
     reg [ADDR_WIDTH-1:0] search_idx;
+    reg [$clog2(CACHE_SIZE)-1:0] fifo_replacement_ptr;
     
     // Cache storage (unrolled for CACHE_SIZE=4)
     reg [DATA_WIDTH-1:0] cache_data0, cache_data1, cache_data2, cache_data3;
     reg [TAG_WIDTH-1:0]  cache_tags0, cache_tags1, cache_tags2, cache_tags3;
     reg                  cache_valid0, cache_valid1, cache_valid2, cache_valid3;
     reg [$clog2(CACHE_SIZE)-1:0] lru_counters0, lru_counters1, lru_counters2, lru_counters3;
+    
+    // Variables moved from always block
+    integer i, k;
+    reg [$clog2(CACHE_SIZE)-1:0] cache_idx_reg;
+    reg [CACHE_SIZE-1:0] matched_tag;
+    reg [$clog2(CACHE_SIZE)-1:0] hit_index;
     
     // FIFO status signals
     wire [ADDR_WIDTH:0] fifo_count = wr_ptr - rd_ptr;
@@ -69,16 +76,16 @@ module cache_fifo #(
     // Function to find index of least recently used cache entry (flattened for Verilog-2005)
     function [$clog2(CACHE_SIZE)-1:0] find_lru_index;
         input [CACHE_SIZE*$clog2(CACHE_SIZE)-1:0] counters_flat;
-        integer i;
+        integer j;
         reg [$clog2(CACHE_SIZE)-1:0] min_idx, min_counter, counter_i;
         begin
             min_idx = 0;
             min_counter = counters_flat[$clog2(CACHE_SIZE)-1:0];
-            for (i = 1; i < CACHE_SIZE; i = i + 1) begin
-                counter_i = counters_flat[(i+1)*$clog2(CACHE_SIZE)-1:i*$clog2(CACHE_SIZE)];
+            for (j = 1; j < CACHE_SIZE; j = j + 1) begin
+                counter_i = counters_flat[j*$clog2(CACHE_SIZE) +: $clog2(CACHE_SIZE)];
                 if (counter_i < min_counter) begin
                     min_counter = counter_i;
-                    min_idx = i[$clog2(CACHE_SIZE)-1:0];
+                    min_idx = j[$clog2(CACHE_SIZE)-1:0];
                 end
             end
             find_lru_index = min_idx;
@@ -90,16 +97,16 @@ module cache_fifo #(
         input [CACHE_SIZE-1:0] valid;
         input [CACHE_SIZE*$clog2(CACHE_SIZE)-1:0] counters_flat;
         input [$clog2(CACHE_SIZE)-1:0] fifo_ptr;
-        integer i;
+        integer j;
         reg [$clog2(CACHE_SIZE)-1:0] idx;
         reg found_empty;
         begin
             found_empty = 0;
             idx = 0;
             // First, look for an invalid entry
-            for (i = 0; i < CACHE_SIZE; i = i + 1) begin
-                if (!valid[i]) begin
-                    idx = i[$clog2(CACHE_SIZE)-1:0];
+            for (j = 0; j < CACHE_SIZE; j = j + 1) begin
+                if (!valid[j]) begin
+                    idx = j[$clog2(CACHE_SIZE)-1:0];
                     found_empty = 1;
                 end
             end
@@ -115,21 +122,8 @@ module cache_fifo #(
         end
     endfunction
     
-    // Write operation
-    always @(posedge clk) begin
-        if (wr_en && !full) begin
-            mem[wr_ptr[ADDR_WIDTH-1:0]] <= wr_data;
-            tag_mem[wr_ptr[ADDR_WIDTH-1:0]] <= wr_tag;
-        end
-    end
-    
-    // FIFO state management
+    // Write operation and FIFO state management
     always @(posedge clk or negedge rst_n) begin
-        integer i, k;
-        reg [$clog2(CACHE_SIZE)-1:0] cache_idx_reg;
-        reg [CACHE_SIZE-1:0] matched_tag;
-        reg [$clog2(CACHE_SIZE)-1:0] hit_index;
-        
         if (!rst_n) begin
             // Yosys-compatible reset: only reset scalars and assign full packed vectors
             wr_ptr <= 0;
@@ -153,7 +147,7 @@ module cache_fifo #(
                 cache_misses <= 0;
             end
             
-            // Update write pointer on write
+            // Update write pointer and memory on write
             if (wr_en && !full) begin
                 mem[wr_ptr[ADDR_WIDTH-1:0]] <= wr_data;
                 tag_mem[wr_ptr[ADDR_WIDTH-1:0]] <= wr_tag;

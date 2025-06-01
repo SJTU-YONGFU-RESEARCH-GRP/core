@@ -16,9 +16,9 @@ The dataset contains 138 Verilog modules across 24 different categories, providi
 ## Code Metrics
 
 ### Average Metrics per Module
-- Lines of Code: 112.74
+- Lines of Code: 116.20
 - Parameters: 2.75
-- Ports: 11.22
+- Ports: 11.21
 
 ### Module Complexity Distribution
 
@@ -135,10 +135,10 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | async_fifo | 504 | 334 | 0 |
 | barrel_shifter_fifo | 4367 | 4249 | 0 |
 | bidirectional_fifo | 747 | 469 | 0 |
-| cache_fifo | N/A | N/A | N/A |
+| cache_fifo | 10770 | 9805 | 0 |
 | circular_buffer_fifo | 644 | 500 | 0 |
 | configurable_param_fifo | 400 | 262 | 0 |
-| configurable_sync_fifo | N/A | N/A | N/A |
+| configurable_sync_fifo | 525 | 392 | 0 |
 | credit_based_fifo | 555 | 410 | 0 |
 | dual_clock_fifo | 466 | 316 | 0 |
 | elastic_buffer | 270 | 186 | 0 |
@@ -152,7 +152,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | skid_buffer | 46 | 32 | 0 |
 | smart_fifo | 1268 | 670 | 0 |
 | sync_fifo | 380 | 236 | 0 |
-| configurable_fir_filter | N/A | N/A | N/A |
+| configurable_fir_filter | 1403 | 0 | 0 |
 | fir_filter | 296 | 239 | 0 |
 | sequence_detector_fsm | 61 | 54 | 0 |
 | axi_lite_master | 204 | 88 | 0 |
@@ -171,7 +171,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | booth_multiplier | 450 | 431 | 0 |
 | configurable_mult | 652 | 641 | 0 |
 | radix4_booth_multiplier | 462 | 427 | 0 |
-| configurable_mesh_router | N/A | N/A | N/A |
+| configurable_mesh_router | 5291 | 4315 | 0 |
 | crossbar_switch | 128 | 73 | 0 |
 | mesh_router | 2142 | 1864 | 0 |
 | network_interface | 211 | 128 | 0 |
@@ -204,7 +204,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | configurable_prng | 69 | 48 | 0 |
 | digital_thermometer_controller | 104 | 88 | 0 |
 | multi_phase_pwm_controller | 552 | 559 | 0 |
-| parameterized_dds | N/A | N/A | N/A |
+| parameterized_dds | 17879 | 16795 | 0 |
 | parameterized_fft | 10629 | 9866 | 0 |
 | parameterized_pwm | 232 | 216 | 0 |
 | pulse_width_detector | 90 | 80 | 0 |
@@ -213,28 +213,28 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | jtag_controller | 206 | 105 | 0 |
 | majority_voter | 90 | 88 | 0 |
 
-- **Average Gate/Cell Count:** 1504.48
-- **Average Wire Count:** 1135.99
+- **Average Gate/Cell Count:** 1711.38
+- **Average Wire Count:** 1323.05
 - **Average Memory Count:** 0.00
 
 ### Most Common Cell Types (All Modules)
 
 | Cell Type | Total Count |
 |-----------|------------|
-| ANDNOT | 59170 |
-| OR | 55293 |
-| DFFE_PP | 45102 |
-| MUX | 14189 |
-| XOR | 5490 |
-| DFFE_PN0P | 3541 |
-| NOT | 3126 |
-| NAND | 2335 |
-| ORNOT | 2194 |
-| NOR | 2183 |
-| XNOR | 1850 |
-| AND | 1743 |
+| ANDNOT | 70203 |
+| OR | 66965 |
+| DFFE_PP | 47942 |
+| MUX | 16563 |
+| XOR | 7428 |
+| DFFE_PN0P | 4827 |
+| NOT | 3890 |
+| NAND | 3747 |
+| NOR | 2898 |
+| ORNOT | 2896 |
+| XNOR | 2641 |
+| AND | 2007 |
 | SDFFCE_PN0P | 1088 |
-| DFF_PN0 | 773 |
+| DFF_PN0 | 840 |
 | SDFFE_PN0P | 89 |
 | DFFE_PN1P | 66 |
 | DFFE_PN0N | 60 |
@@ -246,6 +246,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | SDFFE_PP0P | 19 |
 | DFF_PN1 | 18 |
 | SDFF_PN0 | 11 |
+| print | 10 |
 | DFF_PP0 | 7 |
 | DFFE_NN0N | 4 |
 | DFFE_PN1N | 3 |
@@ -275,9 +276,9 @@ This dataset provides a diverse collection of Verilog modules that represent var
 
 3. **Parameterization**: An average of 2.75 parameters per module suggests that many designs are configurable and promote reusability.
 
-4. **Interface Complexity**: With an average of 11.22 ports per module, the designs demonstrate a range of interface complexities suitable for diverse applications.
+4. **Interface Complexity**: With an average of 11.21 ports per module, the designs demonstrate a range of interface complexities suitable for diverse applications.
 
-5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of 1504.48 cells for 132 successfully synthesized modules with cell data) provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.
+5. **Synthesis Metrics**: Available synthesis statistics (e.g., an average of 1711.38 cells for 137 successfully synthesized modules with cell data) provide insights into the hardware implications and implementation styles. Detailed metrics are available in the synthesis section.
 
 This dataset is well-suited for research in areas such as:
 - RTL design patterns and best practices
