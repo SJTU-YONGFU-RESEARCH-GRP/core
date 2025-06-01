@@ -35,36 +35,43 @@ module parameterized_dds #(
     reg [OUTPUT_WIDTH-1:0] sine_value;
     wire [LUT_ADDR_WIDTH-1:0] sine_addr;
     
-    // Initialize the sine LUT
-    initial begin
-        integer i;
-        real angle, sine_val;
-        integer temp_val;
-        real center_val, scale_val;
-        
-        // Calculate center and scale values for the amplitude conversion
-        center_val = (1 << (OUTPUT_WIDTH-1));
-        scale_val = center_val - 1;
-        
-        for (i = 0; i < (1<<LUT_ADDR_WIDTH); i = i + 1) begin
-            if (USE_QUARTER_SINE != 0) 
-                // Only first quadrant stored (0 to π/2)
-                angle = (i * 3.14159265359 / 2.0) / (1<<LUT_ADDR_WIDTH); 
-            else
-                // Full sine wave stored (0 to 2π)
-                angle = (i * 2.0 * 3.14159265359) / (1<<LUT_ADDR_WIDTH);
-                
-            sine_val = $sin(angle);
-            // Scale to OUTPUT_WIDTH-bit unsigned value centered at 2^(OUTPUT_WIDTH-1)
-            temp_val = $rtoi(sine_val * scale_val + center_val);
+    // Declare center_val and scale_val as reg at the module level
+    reg [OUTPUT_WIDTH-1:0] center_val; // Change to reg
+    reg [OUTPUT_WIDTH-1:0] scale_val;  // Change to reg
+    
+    // LUT initialization state machine
+    reg [LUT_ADDR_WIDTH:0] init_counter;
+    reg lut_initialized;
+    
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            init_counter <= 0;
+            lut_initialized <= 0;
+        end else if (!lut_initialized) begin
+            integer angle;
+            integer scaled_angle, sine_scaled;
+            localparam integer PI_SCALED = 528487449; // Pre-calculated 3.1415926 * 2^24 / 180
+
+            // Calculate current index
+            angle = (init_counter * (USE_QUARTER_SINE ? 90 : 360)) / 
+                   (1 << (USE_QUARTER_SINE ? (LUT_ADDR_WIDTH - 1) : LUT_ADDR_WIDTH));
             
-            // Clamp value to valid range for OUTPUT_WIDTH
-            if (temp_val >= (1<<OUTPUT_WIDTH))
-                sine_lut[i] = (1<<OUTPUT_WIDTH) - 1;
-            else if (temp_val < 0)
-                sine_lut[i] = 0;
+            // Fixed-point sine calculation
+            scaled_angle = angle * PI_SCALED;
+            sine_scaled = scaled_angle - 
+                        ((scaled_angle * scaled_angle * scaled_angle) / 6) + 
+                        ((scaled_angle * scaled_angle * scaled_angle * 
+                        scaled_angle * scaled_angle) / 120);
+            
+            // Store in LUT
+            sine_lut[init_counter] = ((sine_scaled >> (24 - OUTPUT_WIDTH + 8)) + 
+                                    (1 << (OUTPUT_WIDTH-1))) & ((1 << OUTPUT_WIDTH) - 1);
+            
+            // Update counter
+            if (init_counter == (1 << LUT_ADDR_WIDTH) - 1)
+                lut_initialized <= 1;
             else
-                sine_lut[i] = temp_val[OUTPUT_WIDTH-1:0];
+                init_counter <= init_counter + 1;
         end
     end
 
@@ -129,38 +136,30 @@ module parameterized_dds #(
             
             assign cosine_addr = cos_addr_tmp;
         end else begin : cos_full_impl
-            // For full sine, simply add π/2 worth of phase
-            assign cosine_addr = sine_addr + (1<<(LUT_ADDR_WIDTH-2));
+            // Full sine, simply add π/2 worth of phase
+            wire [PHASE_WIDTH-1:0] phase_plus_pi2;
+            assign phase_plus_pi2 = phase_with_offset + (1 << (PHASE_WIDTH-2)); // Add π/2
+            assign cosine_addr = phase_plus_pi2[PHASE_WIDTH-1:PHASE_WIDTH-LUT_ADDR_WIDTH];
         end
     endgenerate
     
-    // Sine/Cosine output generation
+    // Sine/Cosine output generation with proper sign handling
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             sine_out <= {OUTPUT_WIDTH{1'b0}};
             cosine_out <= {OUTPUT_WIDTH{1'b0}};
-            sine_value <= {OUTPUT_WIDTH{1'b0}};
         end else if (enable) begin
-            // Sine output
-            sine_value <= sine_lut[sine_addr];
-            
-            if (USE_QUARTER_SINE != 0) begin
-                if (quadrant == 2'b10 || quadrant == 2'b11) begin
-                    // In 3rd or 4th quadrant, sine is negative
-                    sine_out <= (1 << OUTPUT_WIDTH) - sine_lut[sine_addr];
-                end else begin
-                    sine_out <= sine_lut[sine_addr];
-                end
+            if (USE_QUARTER_SINE) begin
+                // Sine output with quadrant sign handling
+                sine_out <= quadrant[1] ? 
+                    (center_val - (sine_lut[sine_addr] - center_val)) : 
+                    sine_lut[sine_addr];
                 
-                // Cosine output based on adjusted quadrant
-                if (cos_quadrant == 2'b10 || cos_quadrant == 2'b11) begin
-                    // In 3rd or 4th quadrant, cosine is negative
-                    cosine_out <= (1 << OUTPUT_WIDTH) - sine_lut[cosine_addr];
-                end else begin
-                    cosine_out <= sine_lut[cosine_addr];
-                end
+                // Cosine output with quadrant sign handling
+                cosine_out <= cos_quadrant[1] ? 
+                    (center_val - (sine_lut[cosine_addr] - center_val)) : 
+                    sine_lut[cosine_addr];
             end else begin
-                // Full sine implementation
                 sine_out <= sine_lut[sine_addr];
                 cosine_out <= sine_lut[cosine_addr];
             end

@@ -31,23 +31,16 @@ module multi_ported_fifo #(
     // Memory array for data storage
     reg [DATA_WIDTH-1:0] mem [(1<<ADDR_WIDTH)-1:0];
     
-    // Write port data access helper function
-    // Disable BLKSEQ lint for combinational function
-    // verilator lint_off BLKSEQ
-    function [DATA_WIDTH-1:0] get_wr_data(input integer port);
-        integer start_bit;
-        begin
-            start_bit = port * DATA_WIDTH;
-            get_wr_data = wr_data[start_bit +: DATA_WIDTH];
-        end
-    endfunction
-    // Re-enable BLKSEQ lint
-    // verilator lint_on BLKSEQ
-    
     // FIFO pointers and control signals
     reg [ADDR_WIDTH:0] wr_ptr;
     reg [ADDR_WIDTH:0] rd_ptr;
     reg [ADDR_WIDTH:0] fifo_count;
+
+    // New declarations at the module level
+    reg [ADDR_WIDTH-1:0] current_wr_addr;
+    reg [ADDR_WIDTH:0] write_count;
+    reg [ADDR_WIDTH-1:0] current_rd_addr;
+    reg [ADDR_WIDTH:0] read_count;
     
     // Read data output registers
     reg [DATA_WIDTH-1:0] rd_data_regs [0:NUM_READ_PORTS-1];
@@ -115,26 +108,20 @@ module multi_ported_fifo #(
     
     // Write operation with proper wrap-around
     always @(posedge clk) begin
-        reg [ADDR_WIDTH-1:0] current_wr_addr;
-        reg [ADDR_WIDTH:0] write_count;
-        
-        current_wr_addr = wr_ptr[ADDR_WIDTH-1:0];
-        write_count = 0;
+        current_wr_addr <= wr_ptr[ADDR_WIDTH-1:0];
+        write_count <= 0;
         
         for (wp = 0; wp < NUM_WRITE_PORTS; wp = wp + 1) begin
             if (wr_en[wp] && !full && (fifo_count + write_count < (1<<ADDR_WIDTH))) begin
                 mem[current_wr_addr] <= get_wr_data(wp);
-                current_wr_addr = (current_wr_addr + 1'b1);
-                write_count = write_count + 1'b1;
+                current_wr_addr <= (current_wr_addr + 1'b1);
+                write_count <= write_count + 1'b1;
             end
         end
     end
     
     // FIFO state management
     always @(posedge clk or negedge rst_n) begin
-        reg [ADDR_WIDTH-1:0] current_rd_addr;
-        reg [ADDR_WIDTH:0] read_count;
-        
         if (!rst_n) begin
             wr_ptr <= 0;
             rd_ptr <= 0;
@@ -152,15 +139,15 @@ module multi_ported_fifo #(
             end
             
             // Process read ports
-            current_rd_addr = rd_ptr[ADDR_WIDTH-1:0];
-            read_count = 0;
+            current_rd_addr <= rd_ptr[ADDR_WIDTH-1:0];
+            read_count <= 0;
             
             for (i = 0; i < NUM_READ_PORTS; i = i + 1) begin
                 if (rd_en[i] && (fifo_count > read_count)) begin
                     rd_data_regs[i] <= mem[current_rd_addr];
                     rd_valid_regs[i] <= 1'b1;
-                    current_rd_addr = (current_rd_addr + 1'b1);
-                    read_count = read_count + 1'b1;
+                    current_rd_addr <= (current_rd_addr + 1'b1);
+                    read_count <= read_count + 1'b1;
                 end else begin
                     rd_valid_regs[i] <= 1'b0;
                 end
@@ -175,5 +162,18 @@ module multi_ported_fifo #(
             fifo_count <= next_count;
         end
     end
+
+    // Write port data access helper function
+    // Disable BLKSEQ lint for combinational function
+    // verilator lint_off BLKSEQ
+    function [DATA_WIDTH-1:0] get_wr_data(input integer port);
+        integer start_bit;
+        begin
+            start_bit = port * DATA_WIDTH;
+            get_wr_data = wr_data[start_bit +: DATA_WIDTH];
+        end
+    endfunction
+    // Re-enable BLKSEQ lint
+    // verilator lint_on BLKSEQ
 
 endmodule 
