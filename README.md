@@ -14,7 +14,7 @@ This repository contains a collection of parameterized and configurable RTL modu
 ### Installation Steps
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/core.git
+git clone https://github.com/SJTU-YONGFU-RESEARCH-GRP/core.git
 cd core
 ```
 
@@ -48,7 +48,7 @@ sudo yum install git make autoconf gcc-c++ flex bison
 brew install git make autoconf flex bison
 
 # Clone and build Verilator
-git clone https://github.com/verilator/verilator
+git clone https://github.com/verilator/verilator.git
 cd verilator
 git checkout stable  # or 'git checkout master' for latest development version
 autoconf
@@ -57,14 +57,46 @@ make
 sudo make install
 ```
 
-3. Install Python dependencies:
+3. Install Yosys (if not already installed):
+
+Using package manager:
 ```bash
-pip install -r requirements.txt
+# For Ubuntu/Debian
+sudo apt-get install yosys
+
+# For CentOS/RHEL
+yum install epel-release
+yum install yosys
+
+# For macOS
+brew install yosys
+
+# For Windows (using WSL)
+sudo apt-get install yosys
 ```
 
-4. Verify the installation:
+Or install from GitHub source (recommended for latest version):
 ```bash
-make test
+# Install build dependencies
+# For Ubuntu/Debian
+sudo apt-get install git build-essential clang bison flex libreadline-dev gawk tcl-dev libffi-dev graphviz xdot pkg-config python3 python3-pip libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+
+# For CentOS/RHEL
+yum install git gcc clang bison flex readline-devel gawk tcl-devel libffi-devel graphviz xdot pkgconfig python3 python3-pip boost-devel zlib-devel
+
+# For macOS
+brew install git clang bison flex readline gawk tcl-tk libffi graphviz xdot pkg-config python3 boost zlib
+
+# Clone and build Yosys
+git clone https://github.com/YosysHQ/yosys.git
+cd yosys
+make
+sudo make install
+```
+
+4. Install Python dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
 ## Version Information
@@ -72,10 +104,10 @@ make test
 - Last Updated: 2024
 - Supported Verilog Standards: IEEE 1364-2005, IEEE 1800-2012
 - Tool Versions:
-  - Verilator: 5.020
-  - Icarus Verilog: 12.0
-  - Python: 3.8+
-  - GTKWave: 3.3.111+
+  - Verilator: 5.036
+  - Yosys: 0.53+81
+  - Icarus Verilog: 11.0
+  - Python: 3.10.12
 
 ## Directory Structure
 ```
@@ -117,15 +149,36 @@ README.md           # This file
 | Voting | [Voting](docs/README_VOTING.md) | 1 | [majority_voter](libraries/voters/majority_voter.v) |
 
 ## Generating Verification Report
+
 You can generate a comprehensive report of the verification results by running:
 
 ```bash
 python3 report.py
 ```
 
+### What the Script Does
+
 This script will scan RTL files and their testbenches, execute tests using `make`, and produce `REPORT.md`.
 
 You can view the latest report here: [REPORT.md](REPORT.md)
+
+## Analyzing the Verilog Dataset
+
+You can analyze the Verilog dataset and generate a comprehensive markdown report (`DATASET.md`) using the provided `analyze_verilog_dataset.py` script.
+
+### Usage
+
+To analyze the dataset and generate `DATASET.md`:
+
+```bash
+python3 analyze_verilog_dataset.py --synth --output my_report.md --loglevel INFO
+```
+
+### What the Script Does
+This will scan all Verilog modules in the `libraries/` directory, collect code and synthesis metrics, and produce a detailed report in `DATASET.md` (including plots in the `plots/` directory).
+- Analyzes all Verilog files in `libraries/` for code metrics (lines, parameters, ports, patterns, etc.).
+- Optionally runs Yosys synthesis to collect hardware metrics (cell count, wire count, etc.).
+- Generates plots and a markdown report summarizing the dataset's structure, complexity, and synthesis statistics.
 
 ## License
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International Public License](LICENSE).
