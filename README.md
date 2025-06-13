@@ -180,5 +180,53 @@ This will scan all Verilog modules in the `libraries/` directory, collect code a
 - Optionally runs Yosys synthesis to collect hardware metrics (cell count, wire count, etc.).
 - Generates plots and a markdown report summarizing the dataset's structure, complexity, and synthesis statistics.
 
+You can view the latest report here: [DATASET.md](DATASET.md)
+
+## Verilog Standards Analysis
+
+The repository includes a comprehensive analysis of Verilog standards usage across all modules. You can generate a detailed standards report using the provided `verilog_standard_report.py` script.
+
+### Usage
+
+To analyze Verilog standards and generate a report:
+
+```bash
+python3 verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO
+```
+
+### What the Script Does
+
+The script analyzes all Verilog files in the `libraries/` directory and generates a detailed report that includes:
+
+- Standards compliance analysis (Verilog-1995 through SystemVerilog-2017)
+- Feature usage statistics
+- File-by-file analysis
+- Visual charts showing standards distribution and feature usage
+
+The analysis covers the following Verilog standards:
+- Verilog-1995: Basic Verilog features (modules, ports, parameters)
+- Verilog-2001: Enhanced features (generate blocks, signed types)
+- Verilog-2005: Additional features (uwire, trireg)
+- SystemVerilog-2005: Modern features (interfaces, logic types)
+- SystemVerilog-2009: Advanced features (classes, coverage)
+- SystemVerilog-2012: Latest features (program blocks, constraints)
+- SystemVerilog-2017: Assertion and property features
+
+You can view the latest standards report here: [VERILOG_STANDARDS.md](VERILOG_STANDARDS.md)
+
+## Citation
+
+If you use this repository in your research or work, please cite it as follows:
+
+```bibtex
+@misc{core2024,
+  author = {Kian Kit Cheah, Fu Qi Chua, Yunxiang Zhang, Yuxin Ji, Xinfei Guo, Harikrishnan Ramiah, and Yongfu Li},
+  title = {Descriptor: A Corpus of Synthesizable Verilog RTL Modules Dataset for EDA Research (CORE)},
+  year = {2025},
+  journal = {IEEE Data Descriptions},
+  url = {\url{https://github.com/SJTU-YONGFU-RESEARCH-GRP/core}},
+}
+```
+
 ## License
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International Public License](LICENSE).
