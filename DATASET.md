@@ -135,10 +135,10 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | async_fifo | 504 | 334 | 0 |
 | barrel_shifter_fifo | 4367 | 4249 | 0 |
 | bidirectional_fifo | 747 | 469 | 0 |
-| cache_fifo | 10770 | 9805 | 0 |
+| cache_fifo | 10770 | 0 | 0 |
 | circular_buffer_fifo | 644 | 500 | 0 |
 | configurable_param_fifo | 400 | 262 | 0 |
-| configurable_sync_fifo | 525 | 392 | 0 |
+| configurable_sync_fifo | 525 | 0 | 0 |
 | credit_based_fifo | 555 | 410 | 0 |
 | dual_clock_fifo | 466 | 316 | 0 |
 | elastic_buffer | 270 | 186 | 0 |
@@ -171,7 +171,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | booth_multiplier | 450 | 431 | 0 |
 | configurable_mult | 652 | 641 | 0 |
 | radix4_booth_multiplier | 462 | 427 | 0 |
-| configurable_mesh_router | 5291 | 4315 | 0 |
+| configurable_mesh_router | 5291 | 0 | 0 |
 | crossbar_switch | 128 | 73 | 0 |
 | mesh_router | 2142 | 1864 | 0 |
 | network_interface | 211 | 128 | 0 |
@@ -204,7 +204,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | configurable_prng | 69 | 48 | 0 |
 | digital_thermometer_controller | 104 | 88 | 0 |
 | multi_phase_pwm_controller | 552 | 559 | 0 |
-| parameterized_dds | 17879 | 16795 | 0 |
+| parameterized_dds | 17879 | 0 | 0 |
 | parameterized_fft | 10629 | 9866 | 0 |
 | parameterized_pwm | 232 | 216 | 0 |
 | pulse_width_detector | 90 | 80 | 0 |
@@ -214,7 +214,7 @@ The following table summarizes the gate (cell) count, wire count, memory countfo
 | majority_voter | 90 | 88 | 0 |
 
 - **Average Gate/Cell Count:** 1711.38
-- **Average Wire Count:** 1323.05
+- **Average Wire Count:** 1094.53
 - **Average Memory Count:** 0.00
 
 ### Most Common Cell Types (All Modules)

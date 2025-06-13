@@ -129,9 +129,9 @@ class VerilogAnalyzer:
         categories = list(self.stats['modules_by_category'].keys())
         counts = list(self.stats['modules_by_category'].values())
         plt.figure(figsize=(12, 6))
-        bars = plt.bar(categories, counts, width=0.6, color='#007bff')  # Blue
-        plt.xticks(rotation=45, ha='right', fontweight='bold')
-        plt.yticks(fontweight='bold')
+        bars = plt.bar(categories, counts, width=0.6, color='#007bff', edgecolor='black', linewidth=2)
+        plt.xticks(rotation=45, ha='right', fontsize=12, fontweight='bold')
+        plt.yticks(fontsize=12, fontweight='bold')
         plt.title('Module Distribution by Category', pad=20, fontsize=14, fontweight='bold')
         plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
         plt.tight_layout()
@@ -150,12 +150,13 @@ class VerilogAnalyzer:
         patterns = list(self.stats['design_patterns'].keys())
         pattern_counts = list(self.stats['design_patterns'].values())
         plt.figure(figsize=(10, 6))
-        bars = plt.bar(patterns, pattern_counts, width=0.6, color='#007bff')
-        plt.xticks(rotation=45, ha='right', fontweight='bold')
-        plt.yticks(fontweight='bold')
+        bars = plt.bar(patterns, pattern_counts, width=0.6, edgecolor='black', linewidth=2, color='#007bff')
+        plt.xticks(rotation=45, ha='right', fontsize=12, fontweight='bold')
+        plt.yticks(fontsize=12, fontweight='bold')
         plt.title('Design Pattern Usage', pad=20, fontsize=14, fontweight='bold')
         plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
         plt.tight_layout()
+
         # Annotate bar values
         for bar in bars:
             height = bar.get_height()
@@ -190,12 +191,14 @@ class VerilogAnalyzer:
         if cell_counts_nonzero:
             plt.figure(figsize=(10, 6))
             bins = np.logspace(np.log10(min(cell_counts_nonzero)), np.log10(max(cell_counts_nonzero)), 50)
-            n, bins, patches = plt.hist(cell_counts_nonzero, bins=bins, color='#007bff', edgecolor='black', alpha=0.8)
+            n, bins, patches = plt.hist(cell_counts_nonzero, bins=bins, color='#007bff', edgecolor='black', linewidth=2, alpha=0.8)
             plt.title('Distribution of Cell Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Cell Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
             plt.xscale('log')
             plt.yscale('log')
+            plt.xticks(fontsize=12, fontweight='bold')
+            plt.yticks(fontsize=12, fontweight='bold')
             plt.tight_layout()
             # Annotate histogram bars
             for i in range(len(patches)):
@@ -208,17 +211,20 @@ class VerilogAnalyzer:
                                  ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/cell_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
+
         # Histogram of wire counts
         wire_counts_nonzero = [w for w in wire_counts if w > 0]
         if wire_counts_nonzero:
             plt.figure(figsize=(10, 6))
             bins = np.logspace(np.log10(min(wire_counts_nonzero)), np.log10(max(wire_counts_nonzero)), 50)
-            n, bins, patches = plt.hist(wire_counts_nonzero, bins=bins, color='#007bff', edgecolor='black', alpha=0.8)
+            n, bins, patches = plt.hist(wire_counts_nonzero, bins=bins, color='#007bff', edgecolor='black', linewidth=2, alpha=0.8)
             plt.title('Distribution of Wire Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Wire Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
             plt.xscale('log')
             plt.yscale('log')
+            plt.xticks(fontsize=12, fontweight='bold')
+            plt.yticks(fontsize=12, fontweight='bold')
             plt.tight_layout()
             # Annotate histogram bars
             for i in range(len(patches)):
@@ -231,13 +237,16 @@ class VerilogAnalyzer:
                                  ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/wire_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
+
         # Histogram of memory counts
         if memory_counts:
             plt.figure(figsize=(10, 6))
-            n, bins, patches = plt.hist(memory_counts, bins=20, color='#007bff', edgecolor='black', alpha=0.8)
+            n, bins, patches = plt.hist(memory_counts, bins=20, color='#007bff', edgecolor='black', linewidth=2, alpha=0.8)
             plt.title('Distribution of Memory Counts per Module', pad=20, fontsize=14, fontweight='bold')
             plt.xlabel('Memory Count', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
+            plt.xticks(fontsize=12, fontweight='bold')
+            plt.yticks(fontsize=12, fontweight='bold')
             plt.tight_layout()
             # Annotate histogram bars
             for i in range(len(patches)):
@@ -250,6 +259,7 @@ class VerilogAnalyzer:
                                  ha='center', va='bottom', fontsize=8, fontweight='bold')
             plt.savefig('plots/memory_count_histogram.png', dpi=300, bbox_inches='tight')
             plt.close()
+
         # Bar chart of most common cell types
         if cell_type_totals:
             # Filter out paramod cell types for plotting
@@ -262,12 +272,13 @@ class VerilogAnalyzer:
             labels = [c[0] for c in sorted_cells]
             counts = [c[1] for c in sorted_cells]
             plt.figure(figsize=(12, 6))
-            bars = plt.bar(labels, counts, color='#007bff')
-            plt.xticks(rotation=45, ha='right', fontweight='bold')
-            plt.yticks(fontweight='bold')
+            bars = plt.bar(labels, counts, width=0.6, color='#007bff', edgecolor='black', linewidth=2)
+            plt.xticks(rotation=45, ha='right', fontsize=12, fontweight='bold')
+            plt.yticks(fontsize=12, fontweight='bold')
             plt.title('Top 20 Most Common Cell Types (All Modules)', pad=20, fontsize=14, fontweight='bold')
             plt.ylabel('Number of Modules', fontsize=12, fontweight='bold')
             plt.tight_layout()
+            
             # Annotate bar values
             for bar in bars:
                 height = bar.get_height()
