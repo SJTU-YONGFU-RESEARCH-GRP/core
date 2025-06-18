@@ -20,11 +20,8 @@ module arbiter_rr #(
     reg [1:0] granted;
     reg [1:0] ptr;
     reg [1:0] check_idx;
+    integer i;
     always @(posedge clk or negedge rst_n) begin
-        found = 0;
-        granted = 0;
-        ptr = 0;
-        check_idx = 0;
         if (!rst_n) begin
             grant <= {NUM_PORTS{1'b0}};
             priority_ptr <= NUM_PORTS-1;  // Initialize to highest port
@@ -33,23 +30,28 @@ module arbiter_rr #(
             if (|request) begin
                 if (PRIORITY_SCHEME == 0) begin
                     // Fixed priority scheme (higher index has higher priority)
+                    /* verilator lint_off BLKSEQ */
                     found = 0;
                     if (request[3] && !found) begin grant[3] <= 1'b1; found = 1; end
                     if (request[2] && !found) begin grant[2] <= 1'b1; found = 1; end
                     if (request[1] && !found) begin grant[1] <= 1'b1; found = 1; end
                     if (request[0] && !found) begin grant[0] <= 1'b1; found = 1; end
+                    /* verilator lint_on BLKSEQ */
                 end else begin
                     // Round-robin priority scheme for 4 ports
+                    /* verilator lint_off BLKSEQ */
                     granted = 0;
-                    ptr = priority_ptr;
-                    check_idx = (ptr - 0 + 4) % 4;
-                    if (request[check_idx] && !granted) begin grant[check_idx] <= 1'b1; granted = 1; priority_ptr <= (check_idx - 1 + 4) % 4; end
-                    check_idx = (ptr - 1 + 4) % 4;
-                    if (request[check_idx] && !granted) begin grant[check_idx] <= 1'b1; granted = 1; priority_ptr <= (check_idx - 1 + 4) % 4; end
-                    check_idx = (ptr - 2 + 4) % 4;
-                    if (request[check_idx] && !granted) begin grant[check_idx] <= 1'b1; granted = 1; priority_ptr <= (check_idx - 1 + 4) % 4; end
-                    check_idx = (ptr - 3 + 4) % 4;
-                    if (request[check_idx] && !granted) begin grant[check_idx] <= 1'b1; granted = 1; priority_ptr <= (check_idx - 1 + 4) % 4; end
+                    
+                    // Start from current pointer and cycle downward
+                    for (i = 0; i < NUM_PORTS; i = i + 1) begin
+                        check_idx = (priority_ptr - i + NUM_PORTS) % NUM_PORTS;
+                        if (request[check_idx] && !granted) begin 
+                            grant[check_idx] <= 1'b1; 
+                            granted = 1; 
+                            priority_ptr <= (check_idx - 1 + NUM_PORTS) % NUM_PORTS; 
+                        end
+                    end
+                    /* verilator lint_on BLKSEQ */
                 end
             end
         end

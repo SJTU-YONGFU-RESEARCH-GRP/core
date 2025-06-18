@@ -50,6 +50,7 @@ module matrix_arbiter #(
         winner = {NUM_REQUESTORS{1'b0}};
         start_idx = 0;
         found = 1'b0;
+        found_prev_grant = 1'b0;
         
         if (req != {NUM_REQUESTORS{1'b0}}) begin
             // Initialize winner with the request vector

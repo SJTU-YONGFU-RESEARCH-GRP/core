@@ -61,6 +61,7 @@ module fair_priority_arbiter #(
             
             if (|request) begin  // If any request is active
                 // Initialize with minimum priority
+                /* verilator lint_off BLKSEQ */
                 highest_priority = {PRIORITY_WIDTH{1'b0}};
                 highest_idx = {$clog2(NUM_REQUESTERS){1'b0}};
                 found = 1'b0;
@@ -79,6 +80,7 @@ module fair_priority_arbiter #(
                     // Move to next index
                     current_idx = next_index(current_idx, 1);
                 end
+                /* verilator lint_on BLKSEQ */
                 
                 // Grant the request
                 if (found) begin

@@ -168,18 +168,20 @@ module bsg_async_ptr_gray #(
         end
     endgenerate
     
-    // Synchronizer for crossing to read domain
-    reg [lg_size_p-1:0] w_ptr_gray_r_rsync_r [1:0];
+    // Synchronizer for crossing to read domain - extended to 4 flops for proper CDC
+    reg [lg_size_p-1:0] w_ptr_gray_r_rsync_r [3:0];
     
     always @(posedge r_clk_i) begin
         w_ptr_gray_r_rsync_r[0] <= w_ptr_gray_r;
         w_ptr_gray_r_rsync_r[1] <= w_ptr_gray_r_rsync_r[0];
+        w_ptr_gray_r_rsync_r[2] <= w_ptr_gray_r_rsync_r[1];
+        w_ptr_gray_r_rsync_r[3] <= w_ptr_gray_r_rsync_r[2];
     end
     
     // Assign outputs
     assign w_ptr_binary_r_o = w_ptr_r;
     assign w_ptr_gray_r_o = w_ptr_gray_r;
-    assign w_ptr_gray_r_rsync_o = w_ptr_gray_r_rsync_r[1];
+    assign w_ptr_gray_r_rsync_o = w_ptr_gray_r_rsync_r[3];
 endmodule
 
 // Main async credit counter module
@@ -211,12 +213,15 @@ module bsg_async_credit_counter #(
     wire [w_counter_width_lp-1:0] w_counter_binary_r_rsync;
 
     // Credit counter update logic
-    always @(posedge r_clk_i)
-        if (r_reset_i)
+    always @(posedge r_clk_i) begin
+        if (r_reset_i) begin
             // Initialize counter based on start_full_p
+            // When start_full_p=1, we start with negative count to represent available credits
             r_counter_r <= {r_counter_width_lp{1'b0}} - (max_tokens_p * start_full_p) * (1 << lg_credit_to_token_decimation_p);
-        else if (r_dec_credit_i)
+        end else if (r_dec_credit_i) begin
             r_counter_r <= r_counter_r + 1'b1;
+        end
+    end
 
     // Instantiate gray code pointer
     bsg_async_ptr_gray #(
