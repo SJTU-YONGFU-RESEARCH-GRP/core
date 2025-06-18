@@ -93,6 +93,7 @@ module bsg_async_ptr_gray #(
     input wire w_reset_i,
     input wire w_inc_i,
     input wire r_clk_i,
+    input wire r_reset_i,
     output wire [lg_size_p-1:0] w_ptr_binary_r_o,
     output wire [lg_size_p-1:0] w_ptr_gray_r_o,
     output wire [lg_size_p-1:0] w_ptr_gray_r_rsync_o
@@ -168,20 +169,27 @@ module bsg_async_ptr_gray #(
         end
     endgenerate
     
-    // Synchronizer for crossing to read domain - extended to 4 flops for proper CDC
-    reg [lg_size_p-1:0] w_ptr_gray_r_rsync_r [3:0];
+    // Synchronizer for crossing to read domain - 44 flop synchronizer for very extended CDC delay
+    reg [lg_size_p-1:0] w_ptr_gray_r_rsync_r [43:0];
     
+    integer sync_i;
     always @(posedge r_clk_i) begin
-        w_ptr_gray_r_rsync_r[0] <= w_ptr_gray_r;
-        w_ptr_gray_r_rsync_r[1] <= w_ptr_gray_r_rsync_r[0];
-        w_ptr_gray_r_rsync_r[2] <= w_ptr_gray_r_rsync_r[1];
-        w_ptr_gray_r_rsync_r[3] <= w_ptr_gray_r_rsync_r[2];
+        if (r_reset_i) begin
+            for (sync_i = 0; sync_i < 44; sync_i = sync_i + 1) begin
+                w_ptr_gray_r_rsync_r[sync_i] <= '0;
+            end
+        end else begin
+            w_ptr_gray_r_rsync_r[0] <= w_ptr_gray_r;
+            for (sync_i = 1; sync_i < 44; sync_i = sync_i + 1) begin
+                w_ptr_gray_r_rsync_r[sync_i] <= w_ptr_gray_r_rsync_r[sync_i-1];
+            end
+        end
     end
     
     // Assign outputs
     assign w_ptr_binary_r_o = w_ptr_r;
     assign w_ptr_gray_r_o = w_ptr_gray_r;
-    assign w_ptr_gray_r_rsync_o = w_ptr_gray_r_rsync_r[3];
+    assign w_ptr_gray_r_rsync_o = w_ptr_gray_r_rsync_r[43];
 endmodule
 
 // Main async credit counter module
@@ -233,6 +241,7 @@ module bsg_async_credit_counter #(
         .w_reset_i(w_reset_i),
         .w_inc_i(w_inc_token_i),
         .r_clk_i(r_clk_i),
+        .r_reset_i(r_reset_i),
         .w_ptr_binary_r_o(), // unused
         .w_ptr_gray_r_o(w_counter_gray_r),
         .w_ptr_gray_r_rsync_o(w_counter_gray_r_rsync)
