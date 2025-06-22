@@ -220,7 +220,7 @@ If you use this repository in your research or work, please cite it as follows:
 
 ```bibtex
 @misc{core2024,
-  author = {Kian Kit Cheah, Fu Qi Chua, Yunxiang Zhang, Yuxin Ji, Xinfei Guo, Harikrishnan Ramiah, and Yongfu Li},
+  author = {Kian Kit Cheah, Fu Qi Chua, Yunxiang Zhang, Zhuofan Lin, Yuxin Ji, Xinfei Guo, Harikrishnan Ramiah, and Yongfu Li},
   title = {Descriptor: A Corpus of Synthesizable Verilog RTL Modules Dataset for EDA Research (CORE)},
   year = {2025},
   journal = {IEEE Data Descriptions},
