@@ -1,11 +1,26 @@
 # CORE: Corpus Of RTL designs for EDA Research
 
-This repository contains a collection of parameterized and configurable RTL modules written in Verilog, organized by category. Each category has a dedicated documentation page in the `docs/` directory.
+A comprehensive collection of parameterized and configurable RTL modules written in Verilog, organized by category for EDA research and development. This repository contains **136+ verified modules** across **21 categories** with complete testbenches and documentation.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Dataset Overview](#dataset-overview)
+- [Directory Structure](#directory-structure)
+- [Dataset Analysis Tools](#dataset-analysis-tools)
+  - [Verification Report](#verification-report)
+  - [Dataset Analysis](#dataset-analysis)
+  - [Verilog Standards Analysis](#verilog-standards-analysis)
+- [Contributing](#contributing)
+- [Technical Information](#technical-information)
+- [Citation](#citation)
+- [License](#license)
 
 ## Installation
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.6 or higher
 - Icarus Verilog (iverilog) 12.0 or higher
 - GTKWave (for waveform viewing)
 - Make
@@ -99,27 +114,24 @@ sudo make install
 pip install -r requirements.txt
 ```
 
-## Version Information
-- Current Version: 1.0.0
-- Last Updated: 2024
-- Supported Verilog Standards: IEEE 1364-2005, IEEE 1800-2012
-- Tool Versions:
-  - Verilator: 5.036
-  - Yosys: 0.53+81
-  - Icarus Verilog: 11.0
-  - Python: 3.10.12
+The Python dependencies include:
+- `typing-extensions>=0.4.6` - For enhanced type hints support
+- `colorama>=0.4.6` - For colored terminal output  
+- `tqdm>=4.65.0` - For progress bars
+- `rich>=13.0.0` - For rich terminal formatting and logging
+- `matplotlib` - For generating plots and visualizations
+- `seaborn` - For statistical data visualization
 
-## Directory Structure
-```
-/ libraries         # Verilog RTL modules
-/ docs              # Category documentation
-report.py           # Verification report generator
-REPORT.md           # Latest verification report
-LICENSE             # Licensing information
-README.md           # This file
-``` 
+## Quick Start
 
-## Dataset
+After installation, you can immediately start using the modules:
+
+1. **Browse the dataset**: Explore modules in the `libraries/` directory
+2. **Run verification**: Use `python3 report.py` to generate a verification report
+3. **Analyze the dataset**: Use `python3 analyze_verilog_dataset.py` for detailed analysis
+4. **View documentation**: Check category-specific docs in the `docs/` directory
+
+## Dataset Overview
 
 | Category | Docs | Number | Modules |
 |----------|------|-------:|---------|
@@ -148,71 +160,135 @@ README.md           # This file
 | Testing | [Testing](docs/README_TESTING.md) | 2 | [bist_controller](libraries/test/bist_controller.v), [jtag_controller](libraries/test/jtag_controller.v) |
 | Voting | [Voting](docs/README_VOTING.md) | 1 | [majority_voter](libraries/voters/majority_voter.v) |
 
-## Generating Verification Report
+## Directory Structure
+```
+/ libraries         # Verilog RTL modules
+/ docs              # Category documentation
+report.py           # Verification report generator
+REPORT.md           # Latest verification report
+LICENSE             # Licensing information
+README.md           # This file
+``` 
 
-You can generate a comprehensive report of the verification results by running:
+## Dataset Analysis Tools
+
+### Verification Report
+
+Generate a comprehensive report of the verification results:
 
 ```bash
 python3 report.py
 ```
 
-### What the Script Does
+This script scans RTL files and their testbenches, executes tests using `make`, and produces `REPORT.md`.
 
-This script will scan RTL files and their testbenches, execute tests using `make`, and produce `REPORT.md`.
+📊 **View the latest report:** [REPORT.md](REPORT.md)
 
-You can view the latest report here: [REPORT.md](REPORT.md)
+### Dataset Analysis
 
-## Analyzing the Verilog Dataset
-
-You can analyze the Verilog dataset and generate a comprehensive markdown report (`DATASET.md`) using the provided `analyze_verilog_dataset.py` script.
-
-### Usage
-
-To analyze the dataset and generate `DATASET.md`:
+Analyze the Verilog dataset and generate a comprehensive report with synthesis metrics:
 
 ```bash
 python3 analyze_verilog_dataset.py --synth --output my_report.md --loglevel INFO
 ```
 
-### What the Script Does
-This will scan all Verilog modules in the `libraries/` directory, collect code and synthesis metrics, and produce a detailed report in `DATASET.md` (including plots in the `plots/` directory).
-- Analyzes all Verilog files in `libraries/` for code metrics (lines, parameters, ports, patterns, etc.).
-- Optionally runs Yosys synthesis to collect hardware metrics (cell count, wire count, etc.).
-- Generates plots and a markdown report summarizing the dataset's structure, complexity, and synthesis statistics.
+**What it does:**
+- Analyzes all Verilog files in `libraries/` for code metrics (lines, parameters, ports, patterns, etc.)
+- Optionally runs Yosys synthesis to collect hardware metrics (cell count, wire count, etc.)
+- Generates plots and a markdown report summarizing the dataset's structure, complexity, and synthesis statistics
 
-You can view the latest report here: [DATASET.md](DATASET.md)
+📊 **View the latest analysis:** [DATASET.md](DATASET.md)
 
-## Verilog Standards Analysis
+### Verilog Standards Analysis
 
-The repository includes a comprehensive analysis of Verilog standards usage across all modules. You can generate a detailed standards report using the provided `verilog_standard_report.py` script.
-
-### Usage
-
-To analyze Verilog standards and generate a report:
+Generate a detailed standards compliance report:
 
 ```bash
 python3 verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO
 ```
 
-### What the Script Does
-
-The script analyzes all Verilog files in the `libraries/` directory and generates a detailed report that includes:
-
-- Standards compliance analysis (Verilog-1995 through SystemVerilog-2017)
+**Analysis includes:**
+- Standards compliance (Verilog-1995 through SystemVerilog-2017)
 - Feature usage statistics
 - File-by-file analysis
-- Visual charts showing standards distribution and feature usage
+- Visual charts showing standards distribution
 
-The analysis covers the following Verilog standards:
-- Verilog-1995: Basic Verilog features (modules, ports, parameters)
-- Verilog-2001: Enhanced features (generate blocks, signed types)
-- Verilog-2005: Additional features (uwire, trireg)
-- SystemVerilog-2005: Modern features (interfaces, logic types)
-- SystemVerilog-2009: Advanced features (classes, coverage)
-- SystemVerilog-2012: Latest features (program blocks, constraints)
-- SystemVerilog-2017: Assertion and property features
+📊 **View the standards report:** [VERILOG_STANDARDS.md](VERILOG_STANDARDS.md)
 
-You can view the latest standards report here: [VERILOG_STANDARDS.md](VERILOG_STANDARDS.md)
+## Contributing
+
+We welcome and encourage community contributions to expand the CORE dataset! Your contributions help make this repository a more comprehensive resource for EDA research and development.
+
+### How to Contribute
+
+#### 1. Reporting Issues
+- Found a bug or issue? [Create an issue](https://github.com/SJTU-YONGFU-RESEARCH-GRP/core/issues/new) on GitHub
+- Include detailed information about the problem and steps to reproduce it
+- Suggest improvements or request new module categories
+
+#### 2. Contributing New Modules
+We're always looking for new high-quality Verilog RTL modules to add to the dataset. Here's how you can contribute:
+
+**What we're looking for:**
+- Well-documented, parameterized Verilog modules
+- Comprehensive testbenches (preferably in C++ using Verilator)
+- Modules that follow good RTL design practices
+- Coverage of new design patterns or categories not currently in the dataset
+
+**Contribution Process:**
+1. **Fork the repository** and create a new branch for your contribution
+2. **Add your Verilog module(s)** to the appropriate category in `libraries/`
+3. **Include comprehensive testbenches** following our naming convention (`tb_*.cpp`)
+4. **Add documentation** explaining the module's functionality and parameters
+5. **Test your modules** using our verification flow (`make` command)
+6. **Submit a pull request** with a clear description of your contribution
+
+**File Organization:**
+- Place Verilog files in the appropriate `libraries/[category]/` directory
+- Include testbench files with `tb_` prefix
+- Add documentation to the corresponding `docs/README_[CATEGORY].md` file
+- Follow existing naming conventions and coding styles
+
+#### 3. Improving Existing Modules
+- Fix bugs in existing modules
+- Improve testbench coverage
+- Optimize implementations
+- Add better documentation or comments
+
+#### 4. Documentation and Tools
+- Improve documentation clarity
+- Enhance analysis scripts
+- Add new visualization features
+- Fix typos or formatting issues
+
+### Contribution Guidelines
+
+- **Code Quality:** Ensure your code is clean, well-commented, and follows Verilog best practices
+- **Testing:** All modules must include working testbenches that demonstrate functionality
+- **Documentation:** Provide clear documentation explaining module purpose, parameters, and usage
+- **Licensing:** By contributing, you agree that your contributions will be licensed under the same CC BY-NC 4.0 license
+
+### Getting Started
+
+1. **Explore the existing codebase** to understand our structure and conventions
+2. **Check open issues** to see if there are specific modules or features we need
+3. **Start small** - consider fixing bugs or improving documentation before adding large new features
+4. **Ask questions** - create an issue if you need clarification on contribution guidelines
+
+**Join our community** and help make CORE the most comprehensive RTL dataset for EDA research!
+
+For questions about contributions, please create an issue or reach out to the maintainers.
+
+## Technical Information
+
+- **Current Version:** 1.0.0
+- **Last Updated:** 2024
+- **Supported Verilog Standards:** IEEE 1364-2005, IEEE 1800-2012
+- **Tool Versions:**
+  - Verilator: 5.036
+  - Yosys: 0.53+81
+  - Icarus Verilog: 11.0
+  - Python: 3.10.12
 
 ## Citation
 
