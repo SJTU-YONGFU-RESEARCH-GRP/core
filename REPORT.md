@@ -134,10 +134,7 @@ Generated on: 2025-06-18 23:23:57
 
 | Module | File Path | Status | Tests | Runtime (s) | Details |
 |--------|-----------|:------:|------:|-----------:|----------:|
-| bsg_async_credit_counter | libraries/cdc/bsg_async_credit_counter.v | ✗ FAIL | 12/16 | 4.81 | 12 of 16
-
-Error output sample:
-make: *** [Makefile:140: verify_bsg_async_credit_counter] Error 1 |
+| bsg_async_credit_counter | libraries/cdc/bsg_async_credit_counter.v | ✓ PASS | 16/16 | 4.81 | 16 of 16
 | clock_domain_crossing | libraries/cdc/clock_domain_crossing.v | ✓ PASS | 10/10 | 4.53 | 10 of 10 |
 | clock_domain_crossing_fifo | libraries/cdc/clock_domain_crossing_fifo.v | ✓ PASS | 76/76 | 4.61 | 76 of 76 |
 | handshake_synchronizer | libraries/cdc/handshake_synchronizer.v | ✓ PASS | 10/10 | 5.24 | 10 of 10 |
