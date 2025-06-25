@@ -1,6 +1,6 @@
 # CORE: Corpus Of RTL designs for EDA Research
 
-A comprehensive collection of parameterized and configurable RTL modules written in Verilog, organized by category for EDA research and development. This repository contains **136+ verified modules** across **21 categories** with complete testbenches and documentation.
+A comprehensive collection of parameterized and configurable RTL modules written in Verilog, organized by category for EDA research and development. This repository contains **137 verified modules** across **24 categories** with complete testbenches and documentation.
 
 ## Table of Contents
 
