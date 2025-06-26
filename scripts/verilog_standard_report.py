@@ -12,9 +12,9 @@ import base64
 from io import BytesIO
 
 # Default directory to scan
-DEFAULT_LIBRARIES_DIR = os.path.join(os.path.dirname(__file__), 'libraries')
+DEFAULT_LIBRARIES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'libraries'))
 VERILOG_EXTENSIONS = ['.v', '.sv']
-PLOTS_DIR = os.path.join(os.path.dirname(__file__), 'plots')
+PLOTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'plots')
 
 # Features unique to each standard
 FEATURES = {
