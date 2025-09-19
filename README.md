@@ -127,8 +127,8 @@ The Python dependencies include:
 After installation, you can immediately start using the modules:
 
 1. **Browse the dataset**: Explore modules in the `libraries/` directory
-2. **Run verification**: Use `python3 report.py` to generate a verification report
-3. **Analyze the dataset**: Use `python3 analyze_verilog_dataset.py` for detailed analysis
+2. **Run verification**: Run `make verify_all`, then `python3 scripts/report.py` to generate a verification report
+3. **Analyze the dataset**: Use `python3 scripts/analyze_verilog_dataset.py` for detailed analysis
 4. **View documentation**: Check category-specific docs in the `docs/` directory
 
 ## Dataset Overview
@@ -177,7 +177,8 @@ README.md           # This file
 Generate a comprehensive report of the verification results:
 
 ```bash
-python3 report.py
+make verify_all
+python3 scripts/report.py
 ```
 
 This script scans RTL files and their testbenches, executes tests using `make`, and produces `REPORT.md`.
@@ -189,7 +190,7 @@ This script scans RTL files and their testbenches, executes tests using `make`, 
 Analyze the Verilog dataset and generate a comprehensive report with synthesis metrics:
 
 ```bash
-python3 analyze_verilog_dataset.py --synth --output my_report.md --loglevel INFO
+python3 scripts/analyze_verilog_dataset.py --synth --output my_report.md --loglevel INFO
 ```
 
 **What it does:**
@@ -204,7 +205,7 @@ python3 analyze_verilog_dataset.py --synth --output my_report.md --loglevel INFO
 Generate a detailed standards compliance report:
 
 ```bash
-python3 verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO
+python3 scripts/verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO
 ```
 
 **Analysis includes:**
