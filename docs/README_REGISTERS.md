@@ -184,6 +184,17 @@ module lfsr #(
 endmodule
 ```
 
+**Seed and Tap Management**:
+The `registers/lfsr.v` module provides explicit seed handling for reproducible pseudo-random sequences:
+
+- External seed input via `seed` and synchronous load via `load`
+- Galois-style update with configurable `TAPS`
+- Deterministic sequence for a fixed (seed, taps) pair; sequence length depends on polynomial
+
+Guidance:
+- Ensure non-zero seeds to avoid the all-zero lock state
+- Use `load` to initialize or reseed the LFSR during simulation or operation
+
 **Applications**:
 - Pseudo-random number generation
 - Cryptographic algorithms

@@ -11,7 +11,9 @@
   - [Pulse Width Detector](#pulse-width-detector)
 - [Random Number Generation](#random-number-generation)
   - [Configurable Linear Feedback Shift Register (LFSR)](#configurable-linear-feedback-shift-register-lfsr)
+    - [LFSR Seed Management](#lfsr-seed-management)
   - [Configurable Pseudo-Random Number Generator (PRNG)](#configurable-pseudo-random-number-generator-prng)
+    - [PRNG Seed Management](#prng-seed-management)
 - [Specialized Controllers](#specialized-controllers)
   - [Digital Thermometer Controller](#digital-thermometer-controller)
 - [Performance Considerations](#performance-considerations)
@@ -201,6 +203,47 @@ endgenerate
 - Testing and simulation
 - Noise generation
 
+#### LFSR Seed Management
+
+- External seed input via `seed` and synchronous load via `load_seed`
+- Deterministic sequence for a fixed (seed, tap_pattern) pair
+- Choose non-zero seeds to avoid all-zero lock state
+
+### Configurable Pseudo-Random Number Generator (PRNG)
+
+**Description**: A parameterizable PRNG supporting Fibonacci and Galois LFSR modes with reseeding.
+
+**Key Features**:
+- External seed input `seed_in`
+- Reseeding control via `reseed`
+- Non-zero seed enforcement: zero input falls back to parameter `SEED`
+- Deterministic sequence for fixed (seed, mode, taps)
+
+**Implementation Highlights**:
+```verilog
+// Seed cannot be zero for an LFSR
+wire [WIDTH-1:0] actual_seed = (seed_in == {WIDTH{1'b0}}) ? SEED : seed_in;
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        lfsr_reg <= SEED;
+        valid_reg <= 1'b0;
+    end else if (reseed) begin
+        lfsr_reg <= actual_seed; // load new seed
+        valid_reg <= 1'b0;
+    end else if (enable) begin
+        lfsr_reg <= next_state;  // Fibonacci or Galois update
+        valid_reg <= 1'b1;
+    end
+end
+```
+
+#### PRNG Seed Management
+
+- Provide seeds via `seed_in`; toggle `reseed` to load at runtime
+- Zero seeds are replaced by default non-zero `SEED`
+- Keep (seed, mode, taps) fixed for reproducible sequences
+
 ## Performance Considerations
 
 ### Area and Timing Trade-offs
@@ -261,3 +304,5 @@ parameterized_dds #(
 - "Embedded System Design" by Peter Marwedel
 - IEEE Transactions on Circuits and Systems
 - "Pseudo-Random Signal Processing" by Theodore S. Rappaport 
+
+<!-- Seed management details are documented under each RNG subsection above -->
