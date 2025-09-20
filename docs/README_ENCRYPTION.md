@@ -97,6 +97,27 @@ module true_random_generator #(
 - State machine for controlled generation
 - Configurable test and validation stages
 
+### Randomness and Seed Management
+
+- No external seed input: The TRNG does not accept a user-provided seed. Instead, it internally initializes entropy pools to non-zero values and derives randomness from hardware behavior.
+- Non-zero internal initialization:
+  - `entropy_pool` initializes to `...001` on reset to avoid the all-zero state
+  - `entropy_pool2` initializes to all ones on reset
+  - Auxiliary `lfsr_reg` initializes to `32'hABCDE971`
+- Entropy sources and modes:
+  - With `USE_RINGOSCILLATOR = 1` (default): samples a ring oscillator and mixes samples into entropy pools. This mode is non-deterministic across runs and platforms.
+  - With `USE_RINGOSCILLATOR = 0`: disables the ring oscillator and falls back to LFSR-based collection and mixing only. This mode is deterministic for a given build/reset sequence.
+- Mixing and output:
+  - Multiple pools (`entropy_pool`, `entropy_pool2`, and `lfsr_reg`) are XOR-mixed with byte/half-word permutations to improve bit distribution before producing `random_data` in the READY state.
+- Health and validity:
+  - `entropy_low` asserts while collecting if insufficient samples have been accumulated
+  - `test_failed` flags trivial patterns (all-zeros or all-ones) as a basic sanity check
+  - `data_valid` indicates when a fresh mixed value is available (READY state)
+
+Guidance:
+- For cryptographic-quality non-determinism, use the default `USE_RINGOSCILLATOR=1` configuration.
+- For reproducible testing or CI, set `USE_RINGOSCILLATOR=0` to use deterministic LFSR-only behavior under the same reset conditions.
+
 ## Usage Guidelines
 1. Ensure proper clock and reset management
 2. For AES:
