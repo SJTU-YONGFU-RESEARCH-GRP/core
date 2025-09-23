@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1"  # Weekly (Mon 02:00 UTC)
+
+jobs:
+  verify-and-report:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/yosyshq/oss-cad-suite:2024-06-01
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify all modules
+        run: make verify_all
+
+      - name: Generate reports
+        run: |
+          python3 scripts/report.py
+          python3 scripts/analyze_verilog_dataset.py --synth --output DATASET.md --loglevel INFO
+          python3 scripts/verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-and-plots
+          path: |
+            REPORT.md
+            DATASET.md
+            VERILOG_STANDARDS.md
+            scripts/plots/**
+
+

@@ -1,13 +1,15 @@
-# Python version requirement: 3.6 or higher
-# Note: This is a requirement for the Python interpreter, not a pip package
+# Python runtime
+# Use Python 3.11 in CI (see workflow); these pins are compatible with 3.10–3.12
 
-# Core dependencies
-typing-extensions>=0.4.6  # For enhanced type hints support
-colorama>=0.4.6  # For colored terminal output
-tqdm>=4.65.0  # For progress bars
-rich>=13.0.0  # For rich terminal formatting and logging
-matplotlib
-seaborn 
+# Core dependencies (pinned)
+typing-extensions==4.12.2
+colorama==0.4.6
+tqdm==4.66.4
+rich==13.7.1
+numpy==1.26.4
+matplotlib==3.8.4
+seaborn==0.13.2
+pyverilog==1.3.0
 
 # System Requirements
 # Verilator (not a Python package, must be installed separately)

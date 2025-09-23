@@ -80,6 +80,11 @@ help:
 	@echo "  verify_voters     - Verify voter modules"
 	@echo "  verify_interfaces - Verify interface modules"
 	@echo ""
+	@echo "Reports:"
+	@echo "  report          - Generate verification report (REPORT.md)"
+	@echo "  analyze         - Analyze dataset and synthesis (DATASET.md)"
+	@echo "  standards       - Generate Verilog standards report (VERILOG_STANDARDS.md)"
+	@echo ""
 	@echo "Output directories:"
 	@echo "  build/          - Contains all build products and synthesis results"
 	@echo ""
@@ -178,6 +183,19 @@ verify_all: init
 		$(MAKE) verify_$$module || echo "Verification of $$module failed"; \
 	done
 	@echo "\nAll verifications completed."
+
+# Reports
+report:
+	@echo "Generating REPORT.md..."
+	@python3 scripts/report.py
+
+analyze:
+	@echo "Generating DATASET.md..."
+	@python3 scripts/analyze_verilog_dataset.py --synth --output DATASET.md --loglevel INFO
+
+standards:
+	@echo "Generating VERILOG_STANDARDS.md..."
+	@python3 scripts/verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO
 
 # Group verification targets
 verify_adders: init

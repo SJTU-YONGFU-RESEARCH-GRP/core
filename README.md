@@ -131,6 +131,25 @@ After installation, you can immediately start using the modules:
 3. **Analyze the dataset**: Use `python3 scripts/analyze_verilog_dataset.py` for detailed analysis
 4. **View documentation**: Check category-specific docs in the `docs/` directory
 
+## Reproducible Environment
+
+To ensure consistent results across machines and CI:
+
+- Python dependencies are pinned in `requirements.txt`.
+- CI runs inside a pinned OSS CAD Suite container image.
+
+Local (with Docker/Podman):
+```bash
+docker run --rm -v "$PWD":/workspace -w /workspace ghcr.io/yosyshq/oss-cad-suite:2024-06-01 \
+  bash -lc "python -m pip install --upgrade pip && pip install -r requirements.txt && make verify_all && python3 scripts/report.py && python3 scripts/analyze_verilog_dataset.py --synth --output DATASET.md --loglevel INFO && python3 scripts/verilog_standard_report.py --output VERILOG_STANDARDS.md --loglevel INFO"
+```
+
+Make targets:
+- `make verify_all` – build and run all testbenches
+- `make report` – generate `REPORT.md`
+- `make analyze` – generate `DATASET.md`
+- `make standards` – generate `VERILOG_STANDARDS.md`
+
 ## Dataset Overview
 
 | Category | Docs | Number | Modules |
