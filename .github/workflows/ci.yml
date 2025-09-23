@@ -12,7 +12,7 @@ jobs:
   verify-and-report:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/yosyshq/oss-cad-suite:2024-06-01
+      image: ubuntu:24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +26,24 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Install Verilator and Yosys v0.57
+        run: |
+          apt-get update
+          apt-get install -y \
+            git build-essential clang bison flex libreadline-dev gawk tcl-dev libffi-dev \
+            graphviz xdot pkg-config python3 python3-pip libboost-system-dev \
+            libboost-python-dev libboost-filesystem-dev zlib1g-dev ca-certificates \
+            verilator
+          git clone https://github.com/YosysHQ/yosys.git /tmp/yosys
+          cd /tmp/yosys
+          git checkout v0.57
+          git submodule update --init --recursive
+          make -j"$(nproc)"
+          make install
+          echo "Installed tool versions:"
+          yosys -V
+          verilator --version
 
       - name: Verify all modules
         run: make verify_all
@@ -44,6 +62,6 @@ jobs:
             REPORT.md
             DATASET.md
             VERILOG_STANDARDS.md
-            scripts/plots/**
+            plots/**
 
 
